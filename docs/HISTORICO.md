@@ -102,3 +102,7 @@ nas três nuvens, os guardrails da família e o harness com os checks entre os r
   escrever o roadmap: no tx02v2#8 e em [tx03v2#7](https://github.com/maringelix/tx03v2/pull/7).
 - Ao montar os checks da família, todos os invariantes valeram nos seis repositórios, menos um que
   virou exceção registrada: o kubectl é 1.37.1 nos tx e 1.36.5 nos dx (item S.2 do roadmap).
+- O primeiro CI do hub passou (`static` 9 de 9, `family` 11 de 11 contra a `main` dos seis), e o
+  `scripts/repo-guardrails.sh` aplicou o ruleset (`static` obrigatório), o secret scanning com push
+  protection, o reporte privado de vulnerabilidades e a aprovação de runs de forks, lidos de volta com
+  `gh api`.

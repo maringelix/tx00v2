@@ -50,9 +50,9 @@ repositório de aplicação fixa o commit da infraestrutura que o e2e da platafo
 
 | Capacidade | Status | Evidência |
 |---|---|---|
-| Checks do repositório: arquivos obrigatórios, identificadores, política dos workflows, links, formato do roadmap, actionlint, shellcheck, gitleaks | `verificado localmente` | `make static` num container `ubuntu:24.04` descartável em 2026-10-14; job de CI `static` |
-| Checks da família: arquivos do padrão, tabelas da família, versões do contrato, refs fixadas, versões de ferramentas e charts, digests de imagens, arquivos idênticos, paridade do app, pins das actions, links e evidências dos docs do hub | `verificado localmente` | `make family` contra os seis repositórios em 2026-10-14; job de CI `family` (semanal) |
-| Configurações do repositório como código (ruleset exigindo o `static`) | `planejado` | `scripts/repo-guardrails.sh` |
+| Checks do repositório: arquivos obrigatórios, identificadores, política dos workflows, links, formato do roadmap, actionlint, shellcheck, gitleaks | `verificado no CI` | `make static`; job de CI `static` (obrigatório) |
+| Checks da família: arquivos do padrão, tabelas da família, versões do contrato, refs fixadas, versões de ferramentas e charts, digests de imagens, arquivos idênticos, paridade do app, pins das actions, links e evidências dos docs do hub | `verificado no CI` | `make family` contra a `main` dos seis repositórios; job de CI `family` (também semanal) |
+| Configurações do repositório como código (ruleset exigindo o `static`, secret scanning, reporte privado de vulnerabilidades) | `verificado localmente` | `scripts/repo-guardrails.sh` aplicado e lido de volta com `gh api` em 2026-10-14 |
 | Nuvem | não se aplica | o hub não fala com nuvem e não tem credenciais de nuvem |
 
 ## A família em um quadro (2026-10-14)
