@@ -1,0 +1,61 @@
+name: Roadmap item
+description: Propose a new item for ROADMAP.md, or a change to an existing one.
+labels:
+  - roadmap
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Every item of ROADMAP.md has the same fields; fill them so the item can be copied as is.
+        Items beyond the v1 lab start as `proposta` and need the maintainer's OK.
+  - type: input
+    id: title
+    attributes:
+      label: Title
+      placeholder: "Perfil DR no lab local: segundo cluster e banco standby"
+    validations:
+      required: true
+  - type: input
+    id: repos
+    attributes:
+      label: Repositories
+      placeholder: tx01v2, tx02v2, tx03v2
+    validations:
+      required: true
+  - type: dropdown
+    id: origin
+    attributes:
+      label: Origin
+      options:
+        - v1 implemented (parity)
+        - v1 planned, never done
+        - v2 debt
+        - v2 proposal (beyond v1)
+    validations:
+      required: true
+  - type: textarea
+    id: deliverables
+    attributes:
+      label: Deliverables
+      description: Code, probes, docs and CI jobs, per repository.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance
+      description: What a harness check or a probe proves. No acceptance criterion that only a human can see.
+    validations:
+      required: true
+  - type: textarea
+    id: cost
+    attributes:
+      label: Cost
+      description: Local (memory, time) and cloud (per hour or per round, with the source of the price).
+    validations:
+      required: true
+  - type: input
+    id: dependencies
+    attributes:
+      label: Dependencies
+      placeholder: "R1.9, DP-1 (or: nenhuma)"

@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security vulnerability
+    url: https://github.com/maringelix/tx00v2/security/advisories/new
+    about: Report privately (see SECURITY.md). Never post credentials or account IDs in issues.
+  - name: Problem in one lab repository
+    url: https://github.com/maringelix/tx01v2/issues
+    about: Bugs of a lab repository go to that repository (tx01v2, dx01v2, tx02v2, dx02v2, tx03v2, dx03v2).

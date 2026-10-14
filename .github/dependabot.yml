@@ -1,0 +1,32 @@
+# Monthly dependency PRs: minor + patch grouped per ecosystem, majors one by one.
+# Review procedure: AGENTS.md (Dependency updater) and docs/SUSTENTACAO.md. The family check
+# family-actions wants one pin per action in the seven repositories: merge the same bump in the six lab
+# repositories in the same round. Harness tools (tools/) are updated by hand with
+# scripts/update-tool-checksums.sh.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+    groups:
+      github-actions-minor-patch:
+        update-types:
+          - minor
+          - patch
+
+  - package-ecosystem: pre-commit
+    directory: /
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+    groups:
+      pre-commit-minor-patch:
+        update-types:
+          - minor
+          - patch

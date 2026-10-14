@@ -1,0 +1,61 @@
+# The harness is the CI: every job only runs `make <target>` (docs/HARNESS.md).
+# Job ids are stable: `static` is the required status check (.github/rulesets/main.json). `family`
+# checks the six lab repositories (clones of their main branches); it is informative, not required,
+# because a change in another repository can turn it red.
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "0 6 * * 1" # Mondays 06:00 UTC: catches drift between the repositories of the family
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  HARNESS_STRICT: "1"
+
+jobs:
+  static:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0 # gitleaks scans the full history
+
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .tools
+          key: tools-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('tools/versions.env', 'tools/checksums.txt', 'scripts/lib/tools.sh') }}
+
+      - run: make tools
+      - run: make static
+
+  family:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      # The owner whose six lab repositories are checked (a fork of the family sets vars.FAMILY_OWNER
+      # or keeps its own owner; FORK.md).
+      FAMILY_OWNER: ${{ vars.FAMILY_OWNER || github.repository_owner }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .tools
+          key: tools-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('tools/versions.env', 'tools/checksums.txt', 'scripts/lib/tools.sh') }}
+
+      - run: make tools
+      - run: make family
