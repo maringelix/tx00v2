@@ -107,7 +107,7 @@ Regras de execução (as mesmas da v2 desde o início; detalhes em [docs/GUARDRA
 | R0.3 | Lab local com a plataforma completa do v1 | `feito` |
 | R0.4 | O lab local como gate de merge | `feito` |
 | R0.5 | Pronto para fork | `feito` |
-| R0.6 | Hub da família (este repositório) | `em andamento` |
+| R0.6 | Hub da família (este repositório) | `feito` |
 | R1.1 | Traces na plataforma local | `feito` |
 | R1.2 | Alertas no Slack | `feito` |
 | R1.3 | Chaos com hipóteses: latência de rede e stress | `feito` |
@@ -285,7 +285,7 @@ para a camada mínima que já existe.
 
 ### R0.6 Hub da família (este repositório)
 
-- Status: `em andamento`
+- Status: `feito`
 - Repos: tx00v2, tx01v2, dx01v2, tx02v2, dx02v2, tx03v2, dx03v2
 - Origem: proposta v2 (no v1, o `tx00` era um rastreador privado de auditorias)
 - Dependências: R0.1

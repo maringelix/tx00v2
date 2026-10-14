@@ -31,3 +31,10 @@ All notable changes to this project are documented here. The format follows
   `FORK.md`, `AGENTS.md`, `CONTRIBUTING.md`, `SECURITY.md`.
 - Repository settings as code: `.github/rulesets/main.json` (required check `static`) and
   `scripts/repo-guardrails.sh` (the settings of the family without the environment `lab`).
+
+### Changed
+
+- The first CI run passed (`static` 9/9, `family` 11/11 against the main branch of the six
+  repositories): the status rows of the hub say `verified in CI`. `scripts/repo-guardrails.sh` was
+  applied and read back with `gh api` (ruleset, secret scanning with push protection, private
+  vulnerability reporting, fork run approval): `verified locally`. Roadmap item R0.6 is done.

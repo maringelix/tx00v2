@@ -50,9 +50,9 @@ application repository pins the infrastructure commit its platform e2e uses
 
 | Capability | Status | Evidence |
 |---|---|---|
-| Repository checks: required files, identifiers, workflow policy, links, roadmap format, actionlint, shellcheck, gitleaks | `verified locally` | `make static` in a throwaway `ubuntu:24.04` container on 2026-10-14; CI job `static` |
-| Family checks: standard files, family tables, contract versions, pinned refs, tool and chart versions, image digests, identical files, app parity, action pins, links and evidence of the hub docs | `verified locally` | `make family` against the six repositories on 2026-10-14; CI job `family` (weekly) |
-| Repository settings as code (ruleset requiring `static`) | `planned` | `scripts/repo-guardrails.sh` |
+| Repository checks: required files, identifiers, workflow policy, links, roadmap format, actionlint, shellcheck, gitleaks | `verified in CI` | `make static`; CI job `static` (required) |
+| Family checks: standard files, family tables, contract versions, pinned refs, tool and chart versions, image digests, identical files, app parity, action pins, links and evidence of the hub docs | `verified in CI` | `make family` against the main branch of the six repositories; CI job `family` (also weekly) |
+| Repository settings as code (ruleset requiring `static`, secret scanning, private vulnerability reporting) | `verified locally` | `scripts/repo-guardrails.sh` applied and read back with `gh api` on 2026-10-14 |
 | Cloud | not applicable | the hub talks to no cloud and has no cloud credentials |
 
 ## The family at a glance (2026-10-14)
