@@ -115,10 +115,10 @@ Regras de execução (as mesmas da v2 desde o início; detalhes em [docs/GUARDRA
 | R1.4 | Traces no app e contrato v2 | `feito` |
 | R1.5 | Rollout sem downtime e latência entre a API e o banco | `feito` |
 | R1.6 | Exportadores de traces das nuvens, como código | `feito` |
-| R1.7 | Dívida: SHA256 do chart do Collector na nuvem do tx01v2 | `pendente` |
+| R1.7 | Dívida: SHA256 do chart do Collector na nuvem do tx01v2 | `feito` |
 | R1.8 | Dívida: perfil enxuto do e2e-platform para máquinas com menos de 8 GB | `pendente` |
 | R1.9 | Dívida: instalação instável do servidor do Trivy Operator | `pendente` |
-| R1.10 | Dívida: timeout do webhook do ESO no lab local do tx03v2 | `pendente` |
+| R1.10 | Dívida: timeout do webhook do ESO no lab local do tx03v2 | `feito` |
 | R2.1 | Perfil `dr` no lab local: região B, banco standby e backup replicado | `pendente` |
 | R2.2 | Failover do app entre as regiões do lab local | `pendente` |
 | R2.3 | Falha de nó: kind com vários nós | `pendente` |
@@ -176,7 +176,7 @@ Regras de execução (as mesmas da v2 desde o início; detalhes em [docs/GUARDRA
 | S.5 | nginx 1.32 nos apps | `pendente` |
 | S.6 | Amazon Linux 2023 nos nós do EKS | `pendente` |
 | S.7 | Schemas de CRD do kubeconform | `pendente` |
-| S.8 | Menções a "contract v1" que descrevem a versão 2 | `pendente` |
+| S.8 | Menções a "contract v1" que descrevem a versão 2 | `feito` |
 | S.9 | Primeira revisão trimestral conjunta da família | `pendente` |
 
 ## 5. Dependências entre as fases
@@ -449,7 +449,7 @@ chave nova é o endpoint OTLP do Collector).
 
 ### R1.7 Dívida: SHA256 do chart do Collector na nuvem do tx01v2
 
-- Status: `pendente`
+- Status: `feito`
 - Repos: tx01v2
 - Origem: dívida v2 (achada no porte da R1)
 - Dependências: nenhuma
@@ -461,6 +461,7 @@ chave nova é o endpoint OTLP do Collector).
   - `platform/install.sh` baixa o arquivo, confere o SHA256 e instala a partir dele.
 - Aceite:
   - `helm-template` e `local-versions` verdes; o `family-versions` mostra a mesma chave nos três tx.
+- Evidência: [tx01v2#12](https://github.com/maringelix/tx01v2/pull/12) (o `dx01v2` seguiu o commit em [dx01v2#12](https://github.com/maringelix/dx01v2/pull/12))
 
 ### R1.8 Dívida: perfil enxuto do e2e-platform para máquinas com menos de 8 GB
 
@@ -483,7 +484,7 @@ chave nova é o endpoint OTLP do Collector).
 
 - Status: `pendente`
 - Repos: tx01v2, tx02v2, tx03v2
-- Origem: dívida v2 (uma rodada do `e2e` do tx01v2#9 falhou com o servidor embutido do Trivy em CrashLoop na instalação; a seguinte passou)
+- Origem: dívida v2 (uma rodada do `e2e` do tx01v2#9, em 2026-10-14, falhou na instalação: o pod `trivy-server-0` terminou em `Failed` e o Helm reverteu o release; a seguinte passou. O diagnóstico de instalação ainda não existia, então não há dados do pod)
 - Dependências: nenhuma
 - Custo: nenhum
 - Entregáveis:
@@ -492,10 +493,11 @@ chave nova é o endpoint OTLP do Collector).
 - Aceite:
   - Dez rodadas seguidas do job `e2e` verdes nos três tx (PRs e CI semanal), ou a causa documentada
     no `docs/LICOES_APRENDIDAS.md` com a correção.
+  - Contagem em 2026-10-15: 8 seguidas no tx01v2, 18 no tx02v2 e 15 no tx03v2; a falha não voltou.
 
 ### R1.10 Dívida: timeout do webhook do ESO no lab local do tx03v2
 
-- Status: `pendente`
+- Status: `feito`
 - Repos: tx03v2
 - Origem: dívida v2 (duas rodadas locais do perfil `observability` falharam na sonda do External Secrets com `context deadline exceeded` no webhook; o CI passou)
 - Dependências: nenhuma
@@ -506,6 +508,7 @@ chave nova é o endpoint OTLP do Collector).
 - Aceite:
   - Três rodadas locais seguidas do perfil `observability` verdes num Docker de 8 GB, sem mudar a
     sonda.
+- Evidência: [tx03v2#9](https://github.com/maringelix/tx03v2/pull/9) (as três rodadas locais, 22 de 22 sondas cada, estão num comentário do PR), [dx03v2#10](https://github.com/maringelix/dx03v2/pull/10)
 
 ## R2. DR multirregião, resiliência e FinOps
 
@@ -1425,7 +1428,7 @@ Itens com data. As rotinas (CI semanal, Dependabot mensal, revisão trimestral) 
 
 ### S.8 Menções a "contract v1" que descrevem a versão 2
 
-- Status: `pendente`
+- Status: `feito`
 - Repos: tx01v2, dx01v2, tx02v2, dx02v2, tx03v2, dx03v2
 - Origem: dívida v2 (o contrato passou para a versão 2 na R1; cerca de cem comentários, mensagens dos scripts de deploy e linhas de docs ainda dizem "contract v1")
 - Dependências: nenhuma
@@ -1435,6 +1438,7 @@ Itens com data. As rotinas (CI semanal, Dependabot mensal, revisão trimestral) 
     importa, sem mudar comportamento; um PR por repositório.
 - Aceite:
   - `git grep -i "contract v1"` só acha o histórico (CHANGELOG e notas datadas).
+- Evidência: [tx01v2#12](https://github.com/maringelix/tx01v2/pull/12), [tx02v2#10](https://github.com/maringelix/tx02v2/pull/10), [tx03v2#9](https://github.com/maringelix/tx03v2/pull/9), [dx01v2#12](https://github.com/maringelix/dx01v2/pull/12), [dx02v2#8](https://github.com/maringelix/dx02v2/pull/8), [dx03v2#10](https://github.com/maringelix/dx03v2/pull/10)
 
 ### S.9 Primeira revisão trimestral conjunta da família
 
