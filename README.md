@@ -14,8 +14,9 @@ purpose, so the clouds can be compared fairly. Every repository is checked by a 
 needs no cloud account, and the whole platform of the v1 lab runs on a local kind cluster in CI.
 **Nothing of v2 has run in a cloud yet**: the cloud paths are code with tests.
 
-This repository holds no infrastructure and no app. It links the family, keeps the detailed roadmap
-of what is still missing for a complete lab in the three clouds ([ROADMAP.md](ROADMAP.md), pt-BR),
+This repository holds no infrastructure and no app. It links the family, keeps the roadmap of what is
+still missing for the lab to be ready for forks ([ROADMAP.md](ROADMAP.md), pt-BR): anyone who forks it
+runs it locally on Docker and in their own clouds, which this lab never validates in a real cloud;
 the rules the seven repositories follow ([docs/GUARDRAILS.md](docs/GUARDRAILS.md)) and a harness
 that checks the six lab repositories against each other.
 
@@ -41,7 +42,7 @@ application repository pins the infrastructure commit its platform e2e uses
 1. Read the reference pair: [tx01v2](https://github.com/maringelix/tx01v2) and
    [dx01v2](https://github.com/maringelix/dx01v2). The Azure and Google Cloud pairs are ports of it.
 2. Run the local lab, no account needed: `make e2e` in tx01v2 (Docker with 8 GB for the `full`
-   profile; [docs/LAB_LOCAL.md](https://github.com/maringelix/tx01v2/blob/main/docs/LAB_LOCAL.md)),
+   profile, 7 GB with `LOCAL_SIZE=small`; [docs/LAB_LOCAL.md](https://github.com/maringelix/tx01v2/blob/main/docs/LAB_LOCAL.md)),
    then `make e2e-platform` in dx01v2.
 3. Pick an item of [ROADMAP.md](ROADMAP.md); the execution rules are in its section 3.
 4. Forking the lab for a team: [FORK.md](FORK.md).
