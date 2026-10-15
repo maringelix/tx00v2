@@ -34,6 +34,18 @@ All notable changes to this project are documented here. The format follows
 
 ### Changed
 
+- The roadmap is rewritten for the scope Bruno set on 2026-10-15 (DEC-11): the lab is ready when
+  anyone who forks it can run it on Docker and in their own AWS, Azure and Google Cloud accounts;
+  nothing is validated in a real cloud. Two rounds remain: R3 (safety for whoever forks: R3.10 and
+  R3.13 to R3.18) and R4 (the full platform in the clouds as code, with the new R4.8, the path from the
+  fork to your own cloud). DR, FinOps, HTTPS in the clouds, the extra security and quality checks, the
+  real cloud runs, the fork rehearsal and the proposals left the roadmap; their texts stay in the
+  history of the file, and the pending decisions DP-1 to DP-5 fell with them.
+- Roadmap item R1.8 is done: `LOCAL_SIZE=small` runs the full platform with the app in 7 GB of
+  Docker memory, proved in the CI of the three dx (Docker-in-Docker). The goal was 6 GB; the acceptance
+  records the change and the decision. The round is in `docs/HISTORICO.md`.
+- Roadmap item R1.9 is done: ten green `e2e` runs in a row in each tx (11, 20 and 18), and the
+  failure of the Trivy server install did not come back.
 - Roadmap items R1.7, R1.10 and S.8 are done (the debts round); R1.9 records the count of green `e2e`
   runs so far and what the failed run really showed. The round is in `docs/HISTORICO.md`.
 - The first CI run passed (`static` 9/9, `family` 11/11 against the main branch of the six

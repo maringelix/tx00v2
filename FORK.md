@@ -6,7 +6,8 @@ is the order and the links between them.
 ## What you need
 
 - A GitHub account (an organization works too).
-- For the local lab: Linux or WSL 2 with Docker (8 GB of memory for the `full` profile), or the
+- For the local lab: Linux or WSL 2 with Docker (8 GB of memory for the `full` profile, 7 GB
+  with `LOCAL_SIZE=small`), or the
   devcontainer of each lab repository. No cloud account.
 - For the cloud path: your own dedicated AWS account, Azure subscription or Google Cloud project. It
   costs money; read the `docs/CUSTOS.md` of the pair first.
@@ -48,5 +49,5 @@ and `family-links` checks look for them as they are.
 | tx03v2 | [tx03v2/FORK.md](https://github.com/maringelix/tx03v2/blob/main/FORK.md) |
 | dx03v2 | [dx03v2/FORK.md](https://github.com/maringelix/dx03v2/blob/main/FORK.md) |
 
-A real rehearsal of these steps with a second GitHub account is still pending
-([ROADMAP.md](ROADMAP.md), item R5.7).
+These steps were never rehearsed with a second GitHub account: that rehearsal is out of the scope of
+the roadmap (DEC-11 in [ROADMAP.md](ROADMAP.md)).

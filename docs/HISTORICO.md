@@ -150,3 +150,39 @@ RUNBOOK de desenvolvimento exportava o banco de desenvolvimento.
 - O que a validação achou antes dos PRs: o `prettier` do dx03v2 quebrou uma linha que passou de 120
   colunas com a mensagem nova, e o primeiro jeito de tirar o limite de CPU do controller (`null`)
   renderizava `cpu: null`.
+
+## 2026-10-15: tamanho `small` do lab local (R1.8)
+
+- O que foi feito: `LOCAL_SIZE=small` nos três tx põe `platform/local/values/small/<chart>.yaml` por
+  último no `helm_install` (limites menores com `GOMEMLIMIT`, retenção curta no Prometheus e no Tempo,
+  sem as séries de cAdvisor e os histogramas do apiserver, menos workers no Argo CD, um scan do Trivy
+  por vez, auditoria do Gatekeeper só dos tipos das constraints) e acrescenta
+  `terraform/envs/local/kind-config-small.yaml` à config do kind (`GOMEMLIMIT` no apiserver, no
+  controller-manager e no etcd). Os dx ganharam o job `e2e-platform-small` (Docker-in-Docker sem swap):
+  [tx01v2#13](https://github.com/maringelix/tx01v2/pull/13), [dx01v2#13](https://github.com/maringelix/dx01v2/pull/13), [tx02v2#11](https://github.com/maringelix/tx02v2/pull/11), [dx02v2#9](https://github.com/maringelix/dx02v2/pull/9), [tx03v2#10](https://github.com/maringelix/tx03v2/pull/10), [dx03v2#11](https://github.com/maringelix/dx03v2/pull/11).
+- Como foi medido: a primeira tentativa rodou o lab inteiro num Docker-in-Docker de 6 a 7 GB na
+  máquina de desenvolvimento (i5, 16 GB) e travou o Windows. Desde então, rodadas pesadas só no GitHub
+  Actions. Aquela rodada local mostrou o tamanho padrão falhando em 7 GB (thrashing). No CI, o `small`
+  falhou em 6 GB na primeira versão (memória anônima de 4,63 GiB, o app nunca ficou saudável) e, com o
+  plano de controle e o Gatekeeper ajustados, em 6 GB passaram 14 de 18 sondas, e em 7 GB e em 8 GB,
+  todas.
+- A decisão: a meta era 6 GB; o Bruno escolheu 7 GB, abaixo dos 7,65 GiB do Docker Desktop de
+  desenvolvimento. Ir a 6 GB pedia mexer no que o lab é (auditoria do Gatekeeper, watch cache do
+  apiserver), por 1 GB.
+- O que a validação achou: o `GOMEMLIMIT` não segurou o apiserver (1,2 GiB com os CRDs da plataforma);
+  em duas das nove rodadas em 7 GB o kernel matou a cópia do plugin do Velero na instalação, um init
+  container sem requests que o kubelet roda de novo, e o job passou a reportar OOM kills em vez de
+  falhar por eles (as sondas são o portão). O shellcheck pegou duas construções do script novo (crase
+  num `printf` e um `sed` trocável por `printf`).
+- R1.9 fechou junto: com as rodadas desta rodada, o job `e2e` chegou a 11 verdes seguidas no tx01v2,
+  20 no tx02v2 e 18 no tx03v2, e a falha do servidor do Trivy não voltou.
+
+## 2026-10-15: escopo novo, pronto para fork (DEC-11)
+
+- O roadmap somava umas 19 rodadas e cerca de 100 PRs, porque juntava rodadas reais nas nuvens, DR,
+  FinOps, extras de segurança e qualidade e propostas além do v1. O Bruno definiu o que é pronto: quem
+  fizer fork roda o lab no Docker e nas próprias nuvens, e nada é homologado numa nuvem real.
+- Ficaram duas rodadas: R3 (segurança para quem faz fork: R3.10 e R3.13 a R3.18) e R4 (a plataforma
+  completa na nuvem como código, mais o R4.8, o caminho do fork até a própria nuvem). O resto saiu do
+  roadmap; os textos completos ficam no `ROADMAP.md` do commit `736bbb7`.
+- O DR local também saiu (pergunta direta ao Bruno): ficou de fora para fechar o lab em duas rodadas.

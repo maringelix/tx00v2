@@ -14,8 +14,9 @@ propósito, para a comparação entre as nuvens ser justa. Todo repositório é 
 local que não precisa de conta de nuvem, e a plataforma inteira do lab v1 roda num cluster kind local
 no CI. **Nada da v2 rodou numa nuvem ainda**: os caminhos de nuvem são código com testes.
 
-Este repositório não tem infraestrutura nem app. Ele liga a família, guarda o roadmap detalhado do
-que ainda falta para um lab completo nas três nuvens ([ROADMAP.md](ROADMAP.md)), as regras que os
+Este repositório não tem infraestrutura nem app. Ele liga a família, guarda o roadmap do que ainda
+falta para o lab ficar pronto para fork ([ROADMAP.md](ROADMAP.md)): quem fizer fork roda tudo no Docker
+local e nas próprias nuvens, que este lab nunca homologa numa nuvem real; as regras que os
 sete repositórios seguem ([docs/GUARDRAILS.md](docs/GUARDRAILS.md)) e um harness que confere os seis
 repositórios do lab uns contra os outros.
 
@@ -40,7 +41,8 @@ repositório de aplicação fixa o commit da infraestrutura que o e2e da platafo
 
 1. Leia o par de referência: [tx01v2](https://github.com/maringelix/tx01v2) e
    [dx01v2](https://github.com/maringelix/dx01v2). Os pares da Azure e do Google Cloud são portes dele.
-2. Rode o lab local, sem conta: `make e2e` no tx01v2 (Docker com 8 GB para o perfil `full`;
+2. Rode o lab local, sem conta: `make e2e` no tx01v2 (Docker com 8 GB para o perfil `full`, 7 GB
+   com `LOCAL_SIZE=small`;
    [docs/LAB_LOCAL.md](https://github.com/maringelix/tx01v2/blob/main/docs/LAB_LOCAL.md)), depois
    `make e2e-platform` no dx01v2.
 3. Escolha um item do [ROADMAP.md](ROADMAP.md); as regras de execução estão na seção 3 dele.
