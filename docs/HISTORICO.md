@@ -106,3 +106,24 @@ nas três nuvens, os guardrails da família e o harness com os checks entre os r
   `scripts/repo-guardrails.sh` aplicou o ruleset (`static` obrigatório), o secret scanning com push
   protection, o reporte privado de vulnerabilidades e a aprovação de runs de forks, lidos de volta com
   `gh api`.
+
+## 2026-10-14: scripts que só agem no lab (R0.7)
+
+Uma auditoria só de leitura dos seis repositórios procurou tudo o que poderia quebrar a máquina ou a
+nuvem de quem faz fork. Os achados mais graves eram scripts que escolhiam o alvo por uma variável de
+ambiente genérica ou pelo contexto atual do kubectl: o `platform/uninstall.sh` apaga todo Ingress,
+Gateway e Service `LoadBalancer` do cluster que alcança, e um `CLUSTER_NAME` exportado para outro
+cluster o levaria até lá. Os testes de integração dos apps apagam tabelas no banco de `DB_*`, e o
+RUNBOOK de desenvolvimento exportava o banco de desenvolvimento.
+
+- Infraestrutura: [tx01v2#11](https://github.com/maringelix/tx01v2/pull/11),
+  [tx02v2#9](https://github.com/maringelix/tx02v2/pull/9),
+  [tx03v2#8](https://github.com/maringelix/tx03v2/pull/8).
+- Apps: [dx01v2#11](https://github.com/maringelix/dx01v2/pull/11),
+  [dx02v2#7](https://github.com/maringelix/dx02v2/pull/7),
+  [dx03v2#9](https://github.com/maringelix/dx03v2/pull/9).
+- O que a validação achou antes dos PRs: o check novo `policy-scripts` acusava a própria linha do
+  `grep` no harness, e o teste do output de kubeconfig do tx01v2 ainda esperava o comando antigo. No
+  Google Cloud, o schema do provider fixado confirmou que o cluster recebe o label `project` pelos
+  `default_labels` (`terraform_labels`), a condição para a trava não recusar o próprio lab.
+- O resto da auditoria virou os itens R3.13 a R3.18.

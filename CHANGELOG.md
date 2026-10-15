@@ -38,3 +38,7 @@ All notable changes to this project are documented here. The format follows
   repositories): the status rows of the hub say `verified in CI`. `scripts/repo-guardrails.sh` was
   applied and read back with `gh api` (ruleset, secret scanning with push protection, private
   vulnerability reporting, fork run approval): `verified locally`. Roadmap item R0.6 is done.
+- Roadmap item R0.7: after a read-only audit of what could break the machine or the cloud of whoever
+  forks the lab, the scripts of the six repositories act only on what the lab created. The rest of
+  the audit became the pending items R3.13 to R3.18. New family rule SEC-05 in `docs/GUARDRAILS.md`;
+  the round is in `docs/HISTORICO.md`.

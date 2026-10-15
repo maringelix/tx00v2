@@ -108,6 +108,7 @@ Regras de execução (as mesmas da v2 desde o início; detalhes em [docs/GUARDRA
 | R0.4 | O lab local como gate de merge | `feito` |
 | R0.5 | Pronto para fork | `feito` |
 | R0.6 | Hub da família (este repositório) | `feito` |
+| R0.7 | Scripts que só agem no lab (segurança para quem faz fork) | `feito` |
 | R1.1 | Traces na plataforma local | `feito` |
 | R1.2 | Alertas no Slack | `feito` |
 | R1.3 | Chaos com hipóteses: latência de rede e stress | `feito` |
@@ -140,6 +141,12 @@ Regras de execução (as mesmas da v2 desde o início; detalhes em [docs/GUARDRA
 | R3.10 | Permission boundary no papel de apply da AWS | `pendente` |
 | R3.11 | CodeQL no app | `proposta` |
 | R3.12 | Checks novos obrigatórios nos rulesets | `pendente` |
+| R3.13 | `leftovers.sh` da Azure e do Google Cloud só culpam o que é do lab | `pendente` |
+| R3.14 | Destroy que sempre chega ao fim | `pendente` |
+| R3.15 | OIDC e Workload Identity Federation presos a IDs imutáveis e à `main` | `pendente` |
+| R3.16 | Papéis de CI mais estreitos fora de uma conta dedicada | `pendente` |
+| R3.17 | Logs públicos sem identificadores e smoke sem token em texto puro | `pendente` |
+| R3.18 | Efeitos colaterais na máquina de quem faz fork | `pendente` |
 | R4.1 | Perfis `core` e `full` da camada de plataforma na nuvem | `pendente` |
 | R4.2 | ADR: observabilidade no cluster ou gerenciada, por nuvem | `pendente` |
 | R4.3 | Istio ambient nas três nuvens | `pendente` |
@@ -299,6 +306,35 @@ para a camada mínima que já existe.
   - CI verde (`static` e `family`), ruleset aplicado e lido de volta; o check `family-table` acha o
     hub nos doze READMEs dos seis repositórios.
 - Evidência: [tx01v2#10](https://github.com/maringelix/tx01v2/pull/10), [dx01v2#10](https://github.com/maringelix/dx01v2/pull/10), [tx02v2#8](https://github.com/maringelix/tx02v2/pull/8), [tx03v2#6](https://github.com/maringelix/tx03v2/pull/6), [dx02v2#6](https://github.com/maringelix/dx02v2/pull/6), [dx03v2#8](https://github.com/maringelix/dx03v2/pull/8)
+
+### R0.7 Scripts que só agem no lab (segurança para quem faz fork)
+
+- Status: `feito`
+- Repos: tx01v2, dx01v2, tx02v2, dx02v2, tx03v2, dx03v2
+- Origem: auditoria de segurança para forks (2026-10-14): o que poderia quebrar a máquina ou a nuvem
+  de quem faz fork
+- Dependências: R0.5
+- Custo: nenhum
+- Entregáveis:
+  - Os scripts de nuvem não escolhem o alvo por variável de ambiente genérica (`CLUSTER_NAME`,
+    `RESOURCE_GROUP`, `LAB_*`): o alvo vem do contrato e é conferido pela tag `Project` (AWS, Azure)
+    ou pelo label `project` (Google Cloud) do cluster antes de qualquer mudança (`require_lab_cluster`).
+  - Kubeconfig de nuvem em arquivo temporário nos scripts e num arquivo próprio nos outputs e nos
+    runbooks: o `~/.kube/config` e o contexto atual de quem roda não mudam, e o kubelogin da Azure só
+    converte esse arquivo.
+  - Os scripts de `platform/local` e o `scripts/deploy-local.sh` só falam com o contexto
+    `kind-tx0Nv2-local` (`require_lab_context`).
+  - Os testes de integração dos apps, que apagam e recriam tabelas, só aceitam um banco cujo nome
+    termina em `_test` (no helper e no harness); os runbooks mostram um banco `*_test` separado.
+  - O `leftovers.sh` da AWS só conta como sobra o Elastic IP com a tag do lab; o PostgreSQL da Azure
+    leva o sufixo da assinatura no nome (nome DNS global, que bloqueava o apply do lab de outro fork).
+  - Check estático `policy-scripts` nos três tx (SEC-10, SEC-14 e SEC-16 nos guardrails de cada um),
+    SEC-07, SEC-08 e SEC-09 nos dx e a regra SEC-05 da família.
+- Aceite:
+  - `HARNESS_STRICT=1 make verify` local e CI verde nos seis (`static`, `test`, `e2e`; nos dx também
+    `images` e `e2e-platform`); a trava do banco provada nos dois sentidos (aceita `dx01v2_test`,
+    recusa `dx01v2` antes de conectar, no harness e no vitest direto).
+- Evidência: [tx01v2#11](https://github.com/maringelix/tx01v2/pull/11), [tx02v2#9](https://github.com/maringelix/tx02v2/pull/9), [tx03v2#8](https://github.com/maringelix/tx03v2/pull/8), [dx01v2#11](https://github.com/maringelix/dx01v2/pull/11), [dx02v2#7](https://github.com/maringelix/dx02v2/pull/7), [dx03v2#9](https://github.com/maringelix/dx03v2/pull/9)
 
 ## R1. Observabilidade 2.0, alertas, chaos e rollout sem downtime
 
@@ -845,6 +881,115 @@ Primeiro tudo é provado no lab local; a nuvem vem como código opcional.
   - O check `family-identical` vê o mesmo ruleset dentro de cada papel; o ruleset lido de volta lista
     os jobs.
 
+### R3.13 `leftovers.sh` da Azure e do Google Cloud só culpam o que é do lab
+
+- Status: `pendente`
+- Repos: tx02v2, tx03v2
+- Origem: auditoria de segurança para forks (2026-10-14); a parte da AWS entrou em R0.7
+- Dependências: R0.7
+- Custo: nenhum
+- Entregáveis:
+  - Só conta como sobra o que tem a tag `Project=tx02v2` ou está nos grupos `tx02v2-*`, e o que tem o
+    label `project=tx03v2` ou está na rede `tx03v2-lab` (forwarding rules, NEGs, firewalls); o resto
+    aparece como `INFO` ("not the lab's"), nunca como algo a apagar.
+  - `--subscription` explícita na Azure, sem depender do `az account set` da máquina.
+  - A seção 9 dos RUNBOOKs só dá comandos de remoção para itens do lab.
+- Aceite:
+  - Um teste offline com `az` e `gcloud` simulados (como o do `deploy-gcp.sh` do dx03v2) prova a
+    classificação numa assinatura e num projeto que também têm recursos de outro trabalho.
+
+### R3.14 Destroy que sempre chega ao fim
+
+- Status: `pendente`
+- Repos: tx01v2, tx02v2, tx03v2
+- Origem: auditoria de segurança para forks (2026-10-14)
+- Dependências: nenhuma
+- Custo: nenhum (evita um lab esquecido cobrando)
+- Entregáveis:
+  - Se o `platform/uninstall.sh` falha (API do cluster inalcançável, controlador parado, timeout), o
+    workflow de destroy remove pela API da nuvem os load balancers que o cluster criou (pela tag ou
+    pelo nome do lab) e segue para o `terraform destroy`; a checagem de sobras roda com `if: always()`.
+  - Input de `force-unlock` no workflow de destroy e a recuperação de um apply interrompido documentada
+    (lock do S3, lease do blob, lock do GCS, import do que ficou fora do state).
+  - Na Azure, o comando exato de purge do Key Vault no fim do destroy (o soft delete de 7 dias prende o
+    nome para a rodada seguinte).
+- Aceite:
+  - Um teste offline com as CLIs simuladas mostra que um uninstall que falha ainda leva ao destroy e
+    à checagem de sobras.
+
+### R3.15 OIDC e Workload Identity Federation presos a IDs imutáveis e à `main`
+
+- Status: `pendente`
+- Repos: tx01v2, dx01v2, tx02v2, dx02v2, tx03v2, dx03v2
+- Origem: auditoria de segurança para forks (2026-10-14)
+- Dependências: nenhuma
+- Custo: nenhum (reaplicar os três bootstraps)
+- Entregáveis:
+  - A confiança dos papéis e das identidades de CI inclui `repository_owner_id` e `repository_id` (um
+    nome de conta apagado e registrado de novo não herda o lab) e só a `main` com o environment `lab`
+    (customização do `sub` do OIDC, ou `attribute_condition` no Google Cloud).
+  - O `repo-guardrails.sh` falha, em vez de pular, quando não consegue proteger o environment `lab`
+    (hoje só um repositório público recebe a proteção).
+- Aceite:
+  - `terraform test` prova os sujeitos e as condições; o `FORK.md` explica de onde vêm os IDs.
+
+### R3.16 Papéis de CI mais estreitos fora de uma conta dedicada
+
+- Status: `pendente`
+- Repos: tx01v2, tx02v2, tx03v2
+- Origem: auditoria de segurança para forks (2026-10-14)
+- Dependências: R3.10
+- Custo: nenhum
+- Entregáveis:
+  - Google Cloud: o apply sem `roles/editor`, `secretmanager.admin` e `iam.serviceAccountUser` no
+    projeto inteiro (papéis presos aos recursos `tx03v2-lab-*` e à conta de serviço dos nós) e um
+    pre-flight que recusa um projeto com clusters, instâncias SQL ou segredos de outro trabalho.
+  - AWS: o plan com uma política de leitura presa aos serviços do lab, no lugar do `ReadOnlyAccess` da
+    conta inteira; o provider OIDC do GitHub lido por data source quando já existe e nunca apagado no
+    teardown (o permission boundary do apply é o R3.10).
+  - Azure: a identidade do plan sem leitura dos valores dos segredos.
+- Aceite:
+  - `terraform test` prova as permissões; os docs dizem o que ainda exige conta, assinatura ou projeto
+    dedicados ao lab.
+
+### R3.17 Logs públicos sem identificadores e smoke sem token em texto puro
+
+- Status: `pendente`
+- Repos: tx01v2, dx01v2, tx02v2, dx02v2, tx03v2, dx03v2
+- Origem: auditoria de segurança para forks (2026-10-14)
+- Dependências: nenhuma
+- Custo: nenhum
+- Entregáveis:
+  - Mascarar nos logs e nos artefatos públicos dos workflows de nuvem os CIDRs (o IP de casa de quem
+    faz fork), os object IDs e os e-mails, além dos IDs que já são trocados.
+  - O smoke em nuvem não manda o token de admin por HTTP puro: pula as chamadas de admin até o HTTPS
+    do R3.7.
+- Aceite:
+  - O `policy-workflows` prova as máscaras; o plan de exemplo do CI sai sem esses valores.
+
+### R3.18 Efeitos colaterais na máquina de quem faz fork
+
+- Status: `pendente`
+- Repos: tx01v2, dx01v2, tx02v2, dx02v2, tx03v2, dx03v2
+- Origem: auditoria de segurança para forks (2026-10-14)
+- Dependências: nenhuma
+- Custo: nenhum
+- Entregáveis:
+  - Pre-flight do lab local: CIDR da rede Docker que colide com uma rota da máquina (VPN, LAN), porta
+    do registry ocupada, `DOCKER_HOST` ou contexto do Docker diferente do daemon do provider.
+  - `LOCAL_STATE_DIR` separado entre o `make e2e` do tx e o `e2e-platform` do dx (hoje um destrói o
+    lab mantido pelo outro).
+  - `make clean` sempre relativo ao diretório do Makefile; diagnósticos do `e2e-platform` só pelo
+    kubeconfig do lab; guarda de variável vazia no `rm -rf` do `scripts/lib/k8s.sh` do dx02v2; o
+    `repo-guardrails.sh` confere que o argumento é o fork certo.
+  - Google Cloud: budget com `credit_types_treatment = "EXCLUDE_ALL_CREDITS"` (créditos de trial
+    escondem o gasto) e destinatários explícitos; `DOCKER_CONFIG` temporário no deploy; o RUNBOOK
+    recomenda uma configuração do gcloud só para o lab, porque o `application-default login`
+    sobrescreve o ADC da máquina.
+- Aceite:
+  - Cada entregável com um teste ou um check do harness; os docs dizem o que continua exigindo uma
+    máquina sem outro trabalho.
+
 ## R4. A plataforma completa nas nuvens (como código)
 
 Hoje a camada de plataforma da nuvem instala só o mínimo (controlador de entrada, ESO e Collector);
@@ -1388,7 +1533,9 @@ repositórios v1 (privados e arquivados; por isso não há links). "Feito" na co
   `main` e toda segunda-feira.
 - Upstream: um catálogo de schemas quebrado, um chart removido ou uma CVE sem correção numa imagem
   base pode travar um check. A regra é parar, fixar com data e relatar, nunca enfraquecer o check.
-- Fork: o `FORK.md` ainda não foi ensaiado com outra conta (R5.7).
+- Fork: o `FORK.md` ainda não foi ensaiado com outra conta (R5.7). Os scripts só agem no que o lab
+  criou (R0.7), mas os papéis de CI ainda pressupõem uma conta, assinatura ou projeto dedicados ao
+  lab (R3.16) e o environment `lab` protegido (R3.15).
 
 ## Como atualizar este roadmap
 
