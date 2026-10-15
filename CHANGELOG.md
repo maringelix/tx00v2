@@ -34,6 +34,8 @@ All notable changes to this project are documented here. The format follows
 
 ### Changed
 
+- Roadmap items R1.7, R1.10 and S.8 are done (the debts round); R1.9 records the count of green `e2e`
+  runs so far and what the failed run really showed. The round is in `docs/HISTORICO.md`.
 - The first CI run passed (`static` 9/9, `family` 11/11 against the main branch of the six
   repositories): the status rows of the hub say `verified in CI`. `scripts/repo-guardrails.sh` was
   applied and read back with `gh api` (ruleset, secret scanning with push protection, private

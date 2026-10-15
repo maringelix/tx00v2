@@ -127,3 +127,26 @@ RUNBOOK de desenvolvimento exportava o banco de desenvolvimento.
   Google Cloud, o schema do provider fixado confirmou que o cluster recebe o label `project` pelos
   `default_labels` (`terraform_labels`), a condição para a trava não recusar o próprio lab.
 - O resto da auditoria virou os itens R3.13 a R3.18.
+
+## 2026-10-15: rodada de dívidas (R1.7, R1.10, S.8)
+
+- R1.7: o `platform/install.sh` do tx01v2 instala o Collector a partir do arquivo do chart conferido
+  contra o `OTEL_COLLECTOR_CHART_SHA256`, agora em `platform/versions.env` como no tx02v2 e no tx03v2
+  (antes, a nuvem pegava o chart do repositório sem conferir): [tx01v2#12](https://github.com/maringelix/tx01v2/pull/12).
+- R1.10: o webhook do External Secrets do lab local do tx03v2 herdava os limites de CPU do Autopilot
+  (50m), porque o Helm mescla os dois arquivos de values. Os values locais tiram os `resources` do
+  webhook e do cert controller e dão ao controller um teto de 1 CPU (um `null` aninhado que o chart
+  não tem como padrão sai como `cpu: null` no manifest). Três rodadas locais seguidas do perfil
+  `observability` passaram, com 22 de 22 sondas cada, num Docker Desktop de 7,65 GiB:
+  [tx03v2#9](https://github.com/maringelix/tx03v2/pull/9).
+- S.8: cerca de 150 menções a "contract v1" viraram "the contract" ou `docs/CONTRATO.md`, ou "v2" onde
+  a versão importa (o HTTPS fica fora do contrato v2). Ficaram de propósito os CHANGELOGs, a nota datada
+  do `docs/CONTRATO.md` do dx02v2 e as linhas de troubleshooting dos RUNBOOKs dos dx sobre uma
+  plataforma antiga ainda no contrato v1: [tx01v2#12](https://github.com/maringelix/tx01v2/pull/12), [tx02v2#10](https://github.com/maringelix/tx02v2/pull/10), [tx03v2#9](https://github.com/maringelix/tx03v2/pull/9),
+  [dx01v2#12](https://github.com/maringelix/dx01v2/pull/12), [dx02v2#8](https://github.com/maringelix/dx02v2/pull/8), [dx03v2#10](https://github.com/maringelix/dx03v2/pull/10).
+- R1.9 continua pendente: a falha do servidor do Trivy aconteceu uma vez (2026-10-14, antes do
+  diagnóstico de instalação existir) e não voltou; o aceite pede dez rodadas verdes seguidas nos três
+  tx, e o tx01v2 está em 8.
+- O que a validação achou antes dos PRs: o `prettier` do dx03v2 quebrou uma linha que passou de 120
+  colunas com a mensagem nova, e o primeiro jeito de tirar o limite de CPU do controller (`null`)
+  renderizava `cpu: null`.
