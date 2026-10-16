@@ -681,10 +681,57 @@ check_family_versions() {
 }
 
 # Image digests: one digest per image name:tag in the six repositories, and the same set of digests in
-# the files the repositories of a role share (paths compared with the repository names normalized).
+# shared files. Velero cloud values merge a common server with a different plugin for each provider;
+# compare the effective server and validate each pinned provider plugin instead of equating their SHAs.
 check_family_digests() {
-  local rc=0 r
+  local rc=0 r base overlay plugin velero_server="" plugin_re
+  local -a velero_images=()
   family_dirs
+  for r in "${FAMILY_TX[@]}"; do
+    base="${FD[$r]}/platform/local/values/velero.yaml"
+    overlay="${FD[$r]}/platform/values/full/velero.yaml"
+    if [[ ! -f "$base" || ! -f "$overlay" ]]; then
+      echo "$r: missing local or cloud Velero values"
+      rc=1
+      continue
+    fi
+    case "$r" in
+      tx01v2) plugin=aws ;;
+      tx02v2) plugin=microsoft-azure ;;
+      tx03v2) plugin=gcp ;;
+    esac
+    # Helm merges the image map, but replaces initContainers as a whole. Read the base then overlay
+    # with those semantics, including a partial image override or an explicitly empty plugin list.
+    mapfile -t velero_images < <(awk '
+      FNR == 1 { block = "" }
+      /^[^[:space:]#]/ {
+        block = $1; sub(/:$/, "", block)
+        if (block == "initContainers") plugins = ""
+      }
+      block == "image" && $1 == "repository:" { repository = scalar($2) }
+      block == "image" && $1 == "tag:" { tag = scalar($2) }
+      block == "initContainers" && ($1 == "image:" || ($1 == "-" && $2 == "image:")) {
+        plugins = plugins scalar($1 == "image:" ? $2 : $3) "\n"
+      }
+      END { print repository ":" tag; printf "%s", plugins }
+      function scalar(value) { gsub(/["\047]/, "", value); return value }
+    ' "$base" "$overlay")
+    if [[ ! "${velero_images[0]:-}" =~ ^docker\.io/velero/velero:[A-Za-z0-9._-]+@sha256:[0-9a-f]{64}$ ]]; then
+      echo "$r: the effective Velero server must be pinned by version and digest"
+      rc=1
+    fi
+    plugin_re="^docker\\.io/velero/velero-plugin-for-${plugin}:[A-Za-z0-9._-]+@sha256:[0-9a-f]{64}$"
+    if ((${#velero_images[@]} != 2)) || [[ ! "${velero_images[1]:-}" =~ $plugin_re ]]; then
+      echo "$r: expected exactly one digest-pinned Velero plugin for $plugin"
+      rc=1
+    fi
+    if [[ -z "$velero_server" ]]; then
+      velero_server="${velero_images[0]:-}"
+    elif [[ "${velero_images[0]:-}" != "$velero_server" ]]; then
+      echo "$r: the effective Velero server image differs from the other tx repositories"
+      rc=1
+    fi
+  done
   for r in "${FAMILY_LAB[@]}"; do
     git -C "${FD[$r]}" grep -hoIE '[a-z][a-z0-9._/-]*(:[A-Za-z0-9._-]+)?@sha256:[0-9a-f]{64}' -- . \
       ':(exclude)*package-lock.json' | sort -u | sed "s|^|$r |"
@@ -698,8 +745,11 @@ check_family_digests() {
       exit bad
     }' || rc=1
   for r in "${FAMILY_LAB[@]}"; do
+    # The cloud Velero overlay is checked above as effective server + provider plugin, and its full
+    # image references still participate in the global name:tag comparison. All other files retain
+    # the digest-set comparison below.
     git -C "${FD[$r]}" grep -oIE 'sha256:[0-9a-f]{64}' -- . ':(exclude)*package-lock.json' ':(exclude)*.terraform.lock.hcl' \
-      ':(exclude)tools/checksums.txt' | sed -E "s/[dt]x0[1-9]v2/XX0Nv2/g; s|^|$r |"
+      ':(exclude)tools/checksums.txt' ':(exclude)platform/values/full/velero.yaml' | sed -E "s/[dt]x0[1-9]v2/XX0Nv2/g; s|^|$r |"
   done | awk '
     {
       repo = $1; rest = $2; i = index(rest, ":"); path = substr(rest, 1, i - 1); digest = substr(rest, i + 1)
