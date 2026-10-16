@@ -34,6 +34,11 @@ All notable changes to this project are documented here. The format follows
 
 ### Changed
 
+- Round R3 (safety for whoever forks) is done in the six lab repositories: R3.10 and R3.13 to R3.18 are `feito`
+  with their pull requests as evidence, the overview, the plan and `docs/HISTORICO.md` say that one
+  round is left (R4). R3.16 records a change of acceptance for Google Cloud: the roles of the apply
+  identity are not tied to `tx03v2-lab-*` names (a role cannot be tied to a resource that does not
+  exist yet), the dedicated project and the pre-flight hold what the role does not.
 - The roadmap is rewritten for the scope Bruno set on 2026-10-15 (DEC-11): the lab is ready when
   anyone who forks it can run it on Docker and in their own AWS, Azure and Google Cloud accounts;
   nothing is validated in a real cloud. Two rounds remain: R3 (safety for whoever forks: R3.10 and
