@@ -16,7 +16,7 @@ needs no cloud account, and the whole platform of the v1 lab runs on a local kin
 
 This repository holds no infrastructure and no app. It links the family, keeps the roadmap of what is
 still missing for the lab to be ready for forks ([ROADMAP.md](ROADMAP.md), pt-BR): anyone who forks it
-runs it locally on Docker and in their own clouds, which this lab never validates in a real cloud;
+runs it locally on Docker and in their own clouds; cloud homologation requires a separate authorized run;
 the rules the seven repositories follow ([docs/GUARDRAILS.md](docs/GUARDRAILS.md)) and a harness
 that checks the six lab repositories against each other.
 
@@ -56,16 +56,17 @@ application repository pins the infrastructure commit its platform e2e uses
 | Repository settings as code (ruleset requiring `static`, secret scanning, private vulnerability reporting) | `verified locally` | `scripts/repo-guardrails.sh` applied and read back with `gh api` on 2026-10-14 |
 | Cloud | not applicable | the hub talks to no cloud and has no cloud credentials |
 
-## The family at a glance (2026-10-14)
+## The family at a glance (2026-10-16)
 
 | Capability | Status | Where |
 |---|---|---|
 | Harness, CI (`static`, `test`, `e2e`; apps also `images`, `e2e-platform`), rulesets, Dependabot, weekly CI | `verified in CI` | the six repositories |
 | The v1 platform on a local kind lab: Istio ambient, Gateway API + cert-manager, External Secrets, Prometheus, Alertmanager, Grafana, Loki, Argo CD, Gatekeeper, Trivy Operator, Velero, Chaos Mesh (34 probes per infrastructure repository) | `verified in CI` | job `e2e` of tx01v2, tx02v2, tx03v2 |
 | The app on that platform through GitOps (18 probes per application repository) | `verified in CI` | job `e2e-platform` of dx01v2, dx02v2, dx03v2 |
-| Round 1: OpenTelemetry traces (Collector + Tempo), Slack alerts, chaos with hypotheses, zero-downtime rollout | `verified in CI` | ROADMAP.md, items R1.1 to R1.6 |
+| Round 1: OpenTelemetry traces (Collector + Tempo), Slack sink alerts, chaos with hypotheses, local rollout probe (same content) | `verified in CI` | ROADMAP.md, items R1.1 to R1.6; release changes/rollback planned in R7.2 |
 | Cloud paths of the three clouds (bootstrap, apply, platform layer, deploy, destroy + leftovers) | `not run in the cloud (v2)` | `docs/RUNBOOK.md` of each repository |
-| DR, FinOps, SonarQube, OWASP ZAP, ACME, Istio traffic management, the full platform in the clouds | `planned` | [ROADMAP.md](ROADMAP.md) |
+| Cloud core/full chart baseline and GitOps deploy paths | `verified in CI`; `not run in the cloud (v2)` | completed R4 baseline; full app integration remains pending |
+| Complete scope: SonarQube/SAST, artifact promotion, TLS/DNS, advanced mesh, durable observability, HA/restore/multi-region DR, Chaos and FinOps/scaling | `planned`: 22 construction PRs in R7–R11 | [ROADMAP.md](ROADMAP.md), [scope audit](docs/AUDITORIA_ESCOPO_2026-10-16.md) |
 
 ## Harness
 

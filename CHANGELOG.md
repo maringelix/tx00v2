@@ -6,6 +6,14 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+### Changed
+
+- Reopened the full three-cloud learning scope after the 2026-10-16 audit (DEC-13). R7–R11 plan
+  22 construction PRs for DevSecOps/releases, integrated cloud platform, HA/backup/DR and
+  FinOps/scaling, plus final acceptance. Earlier milestones retain their evidence; installing
+  charts and passing local CI do not imply complete cloud integration or cloud homologation.
+- Added the requirement-by-requirement scope audit and clarified the family status in both READMEs.
+
 ### Added
 
 - The family hub of the v2 lab (2026-10-14): README in English and Brazilian Portuguese with the
