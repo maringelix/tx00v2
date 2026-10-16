@@ -1,10 +1,10 @@
 # Roadmap do lab DevOps v2: pronto para fork
 
-Estado em 2026-10-16. Este arquivo é a fonte única do que falta para a família v2 ficar pronta: quem
-fizer fork consegue rodar o lab inteiro no Docker da própria máquina e subir a infraestrutura, a
-plataforma e o app nas próprias contas da AWS, da Azure e do Google Cloud, só com o código e o
-`FORK.md` de cada repositório. Cada item diz o que entregar, como provar, quanto custa e do que
-depende.
+Estado em 2026-10-16. Este arquivo é a fonte única do escopo, do estado e do calendário da família
+v2: quem fizer fork consegue rodar o lab inteiro no Docker da própria máquina e subir a
+infraestrutura, a plataforma e o app nas próprias contas da AWS, da Azure e do Google Cloud, só com
+o código e o `FORK.md` de cada repositório. Cada item diz o que foi entregue ou falta, como provar,
+quanto custa e do que depende.
 
 O harness deste repositório confere o formato: o check `roadmap` (`make static`, obrigatório no
 ruleset) exige os campos de todo item, status válidos, repositórios conhecidos, dependências que
@@ -21,13 +21,14 @@ Decisão do Bruno em 2026-10-15 (DEC-11). O lab está pronto quando as quatro co
 2. Nuvem como código: a plataforma que o lab local prova tem o código para as três nuvens, validado
    sem nuvem (render dos charts, kubeconform, `terraform test` com provider mockado, gator). Nada é
    homologado numa nuvem real: o rótulo continua `não executado em nuvem (v2)`, e quem faz fork roda
-   na própria conta (R4).
+   na própria conta (R4). Feito em código e validado no CI; nenhuma nuvem foi homologada.
 3. Seguro para quem faz fork: scripts e workflows só mexem no que o lab criou, o destroy sempre chega
    ao fim, as identidades de CI ficam presas ao fork e à `main`, e nada identifica a pessoa nos logs
    públicos (R3). Feito.
 4. Coerência da família: o `make family` deste repositório fica verde.
 
-Falta uma rodada, a R4, com um PR por repositório.
+O objetivo está completo: não há rodada de implementação pendente. Os itens de sustentação e
+calendário continuam na seção S.
 
 ### Fora do escopo (DEC-11)
 
@@ -48,8 +49,8 @@ commit `736bbb7`). Voltam só com um pedido do Bruno, como item novo.
 ## 2. Onde estamos (2026-10-16)
 
 Os seis repositórios são públicos, têm harness, CI semanal, Dependabot mensal, ruleset com checks
-obrigatórios e rodam o lab local inteiro no CI. As fases R0, R1 e R3 estão feitas. Nada da v2 rodou numa
-nuvem.
+obrigatórios e rodam o lab local inteiro no CI. R0, R1, R3 e R4 estão feitas. Não há rodada de
+implementação pendente. Nada da v2 rodou numa nuvem.
 
 | Repositório | Papel | Jobs obrigatórios | Lab local | Nuvem |
 |---|---|---|---|---|
@@ -70,10 +71,11 @@ query do PostgreSQL, `trace_id` nos logs, exemplars), Argo CD (commit, sync, sel
 em `deny`, Trivy Operator, Velero (restore de namespace com dados) e Chaos Mesh com hipóteses (pod
 kill, latência, stress, latência entre a API e o banco), além do rollout sem downtime do app.
 
-O que existe só como código (`não executado em nuvem (v2)`): bootstrap (state, identidades OIDC ou
-Workload Identity Federation, budget), apply do lab (rede, EKS/AKS/GKE Autopilot 1.36, PostgreSQL 17
-gerenciado, registry, WAF, contrato), camada de plataforma mínima (controlador de entrada, ESO e
-Collector com exportador de traces da nuvem), deploy do app e destroy com checagem de sobras.
+O que existe só como código (`não executado em nuvem (v2)`): bootstrap e apply da infraestrutura;
+perfis `core` e `full` da plataforma com charts, overlays e identidades fixados; Argo CD com app-of-apps
+da plataforma e Application do app; deploy GitOps dos três dx; Velero com o object storage de cada
+nuvem; e destroy com checagem de sobras. O perfil `core` continua padrão. Nenhum desses caminhos foi
+aplicado numa conta de nuvem.
 
 Custos de referência de uma rodada de 3 horas com os padrões (fonte: `docs/CUSTOS.md` de cada
 repositório de infraestrutura): AWS cerca de US$0,80 a 1,00
@@ -145,14 +147,14 @@ Regras de execução (as mesmas da v2 desde o início; detalhes em [docs/GUARDRA
 | R3.16 | Papéis de CI mais estreitos fora de uma conta dedicada | `feito` |
 | R3.17 | Logs públicos sem identificadores e smoke sem token em texto puro | `feito` |
 | R3.18 | Efeitos colaterais na máquina de quem faz fork | `feito` |
-| R4.1 | Perfis `core` e `full` da camada de plataforma na nuvem | `pendente` |
-| R4.2 | ADR: observabilidade no cluster ou gerenciada, por nuvem | `pendente` |
-| R4.3 | Istio ambient nas três nuvens | `pendente` |
-| R4.4 | Argo CD na nuvem e deploy do app por GitOps | `pendente` |
-| R4.5 | Velero com o object storage de cada nuvem | `pendente` |
-| R4.6 | Gatekeeper, Trivy Operator e Chaos Mesh na nuvem | `pendente` |
-| R4.7 | Dimensionamento e custo do perfil `full` | `pendente` |
-| R4.8 | Do fork à própria nuvem, de ponta a ponta | `pendente` |
+| R4.1 | Perfis `core` e `full` da camada de plataforma na nuvem | `feito` |
+| R4.2 | ADR: observabilidade no cluster ou gerenciada, por nuvem | `feito` |
+| R4.3 | Istio ambient nas três nuvens | `feito` |
+| R4.4 | Argo CD na nuvem e deploy do app por GitOps | `feito` |
+| R4.5 | Velero com o object storage de cada nuvem | `feito` |
+| R4.6 | Gatekeeper, Trivy Operator e Chaos Mesh na nuvem | `feito` |
+| R4.7 | Dimensionamento e custo do perfil `full` | `feito` |
+| R4.8 | Do fork à própria nuvem, de ponta a ponta | `feito` |
 | S.1 | Node.js 26 LTS nos apps | `pendente` |
 | S.2 | Kubernetes 1.37 na família e kubectl alinhado | `pendente` |
 | S.3 | Istio 1.31 para 1.33 | `pendente` |
@@ -163,17 +165,19 @@ Regras de execução (as mesmas da v2 desde o início; detalhes em [docs/GUARDRA
 | S.8 | Menções a "contract v1" que descrevem a versão 2 | `feito` |
 | S.9 | Primeira revisão trimestral conjunta da família | `pendente` |
 
-## 5. A rodada que falta
+## 5. Fechamento do roadmap
 
 ```mermaid
 flowchart LR
   R0["R0 fundação (feito)"] --> R1["R1 observabilidade 2.0, alertas, chaos, rollout (feito)"]
   R1 --> R3["R3 segurança para quem faz fork (feito)"]
-  R3 --> R4["R4 plataforma completa na nuvem (código) e o caminho do fork"]
+  R3 --> R4["R4 plataforma completa na nuvem (código) e o caminho do fork (feito)"]
   S["S sustentação e calendário"] -.-> R4
 ```
 
-R4: R4.1 a R4.8, nos seis repositórios de lab. O R4.8 fecha o caminho do fork até a própria nuvem.
+R4.1 a R4.8 foram concluídos nos seis repositórios de lab. O caminho do fork até a própria nuvem
+está documentado e validado no CI, sem execução em nuvem. Não há rodada de implementação pendente;
+os itens S continuam no calendário de sustentação.
 
 Os itens S entram quando a data chega (uma versão nova, uma exceção que vence), fora da rodada.
 
@@ -639,14 +643,14 @@ O resto da auditoria de segurança para forks de 2026-10-14 (a parte local entro
 
 ## R4. A plataforma completa nas nuvens (como código)
 
-Hoje a camada de plataforma da nuvem instala só o mínimo (controlador de entrada, ESO e Collector);
-os READMEs dos três tx dizem `planejado` para "os mesmos add-ons no EKS/AKS/GKE". Esta fase leva o
-que o lab local prova para a nuvem, com as mesmas versões e digests, sempre opcional e com custo
-escrito. É a rodada que falta; nada daqui é aplicado numa nuvem (DEC-11).
+Concluída em 2026-10-16. Os três tx oferecem perfis `core` e `full`, e os três dx fazem o deploy do
+app por GitOps. Charts, imagens, overlays, custos, limites do GKE Autopilot e o caminho para quem faz
+fork estão documentados e verificados no CI. Tudo continua opcional; nada foi aplicado numa nuvem
+(`não executado em nuvem (v2)`, DEC-11).
 
 ### R4.1 Perfis `core` e `full` da camada de plataforma na nuvem
 
-- Status: `pendente`
+- Status: `feito`
 - Repos: tx01v2, tx02v2, tx03v2
 - Origem: v1 implementado (os add-ons do v1 eram instalados por workflows nas três nuvens)
 - Dependências: nenhuma
@@ -660,10 +664,11 @@ escrito. É a rodada que falta; nada daqui é aplicado numa nuvem (DEC-11).
 - Aceite:
   - `helm-template`, `kubeconform` e `contract-platform` renderizam e validam o perfil `full` das três
     nuvens no CI; `não executado em nuvem (v2)`.
+- Evidência: [tx01v2#15](https://github.com/maringelix/tx01v2/pull/15), [tx02v2#13](https://github.com/maringelix/tx02v2/pull/13) e [tx03v2#13](https://github.com/maringelix/tx03v2/pull/13). Os três mantêm `core` como padrão e fixam charts, imagens e overlays por nuvem.
 
 ### R4.2 ADR: observabilidade no cluster ou gerenciada, por nuvem
 
-- Status: `pendente`
+- Status: `feito`
 - Repos: tx01v2, tx02v2, tx03v2
 - Origem: dívida v2
 - Dependências: nenhuma
@@ -675,10 +680,11 @@ escrito. É a rodada que falta; nada daqui é aplicado numa nuvem (DEC-11).
     Cloud Logging + Cloud Trace; o que cada opção deixa as sondas provarem.
 - Aceite:
   - ADR mesclado nos três, com a decisão e o custo; o perfil `full` da R4.1 segue a decisão.
+- Evidência: [tx01v2#15](https://github.com/maringelix/tx01v2/pull/15), [tx02v2#13](https://github.com/maringelix/tx02v2/pull/13) e [tx03v2#13](https://github.com/maringelix/tx03v2/pull/13). Cada ADR compara observabilidade no cluster com os serviços gerenciados e registra custos e limites.
 
 ### R4.3 Istio ambient nas três nuvens
 
-- Status: `pendente`
+- Status: `feito`
 - Repos: tx01v2, tx02v2, tx03v2
 - Origem: v1 implementado (Istio no AKS e no GKE do v1, com mTLS `PERMISSIVE`)
 - Dependências: R4.1
@@ -691,10 +697,11 @@ escrito. É a rodada que falta; nada daqui é aplicado numa nuvem (DEC-11).
 - Aceite:
   - Render e kubeconform do perfil `full`; a resposta sobre o Autopilot registrada no
     `docs/ARQUITETURA.md` do tx03v2.
+- Evidência: [tx01v2#15](https://github.com/maringelix/tx01v2/pull/15), [tx02v2#13](https://github.com/maringelix/tx02v2/pull/13) e [tx03v2#13](https://github.com/maringelix/tx03v2/pull/13). Istio ambient entra no EKS e AKS; no GKE Autopilot ficam documentados os componentes privilegiados que não são instalados.
 
 ### R4.4 Argo CD na nuvem e deploy do app por GitOps
 
-- Status: `pendente`
+- Status: `feito`
 - Repos: tx01v2, tx02v2, tx03v2, dx01v2, dx02v2, dx03v2
 - Origem: v1 implementado em parte (Argo CD instalado por workflow; a Application do GCP apontava para um caminho que não existia)
 - Dependências: R4.1
@@ -703,14 +710,15 @@ escrito. É a rodada que falta; nada daqui é aplicado numa nuvem (DEC-11).
   - Argo CD sem usuário admin, com ClusterIP, app-of-apps da plataforma a partir do repositório tx e
     uma Application do app a partir do repositório dx (público, por https, sem credencial).
   - O workflow de deploy dos dx passa de push (`deploy-<nuvem>.sh` aplicando manifests) para commit e
-    sync, com o push mantido como alternativa documentada.
+    sync; o push fica como fallback do script local, sem uma opção no workflow para trocar o modo.
 - Aceite:
   - Render e validação das Applications; o mesmo fluxo que o lab local prova (commit, sync,
     self-heal); `não executado em nuvem (v2)`.
+- Evidência: [tx01v2#15](https://github.com/maringelix/tx01v2/pull/15), [dx01v2#16](https://github.com/maringelix/dx01v2/pull/16), [tx02v2#13](https://github.com/maringelix/tx02v2/pull/13), [dx02v2#11](https://github.com/maringelix/dx02v2/pull/11), [tx03v2#13](https://github.com/maringelix/tx03v2/pull/13), [tx03v2#14](https://github.com/maringelix/tx03v2/pull/14) e [dx03v2#13](https://github.com/maringelix/dx03v2/pull/13). Os workflows dos dx são GitOps; o `contents: write` fica restrito ao job de deploy e o contrato GCP está na v3.
 
 ### R4.5 Velero com o object storage de cada nuvem
 
-- Status: `pendente`
+- Status: `feito`
 - Repos: tx01v2, tx02v2, tx03v2
 - Origem: v1 implementado de outro jeito (backups por workflows: AWS Backup, backups do Azure SQL e do Cloud SQL; sem Velero)
 - Dependências: R4.1
@@ -722,10 +730,11 @@ escrito. É a rodada que falta; nada daqui é aplicado numa nuvem (DEC-11).
   - O drill de restore do lab local descrito no RUNBOOK para a rodada de quem fizer fork.
 - Aceite:
   - `terraform test` do bucket e das permissões; `não executado em nuvem (v2)`.
+- Evidência: [tx01v2#15](https://github.com/maringelix/tx01v2/pull/15), [tx02v2#13](https://github.com/maringelix/tx02v2/pull/13) e [tx03v2#13](https://github.com/maringelix/tx03v2/pull/13). Cada provedor usa armazenamento privado, ciclo de vida de 35 dias e permissões de objeto limitadas ao Velero.
 
 ### R4.6 Gatekeeper, Trivy Operator e Chaos Mesh na nuvem
 
-- Status: `pendente`
+- Status: `feito`
 - Repos: tx01v2, tx02v2, tx03v2
 - Origem: v1 implementado (Gatekeeper e Trivy Operator instalados por workflow; Chaos Mesh no AKS)
 - Dependências: R4.1
@@ -737,10 +746,11 @@ escrito. É a rodada que falta; nada daqui é aplicado numa nuvem (DEC-11).
     no lab local, documentado.
 - Aceite:
   - Render, kubeconform e gator verdes para as três nuvens.
+- Evidência: [tx01v2#15](https://github.com/maringelix/tx01v2/pull/15), [tx02v2#13](https://github.com/maringelix/tx02v2/pull/13) e [tx03v2#13](https://github.com/maringelix/tx03v2/pull/13). As constraints seguem o lab local; o perfil GKE documenta os limites do Autopilot e só mantém os experimentos compatíveis.
 
 ### R4.7 Dimensionamento e custo do perfil `full`
 
-- Status: `pendente`
+- Status: `feito`
 - Repos: tx01v2, tx02v2, tx03v2
 - Origem: dívida v2
 - Dependências: R4.1, R4.2
@@ -750,10 +760,11 @@ escrito. É a rodada que falta; nada daqui é aplicado numa nuvem (DEC-11).
     `docs/CUSTOS.md` com o custo por hora do perfil `full` e o budget ajustado.
 - Aceite:
   - Uma tabela por nuvem com os requests somados e o custo; o padrão continua o perfil `core`.
+- Evidência: [tx01v2#15](https://github.com/maringelix/tx01v2/pull/15), [tx02v2#13](https://github.com/maringelix/tx02v2/pull/13) e [tx03v2#13](https://github.com/maringelix/tx03v2/pull/13). Requests, tamanhos de nós, custo por hora e budgets estão registrados nos `docs/CUSTOS.md` dos três tx.
 
 ### R4.8 Do fork à própria nuvem, de ponta a ponta
 
-- Status: `pendente`
+- Status: `feito`
 - Repos: tx01v2, dx01v2, tx02v2, dx02v2, tx03v2, dx03v2
 - Origem: dívida v2 (a definição de pronto da DEC-11)
 - Dependências: R4.1, R4.4, R4.5, R4.6, R4.7
@@ -765,6 +776,7 @@ escrito. É a rodada que falta; nada daqui é aplicado numa nuvem (DEC-11).
 - Aceite:
   - O check de links e o harness de cada repositório confirmam que todo script, alvo do `make`,
     workflow e variável citados nesse caminho existem; `não executado em nuvem (v2)`.
+- Evidência: [tx01v2#15](https://github.com/maringelix/tx01v2/pull/15), [dx01v2#16](https://github.com/maringelix/dx01v2/pull/16), [tx02v2#13](https://github.com/maringelix/tx02v2/pull/13), [dx02v2#11](https://github.com/maringelix/dx02v2/pull/11), [tx03v2#13](https://github.com/maringelix/tx03v2/pull/13), [tx03v2#14](https://github.com/maringelix/tx03v2/pull/14) e [dx03v2#13](https://github.com/maringelix/dx03v2/pull/13). Os seis `FORK.md` e RUNBOOKs documentam bootstrap, apply, perfil, GitOps, smoke, destroy e checagem de sobras.
 
 ## S. Sustentação e calendário
 
