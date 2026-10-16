@@ -16,7 +16,7 @@ no CI. **Nada da v2 rodou numa nuvem ainda**: os caminhos de nuvem são código 
 
 Este repositório não tem infraestrutura nem app. Ele liga a família, guarda o roadmap do que ainda
 falta para o lab ficar pronto para fork ([ROADMAP.md](ROADMAP.md)): quem fizer fork roda tudo no Docker
-local e nas próprias nuvens, que este lab nunca homologa numa nuvem real; as regras que os
+local e nas próprias nuvens; a homologação cloud exige uma rodada autorizada separada. Guarda as regras que os
 sete repositórios seguem ([docs/GUARDRAILS.md](docs/GUARDRAILS.md)) e um harness que confere os seis
 repositórios do lab uns contra os outros.
 
@@ -57,16 +57,17 @@ repositório de aplicação fixa o commit da infraestrutura que o e2e da platafo
 | Configurações do repositório como código (ruleset exigindo o `static`, secret scanning, reporte privado de vulnerabilidades) | `verificado localmente` | `scripts/repo-guardrails.sh` aplicado e lido de volta com `gh api` em 2026-10-14 |
 | Nuvem | não se aplica | o hub não fala com nuvem e não tem credenciais de nuvem |
 
-## A família em um quadro (2026-10-14)
+## A família em um quadro (2026-10-16)
 
 | Capacidade | Status | Onde |
 |---|---|---|
 | Harness, CI (`static`, `test`, `e2e`; nos apps também `images` e `e2e-platform`), rulesets, Dependabot, CI semanal | `verificado no CI` | os seis repositórios |
 | A plataforma do v1 num lab kind local: Istio ambient, Gateway API + cert-manager, External Secrets, Prometheus, Alertmanager, Grafana, Loki, Argo CD, Gatekeeper, Trivy Operator, Velero, Chaos Mesh (34 sondas por repositório de infraestrutura) | `verificado no CI` | job `e2e` do tx01v2, do tx02v2 e do tx03v2 |
 | O app nessa plataforma por GitOps (18 sondas por repositório de aplicação) | `verificado no CI` | job `e2e-platform` do dx01v2, do dx02v2 e do dx03v2 |
-| Rodada 1: traces com OpenTelemetry (Collector + Tempo), alertas no Slack, chaos com hipóteses, rollout sem downtime | `verificado no CI` | ROADMAP.md, itens R1.1 a R1.6 |
+| Rodada 1: traces com OpenTelemetry (Collector + Tempo), alertas no sink Slack, chaos com hipóteses, sonda de rollout local (mesmo conteúdo) | `verificado no CI` | ROADMAP.md, itens R1.1 a R1.6; release com alteração/rollback planejada em R7.2 |
 | Caminhos de nuvem das três nuvens (bootstrap, apply, camada de plataforma, deploy, destroy + sobras) | `não executado em nuvem (v2)` | `docs/RUNBOOK.md` de cada repositório |
-| DR, FinOps, SonarQube, OWASP ZAP, ACME, gerência de tráfego do Istio, a plataforma completa nas nuvens | `planejado` | [ROADMAP.md](ROADMAP.md) |
+| Base de charts cloud core/full e caminhos de deploy GitOps | `verificado no CI`; `não executado em nuvem (v2)` | base R4 concluída; integração completa do app pendente |
+| Escopo completo: SonarQube/SAST, promoção de artefatos, TLS/DNS, mesh avançada, observabilidade durável, HA/restore/DR multi-region, Chaos e FinOps/escala | `planejado`: 22 PRs de construção em R7–R11 | [ROADMAP.md](ROADMAP.md), [auditoria de escopo](docs/AUDITORIA_ESCOPO_2026-10-16.md) |
 
 ## Harness
 

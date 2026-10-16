@@ -203,3 +203,14 @@ RUNBOOK de desenvolvimento exportava o banco de desenvolvimento.
 - O CI validou os renders do perfil `full`, os manifests, os charts GitOps, os testes Terraform com provider mockado, kubeconform, gator, os checks do harness e os e2e locais dos três dx. Nenhuma infraestrutura ou aplicação foi criada numa conta de nuvem; a etiqueta continua `não executado em nuvem (v2)`.
 - Uma correção do `policy-workflows` do GCP permite `contents: write` apenas no job protegido de deploy GitOps; as permissões globais permanecem `contents: read`. Nos três dx, o deploy do workflow é sempre GitOps e o push direto fica apenas no script local.
 - O `family-digests` encontrou os plugins diferentes de Velero no mesmo caminho de values cloud. A regra agora combina base e overlay como o Helm: exige o mesmo servidor nos três tx e exatamente o plugin do provedor, fixado por versão e digest. Os outros arquivos mantêm a comparação de digests e todas as imagens completas continuam na comparação global por nome e tag.
+
+## 2026-10-16: auditoria do escopo completo e reabertura (DEC-13)
+
+- O Bruno pediu a lista completa de tecnologias e práticas para os três pares. A auditoria
+  confrontou Terraform, manifests, workflows, scripts e docs; não executou nenhuma nuvem.
+- O fechamento anterior era do escopo reduzido da DEC-11. Permanecem lacunas em DevSecOps,
+  promoção de releases, integração cloud, TLS, mesh, dados/HA/DR e FinOps. A
+  [auditoria](AUDITORIA_ESCOPO_2026-10-16.md) registra provas e limites por capacidade.
+- R7 a R11 passam a conter 11 itens pendentes, agrupados em 22 PRs de construção previstos
+  após a revisão do roadmap: 3 + 6 + 6 + 6 + 1. Esta revisão não implementa os recursos;
+  homologação cloud e possíveis correções futuras têm estado separado.

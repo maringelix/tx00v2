@@ -1,123 +1,102 @@
-# Roadmap do lab DevOps v2: pronto para fork
+# Roadmap do lab DevOps v2: escopo completo para aprender e operar
 
-Estado em 2026-10-16. Este arquivo é a fonte única do escopo, do estado e do calendário da família
-v2: quem fizer fork consegue rodar o lab inteiro no Docker da própria máquina e subir a
-infraestrutura, a plataforma e o app nas próprias contas da AWS, da Azure e do Google Cloud, só com
-o código e o `FORK.md` de cada repositório. Cada item diz o que foi entregue ou falta, como provar,
-quanto custa e do que depende.
+Estado em 2026-10-16, após o pedido explícito do Bruno de completar a lista de tecnologias
+(DEC-13). **A construção do escopo completo ainda não terminou.** R0, R1, R3 e R4 entregaram a base
+do lab e encerraram o escopo reduzido anterior; R7 a R11 abaixo cobrem as lacunas agora aceitas.
 
-O harness deste repositório confere o formato: o check `roadmap` (`make static`, obrigatório no
-ruleset) exige os campos de todo item, status válidos, repositórios conhecidos, dependências que
-existem e a tabela da visão geral igual aos itens; o check `family-evidence` (`make family`) confere
-que todo item `feito` aponta para pull requests mesclados.
+Esta é a fonte única de escopo, sequência, aceite e evidências. A
+[auditoria do escopo](docs/AUDITORIA_ESCOPO_2026-10-16.md) confronta o pedido com o código atual dos
+sete repositórios. Nenhum recurso novo está entregue só por entrar neste plano.
 
-## 1. O que é "pronto"
+## 1. O que é "pronto" no escopo completo
 
-Decisão do Bruno em 2026-10-15 (DEC-11). O lab está pronto quando as quatro condições abaixo valem:
+Quem fizer fork deve conseguir aprender e reproduzir as capacidades abaixo, com o mesmo app
+React + Node.js + PostgreSQL nos três pares, infraestrutura como código, exercícios, diagnóstico,
+custos e limpeza. São três implantações da mesma aplicação; três produtos diferentes não fazem
+parte da regra de paridade da família.
 
-1. Lab local: toda capacidade de plataforma e de app tem uma sonda que roda no CI do repositório
-   (`verificado no CI`), sem conta de nuvem, e o lab cabe num notebook (7 GB de Docker com
-   `LOCAL_SIZE=small`, R1.8). Feito.
-2. Nuvem como código: a plataforma que o lab local prova tem o código para as três nuvens, validado
-   sem nuvem (render dos charts, kubeconform, `terraform test` com provider mockado, gator). Nada é
-   homologado numa nuvem real: o rótulo continua `não executado em nuvem (v2)`, e quem faz fork roda
-   na própria conta (R4). Feito em código e validado no CI; nenhuma nuvem foi homologada.
-3. Seguro para quem faz fork: scripts e workflows só mexem no que o lab criou, o destroy sempre chega
-   ao fim, as identidades de CI ficam presas ao fork e à `main`, e nada identifica a pessoa nos logs
-   públicos (R3). Feito.
-4. Coerência da família: o `make family` deste repositório fica verde.
+1. **Construção:** Terraform, manifests, imagens, workflows, contratos, runbooks e aulas contemplam
+   EKS/AKS/GKE Autopilot, aplicação, redes/TLS/DNS/WAF, identidade, segurança, observabilidade,
+   GitOps, HA, backup/restore, DR, Chaos e FinOps. Uma tecnologia instalada sem integração e sem
+   exercício não fecha seu item.
+2. **Prova reproduzível em Docker/CI:** testes de aplicação, políticas, renders, Terraform com
+   providers mockados e exercícios reais sobre kind/PostgreSQL validam o comportamento portável.
+   O pipeline deve provar também que rejeita configurações inseguras ou incompletas. Rodadas
+   pesadas, incluindo SonarQube, DR e carga, ficam no GitHub Actions; não no computador do Bruno.
+3. **Código preparado para as três nuvens:** cada capacidade tem implementação do provedor,
+   contrato, IAM, custos, quota/pré-requisitos e roteiro de operação/destruição. Uma limitação do
+   Autopilot exige um caminho suportado ou uma alternativa explícita; escrever "não suporta" não
+   equivale a entregar mesh, DR ou observabilidade.
+4. **Homologação cloud separada:** Docker não executa EKS, AKS, GKE, RDS, Cloud SQL ou IAM real. A
+   primeira rodada numa conta própria pode revelar ajustes. Emissão pública de certificados,
+   entrega externa no Slack, failover gerenciado, custo faturado e operação 24/7 só recebem
+   evidência de nuvem depois de uma execução autorizada. Até lá: `não executado em nuvem (v2)`.
+5. **Fork utilizável:** documentação por exercício, credenciais próprias, perfis de custo explícitos,
+   gates reproduzíveis sem assinatura comercial obrigatória, recuperação de falhas e teardown com
+   checagem de sobras. Domínio, webhook e contas cloud são fornecidos pelo dono do fork.
 
-O objetivo está completo: não há rodada de implementação pendente. Os itens de sustentação e
-calendário continuam na seção S.
+O padrão continua econômico. Perfis de plataforma completa, HA e DR são escolhas explícitas, com
+estimativas por hora/rodada e retenções descritas. Budget alerta; não é um bloqueio automático de
+gastos. "Produção", "24/7", "zero downtime" e "RPO/RTO" sempre dizem qual cenário foi medido.
 
-### Fora do escopo (DEC-11)
+### O que mudou em relação ao fechamento anterior
 
-Estes temas saíram do roadmap; os textos completos estão no histórico do git (o `ROADMAP.md` do
-commit `736bbb7`). Voltam só com um pedido do Bruno, como item novo.
+A DEC-11 havia retirado DR, FinOps, HTTPS cloud, SonarQube, tráfego avançado e outros itens. O pedido
+de 2026-10-16 reabre essas capacidades. Os dez PRs anteriores continuam mesclados; isso comprova as
+entregas daquela rodada, não o cumprimento de toda a lista ampliada. O histórico não é apagado.
 
-- Rodadas reais nas nuvens, o rótulo `verificado na nuvem` e as perguntas que só a nuvem responde.
-- O ensaio de fork com uma segunda conta do GitHub.
-- DR: o perfil `dr` do lab local (região B, banco standby, failover, falha de nó), o DR na nuvem e o
-  runbook de RTO e RPO.
-- FinOps: OpenCost, labels de custo e showback, rightsizing com o VPA, spot e autoscaling de nós.
-- HTTPS nas nuvens (pede um domínio) e o ACME local.
-- Extras de segurança e qualidade: SonarQube, OWASP ZAP, Cloud Armor com a cobertura do v1, paridade
-  dos WAFs, WAF no lab local, gerência de tráfego no Istio, SBOM e assinatura de imagens, CodeQL e
-  checks novos nos rulesets.
-- As propostas além do v1.
+O escopo implementa a lista nomeada neste arquivo. Ferramentas alternativas adicionais, novos
+produtos, suporte comercial e um serviço hospedado permanentemente não surgem automaticamente de
+"etc."; entram como nova decisão de escopo.
 
-## 2. Onde estamos (2026-10-16)
+## 2. Onde estamos (auditoria de 2026-10-16)
 
-Os seis repositórios são públicos, têm harness, CI semanal, Dependabot mensal, ruleset com checks
-obrigatórios e rodam o lab local inteiro no CI. R0, R1, R3 e R4 estão feitas. Não há rodada de
-implementação pendente. Nada da v2 rodou numa nuvem.
+| Área | Prova atual | Construção pendente |
+|---|---|---|
+| EKS, AKS e GKE Autopilot | Terraform e testes mockados; kind no CI | autoscaling por demanda no EKS; cenários de capacidade/Spot nas três; execução gerenciada real ainda não ocorreu |
+| React + Node.js + PostgreSQL | mesma aplicação full-stack nos três DX, testes e deploy local | promover a imagem validada por digest; release com mudança/migração/rollback exercitados |
+| CI/CD e segurança | GitHub Actions, Trivy, gitleaks, lint/tipos/coverage, GitOps | SonarQube, SAST e quality gate de promoção, cadeia de artefatos e testes negativos dos gates |
+| Rede, TLS, WAF e IAM | redes privadas, LBs/WAFs e federação como código; TLS por CA local | DNS/ACME/TLS cloud completos, WAF exercitado localmente, revisão dos privilégios amplos de apply |
+| Observabilidade e OTel | Prometheus/Grafana/Loki/Tempo/Collector locais; exportadores cloud; integração Slack opcional | componentes cloud-full dos apps, retenção durável, sinais/alertas gerenciados e provas de recuperação |
+| Mesh, políticas e Chaos | Istio ambient, Gatekeeper e Chaos locais; charts cloud | tráfego L7 avançado, mesh suportada no Autopilot, scan de imagens privadas e exercícios cloud portáveis |
+| Dados, HA, BKP e DR | PostgreSQL TLS; backups gerenciados básicos; Velero restaura objetos K8s | HA nas três, restore de dados/PITR/PVs aplicáveis, segunda região, failover/failback e RPO/RTO medidos |
+| FinOps | budgets, estimativas e Spot EKS | OpenCost/showback, rightsizing/VPA, custo atribuído, carga e limites de escala |
+| Operação em nuvem/24x7 | nenhuma execução real da v2 | homologação com contas/orçamento próprios e evidência operacional; não demonstrável apenas com Docker |
 
-| Repositório | Papel | Jobs obrigatórios | Lab local | Nuvem |
-|---|---|---|---|---|
-| [`tx01v2`](https://github.com/maringelix/tx01v2) | infraestrutura AWS | `static`, `test`, `e2e` | 34 sondas (`full`) | `não executado em nuvem (v2)` |
-| [`dx01v2`](https://github.com/maringelix/dx01v2) | app na AWS | `static`, `test`, `images`, `e2e`, `e2e-platform` | 18 sondas na plataforma do tx01v2 | `não executado em nuvem (v2)` |
-| [`tx02v2`](https://github.com/maringelix/tx02v2) | infraestrutura Azure | `static`, `test`, `e2e` | 34 sondas (`full`) | `não executado em nuvem (v2)` |
-| [`dx02v2`](https://github.com/maringelix/dx02v2) | app na Azure | `static`, `test`, `images`, `e2e`, `e2e-platform` | 18 sondas na plataforma do tx02v2 | `não executado em nuvem (v2)` |
-| [`tx03v2`](https://github.com/maringelix/tx03v2) | infraestrutura Google Cloud | `static`, `test`, `e2e` | 34 sondas (`full`) | `não executado em nuvem (v2)` |
-| [`dx03v2`](https://github.com/maringelix/dx03v2) | app no Google Cloud | `static`, `test`, `images`, `e2e`, `e2e-platform` | 18 sondas na plataforma do tx03v2 | `não executado em nuvem (v2)` |
-| [`tx00v2`](https://github.com/maringelix/tx00v2) | hub da família | `static` (`family` informativo) | não se aplica | não fala com nuvem |
+Detalhes, caminhos de arquivos e limites estão na auditoria vinculada acima. Instalar charts não
+prova automaticamente que o app está monitorado, protegido pela malha ou recuperável.
 
-O que o lab local de cada par já prova (`verificado no CI`): kind 1.36 com os gêmeos locais da nuvem
-(registry, PostgreSQL 17 só com TLS, object storage, load balancer, servidor git), Istio 1.31 ambient
-com mTLS `STRICT` e `AuthorizationPolicy` por identidade, Gateway API com HTTPS (cert-manager, CA do
-lab), External Secrets, metrics-server, Prometheus, Alertmanager (alerta entregue também como
-mensagem de Slack), Grafana, Loki + Alloy, Tempo e o OpenTelemetry Collector (trace do Gateway até a
-query do PostgreSQL, `trace_id` nos logs, exemplars), Argo CD (commit, sync, self-heal), Gatekeeper
-em `deny`, Trivy Operator, Velero (restore de namespace com dados) e Chaos Mesh com hipóteses (pod
-kill, latência, stress, latência entre a API e o banco), além do rollout sem downtime do app.
+## 3. Como executar e acompanhar
 
-O que existe só como código (`não executado em nuvem (v2)`): bootstrap e apply da infraestrutura;
-perfis `core` e `full` da plataforma com charts, overlays e identidades fixados; Argo CD com app-of-apps
-da plataforma e Application do app; deploy GitOps dos três dx; Velero com o object storage de cada
-nuvem; e destroy com checagem de sobras. O perfil `core` continua padrão. Nenhum desses caminhos foi
-aplicado numa conta de nuvem.
-
-Custos de referência de uma rodada de 3 horas com os padrões (fonte: `docs/CUSTOS.md` de cada
-repositório de infraestrutura): AWS cerca de US$0,80 a 1,00
-([CUSTOS do tx01v2](https://github.com/maringelix/tx01v2/blob/main/docs/CUSTOS.md)), Azure cerca de
-US$1,50 ([CUSTOS do tx02v2](https://github.com/maringelix/tx02v2/blob/main/docs/CUSTOS.md)), Google
-Cloud cerca de US$0,40 com o free tier da GKE e US$0,70 sem
-([CUSTOS do tx03v2](https://github.com/maringelix/tx03v2/blob/main/docs/CUSTOS.md)).
-
-## 3. Como ler e como executar
-
-Campos de todo item: `Status`, `Repos`, `Origem`, `Dependências`, `Custo`, `Entregáveis`, `Aceite`
-e, quando `feito`, `Evidência` (links dos PRs mesclados).
+Campos de cada item: `Status`, `Repos`, `Origem`, `Dependências`, `Custo`, `Entregáveis`, `Aceite` e,
+quando `feito`, `Evidência` com PRs mesclados. O harness valida formato, dependências e a igualdade
+com a visão geral; o `family-evidence` confere os merges.
 
 | Status | Significado |
 |---|---|
-| `feito` | mesclado com o CI verde; a evidência aponta os PRs |
-| `em andamento` | PR aberto ou parte dos repositórios mesclada |
-| `pendente` | aceito, ainda não começou |
-| `bloqueado` | depende de algo fora dos repositórios (orçamento, conta, decisão) |
-| `proposta` | além do v1; precisa do OK do Bruno antes de virar `pendente` |
+| `feito` | entrega do item mesclada com CI verde, dentro dos limites do seu aceite |
+| `em andamento` | implementação/PR em curso ou parte dos repositórios mesclada |
+| `pendente` | escopo aceito, ainda não implementado |
+| `bloqueado` | depende de uma condição externa identificada |
+| `proposta` | sugestão ainda não aprovada pelo Bruno |
 
-| Origem | Significado |
-|---|---|
-| v1 implementado | o v1 tinha; a v2 precisa da paridade |
-| v1 planejado | estava nos planos do v1 (as "Melhorias futuras" do tx01, as auditorias, a "Evolução Contínua" da apresentação pública do lab) e nunca foi feito |
-| dívida v2 | encontrado ao construir a v2 |
-| proposta v2 | não existia no v1 |
+Regras:
 
-Regras de execução (as mesmas da v2 desde o início; detalhes em [docs/GUARDRAILS.md](docs/GUARDRAILS.md)):
-
-1. Uma rodada por vez. O `tx01v2` e o `dx01v2` são a referência: o item nasce neles e é portado para
-   o `tx02v2`/`tx03v2` e o `dx02v2`/`dx03v2` na mesma rodada, só com renomeações e o que a nuvem exige.
-2. Um PR por repositório por rodada, com o CI verde antes do merge; o tx entra antes do dx, e o PR do
-   dx fixa o commit mesclado do tx em `deploy/local/tx0Nv2.ref`.
-3. Primeiro local, com sonda no CI; depois o código da nuvem, com testes, rótulo
-   `não executado em nuvem (v2)` e o custo no `docs/CUSTOS.md`. Nada é aplicado numa nuvem sem um
-   pedido explícito do Bruno para aquela ação.
-4. Mudança de contrato: PRs coordenados nos dois lados e versão nova (`docs/CONTRATO.md`).
-5. Nada de enfraquecer gate (`continue-on-error`, `|| true`, check pulado, ignore sem `statement` e
-   `expired_at`), tudo fixado (versão + SHA256, SHA de 40 caracteres, digest).
-6. Ao fim da rodada: este roadmap (status, evidência), o `docs/HISTORICO.md` e o `CHANGELOG.md` deste
-   repositório, num commit só de documentação.
+1. AWS é a referência; os outros pares recebem a capacidade na mesma rodada, com as adaptações
+   exigidas pelo provedor. O app continua igual nos três DX.
+2. Um PR coeso por repositório por rodada. O tx entra antes do dx, que fixa o commit mesclado do tx
+   em `deploy/local/tx0Nv2.ref`. Mudanças de contrato exigem versão e PRs coordenados.
+3. Cada PR inclui implementação, testes pertinentes, aula/exercício, runbook, custo e changelog.
+   Não há um PR por ferramenta. Se uma entrega ficar impraticável de revisar, ela é dividida e a
+   previsão é atualizada; a contagem não é motivo para omitir testes ou misturar trabalho sem relação.
+4. Gates permanecem bloqueantes e dependências fixadas. Nada de `continue-on-error`, `|| true`,
+   scanner ignorado sem justificativa ou status mais forte que sua evidência.
+5. A construção usa Docker/CI e validação offline de IaC. Deploy, failover e ações que gastam numa
+   nuvem só ocorrem com autorização específica para a rodada e após revisar custo/plan.
+6. O hub mantém este plano e um PR final de aceite. Aulas e evidências técnicas entram nos PRs dos
+   pares; atualizações intermediárias podem ser agrupadas, sem criar um PR documental por checkbox.
+7. Histórico preservado: os marcos concluídos abaixo não são recontados como construção ausente.
+   As novas etapas fecham lacunas concretas, e a homologação real mantém um estado separado.
 
 ## 4. Visão geral
 
@@ -155,6 +134,17 @@ Regras de execução (as mesmas da v2 desde o início; detalhes em [docs/GUARDRA
 | R4.6 | Gatekeeper, Trivy Operator e Chaos Mesh na nuvem | `feito` |
 | R4.7 | Dimensionamento e custo do perfil `full` | `feito` |
 | R4.8 | Do fork à própria nuvem, de ponta a ponta | `feito` |
+| R7.1 | SonarQube, SAST e gates de qualidade e segurança | `pendente` |
+| R7.2 | Promover o artefato aprovado, com migração e rollback | `pendente` |
+| R8.1 | Entrada segura, identidade e caminho de fork coerente | `pendente` |
+| R8.2 | Mesh e gerenciamento avançado de tráfego nos três Kubernetes | `pendente` |
+| R8.3 | Observabilidade do app, retenção e integrações gerenciadas | `pendente` |
+| R8.4 | Segurança de runtime e Chaos Engineering integrado | `pendente` |
+| R9.1 | HA dos bancos e recuperação verificável de dados | `pendente` |
+| R9.2 | DR entre regiões com failover e failback | `pendente` |
+| R10.1 | Autoscaling por demanda, carga e capacidade Spot | `pendente` |
+| R10.2 | FinOps com OpenCost, showback e rightsizing | `pendente` |
+| R11.1 | Matriz de escopo, aulas e evidências finais | `pendente` |
 | S.1 | Node.js 26 LTS nos apps | `pendente` |
 | S.2 | Kubernetes 1.37 na família e kubectl alinhado | `pendente` |
 | S.3 | Istio 1.31 para 1.33 | `pendente` |
@@ -165,21 +155,312 @@ Regras de execução (as mesmas da v2 desde o início; detalhes em [docs/GUARDRA
 | S.8 | Menções a "contract v1" que descrevem a versão 2 | `feito` |
 | S.9 | Primeira revisão trimestral conjunta da família | `pendente` |
 
-## 5. Fechamento do roadmap
+## 5. Plano de entregas e quantidade de PRs
+
+**Previsão: 22 PRs de construção após esta revisão do roadmap.** Esta revisão documental usa um
+PR próprio e não implementa os recursos planejados. A conta é `3 + 6 + 6 + 6 + 1`; não é uma
+garantia de prazo nem um teto que obrigue a esconder correções.
+
+| Rodada | Entrega coesa | Repositórios | PRs previstos |
+|---|---|---|---:|
+| R7 | DevSecOps e release: SonarQube/SAST/gates, artefato por digest, migração e rollback | dx01v2, dx02v2, dx03v2 | 3 |
+| R8 | Plataforma cloud completa integrada ao app: TLS/DNS/WAF/IAM, mesh, observabilidade durável, policies/scanning e Chaos | um TX e um DX por nuvem | 6 |
+| R9 | Continuidade de dados: HA, backup/PITR/restore, DR entre regiões, failover/failback | um TX e um DX por nuvem | 6 |
+| R10 | FinOps e capacidade: autoscaling/Spot, OpenCost/showback, VPA/rightsizing e carga | um TX e um DX por nuvem | 6 |
+| R11 | Aceite final, currículo e matriz de evidências do escopo completo | tx00v2 | 1 |
+| **Total restante de construção** | | | **22** |
+
+R8 reúne os itens da plataforma num único contrato por par; R9 reúne proteção e recuperação dos
+dados no mesmo fluxo. São os blocos maiores e devem ser revistos antes de codificar. O acabamento
+didático faz parte de cada PR, não de outra rodada nos seis repositórios.
+
+Ordem por rodada: tx01v2 → dx01v2, tx02v2 → dx02v2, tx03v2 → dx03v2; pares independentes podem
+avançar em paralelo. R7 começa nos DX; R8 integra a nova cadeia de entrega. HA/DR e FinOps recebem
+jobs separados para não sobrecarregar a prova básica do lab.
 
 ```mermaid
 flowchart LR
-  R0["R0 fundação (feito)"] --> R1["R1 observabilidade 2.0, alertas, chaos, rollout (feito)"]
-  R1 --> R3["R3 segurança para quem faz fork (feito)"]
-  R3 --> R4["R4 plataforma completa na nuvem (código) e o caminho do fork (feito)"]
-  S["S sustentação e calendário"] -.-> R4
+  BASE["R0/R1/R3/R4: base construída"] --> R7["R7 CI/CD e DevSecOps: 3 PRs"]
+  R7 --> R8["R8 plataforma integrada: 6 PRs"]
+  R8 --> R9["R9 HA, backup e DR: 6 PRs"]
+  R8 --> R10["R10 escala e FinOps: 6 PRs"]
+  R9 --> R11["R11 aceite: 1 PR"]
+  R10 --> R11
 ```
 
-R4.1 a R4.8 foram concluídos nos seis repositórios de lab. O caminho do fork até a própria nuvem
-está documentado e validado no CI, sem execução em nuvem. Não há rodada de implementação pendente;
-os itens S continuam no calendário de sustentação.
+A validação real nas três nuvens é uma etapa operacional posterior, com contas, domínio, quotas,
+webhook e orçamento próprios. Executar essa validação não é, por si, um PR. Correções que ela
+revelar entram como trabalho adicional com evidência, sem prometer antecipadamente uma quantidade.
+O calendário S continua separado das 22 entregas de construção.
 
-Os itens S entram quando a data chega (uma versão nova, uma exceção que vence), fora da rodada.
+## R7. DevSecOps e entrega de releases
+
+Uma rodada de três PRs, um por DX, incluindo os dois itens abaixo.
+
+### R7.1 SonarQube, SAST e gates de qualidade e segurança
+
+- Status: `pendente`
+- Repos: dx01v2, dx02v2, dx03v2
+- Origem: pedido do Bruno em 2026-10-16, DEC-1 e DEC-13
+- Dependências: R0.4, R1.4
+- Custo: sem assinatura comercial obrigatória; SonarQube e DAST em jobs isolados no Actions;
+  recursos e limites do runner documentados, sem subir esse conjunto na máquina do Bruno.
+- Entregáveis:
+  - SonarQube Community Build reproduzível com banco, scanner fixado e análise de cobertura;
+    quality gate real bloqueia a promoção. Explicar a análise de branch principal da edição
+    Community e não depender de decoração de PR ou multibranch de edição comercial.
+  - SAST em PR (CodeQL quando sua licença permitir no fork público), Trivy, gitleaks, cobertura e
+    OWASP ZAP contra a aplicação local. Caminho seguro de PR vindo de fork, sem entregar secrets.
+  - SBOM, proveniência e assinatura keyless de imagens; verificação antes de promover. Fixar
+    identidade/emissor esperados, sem aceitar qualquer assinatura válida.
+  - Aula com defeito de qualidade, vulnerabilidade e segredo fictício; relatórios redigidos,
+    critérios de correção e política de exceções com prazo, sem enfraquecer os gates existentes.
+- Aceite:
+  - CI faz uma análise Sonar real e lê o resultado do gate; fixtures negativas demonstram que
+    qualidade, SAST, DAST e artefato sem assinatura/identidade correta bloqueiam a promoção.
+  - Um fork sem serviços pagos consegue executar as aulas; indisponibilidade do scanner não vira
+    aprovação. Os gates funcionam antes da primeira publicação, sem PR com secrets de produção.
+
+### R7.2 Promover o artefato aprovado, com migração e rollback
+
+- Status: `pendente`
+- Repos: dx01v2, dx02v2, dx03v2
+- Origem: auditoria do fluxo de deploy e pedido de CI/CD com zero downtime, DEC-13
+- Dependências: R7.1, R4.4
+- Custo: jobs de build/teste/carga no Actions; retenção de artefatos e registry descrita no runbook.
+- Entregáveis:
+  - Construir uma vez; ECR, ACR e Artifact Registry recebem o digest aprovado para o commit exato.
+    Workflow manual confirma gates e proveniência desse commit, sem recompilar no deploy.
+  - Release com duas versões de conteúdo diferente, migração expand/contract compatível,
+    readiness, PDB, rollout, promoção GitOps e rollback para digest conhecido.
+  - Exercício de imagem reprovada, migração falha e versão sem prontidão; separar rollback do app
+    de recuperação de dados e registrar os limites de uma migração irreversível.
+- Aceite:
+  - Em kind/CI, chamadas contínuas durante a troca real comprovam o objetivo de disponibilidade
+    definido no teste, versão nova atendendo e versão anterior restaurada após falha induzida.
+  - Nenhum caminho de deploy contorna gates, troca o digest ou promove outro SHA. O mesmo fluxo de
+    release é renderizado/validado para as três nuvens; execução real permanece separada.
+
+## R8. Plataforma cloud completa integrada à aplicação
+
+Uma rodada de seis PRs, um por TX/DX. Cada par fecha conjuntamente os quatro itens; limitações do
+provedor precisam de implementação suportada e exercício equivalente explícito.
+
+### R8.1 Entrada segura, identidade e caminho de fork coerente
+
+- Status: `pendente`
+- Repos: tx01v2, dx01v2, tx02v2, dx02v2, tx03v2, dx03v2
+- Origem: pedido de redes/WAF/SSL/DNS/least privilege e lacunas de fork, DEC-13
+- Dependências: R7.2, R3.16, R4.8
+- Custo: DNS, domínio, certificados gerenciados, LB, WAF, NAT e IPs por nuvem em `docs/CUSTOS.md`;
+  padrão econômico, sem domínio ou conta real embutidos no repositório.
+- Entregáveis:
+  - DNS e HTTPS como IaC/contrato nas três nuvens, com renovação automática, redirect HTTP e teste
+    de configuração inválida. cert-manager/ACME é exercitado com ACME de teste no Docker; quando
+    a integração do LB exigir certificado do provedor, documentar essa fronteira.
+  - Subnets públicas/privadas, egress, Ingress/Gateway/LB e WAF com regras e probes de bloqueio;
+    banco privado, TLS entre app/banco, NetworkPolicies e segredos via identidade de workload.
+  - Revisar IAM/RBAC de bootstrap, plan, apply, runtime e backup; reduzir permissões amplas onde
+    viável, testar negações e justificar privilégio residual no escopo dedicado do lab.
+  - Um caminho de fork para `core` e outro para `full`, sem pedir GitOps quando Argo CD não foi
+    instalado. Entradas, contratos, outputs, scripts e workflows devem concordar.
+- Aceite:
+  - CI valida DNS/certificados/rotas nos três provedores com mocks/renders e prova ACME/renovação,
+    isolamento e bloqueio WAF no gêmeo local, sem afirmar emissão pública ou IAM real homologados.
+  - Ensaio offline a partir de configuração de fork nova cobre core/full e falhas de pré-requisito;
+    checks offline validam políticas e scripts recusam contextos/alvos fora do lab. A negação
+    efetiva pelo IAM aguarda homologação cloud.
+
+### R8.2 Mesh e gerenciamento avançado de tráfego nos três Kubernetes
+
+- Status: `pendente`
+- Repos: tx01v2, dx01v2, tx02v2, dx02v2, tx03v2, dx03v2
+- Origem: pedido de service mesh e tráfego avançado nas três nuvens, DEC-13
+- Dependências: R8.1, R4.3
+- Custo: dataplane/waypoints, capacidade e eventual serviço gerenciado estimados por perfil;
+  seguir o caminho suportado do GKE Autopilot, sem daemon privilegiado incompatível.
+- Entregáveis:
+  - mTLS STRICT no tráfego interno, autorização por identidade e políticas de egress integradas
+    ao app nas três. LBs/gateways externos à malha usam TLS de origem ou exceção restrita e
+    justificada no edge, com política que preserva o isolamento e testes do caminho de entrada.
+  - Canary com divisão de tráfego, timeouts, retries limitados e circuit breaking/outlier
+    detection com dataplane L7; habilitar waypoint quando o modo ambient exigir.
+  - IaC/instalação de Cloud Service Mesh gerenciada para Autopilot ou caminho oficialmente
+    suportado equivalente, com versões, pré-requisitos e diferenças didáticas registradas.
+- Aceite:
+  - CI mede distribuição entre versões distintas, limita retry amplification, rejeita identidade
+    não autorizada e observa isolamento de falhas; não basta renderizar VirtualService/HTTPRoute.
+  - Manifests e testes de contrato cobrem os três destinos; a prova local declara o que não
+    demonstra sobre o serviço gerenciado e o runbook inclui diagnóstico/teardown da malha.
+
+### R8.3 Observabilidade do app, retenção e integrações gerenciadas
+
+- Status: `pendente`
+- Repos: tx01v2, dx01v2, tx02v2, dx02v2, tx03v2, dx03v2
+- Origem: pedido de observabilidade completa, OpenTelemetry, Cloud Monitoring e Slack, DEC-13
+- Dependências: R8.1, R1.6, R4.2
+- Custo: volumes/object storage, retenção, ingestão e egress explicitados; limites e perfis baratos
+  evitam duplicar sinais no cluster e no serviço gerenciado sem necessidade.
+- Entregáveis:
+  - Componentes cloud-full de ServiceMonitor, PrometheusRule, dashboards e sinais do app;
+    métricas/logs/traces correlacionados por OpenTelemetry com exemplars e trace_id.
+  - Prometheus/Grafana/Alertmanager/Loki/Tempo com persistência, retenção e recuperação; exporters,
+    dashboards e políticas de alerta dos serviços nativos, incluindo Cloud Monitoring no GCP.
+  - Alertas Slack parametrizados, segredo externo, agrupamento/silêncio e runbook de incidente;
+    receiver nulo sem webhook deve ser visível como integração não configurada.
+  - SLIs/SLOs, error budget, alertas por consumo do orçamento de erro e monitoração sintética.
+- Aceite:
+  - CI provoca erro/latência no app e prova métrica, trace, log correlacionado e alerta no sink;
+    reiniciar componentes preserva os dados esperados no horizonte de retenção declarado.
+  - Policies/IAM/exportadores nativos são verificados offline; entrega ao Slack externo,
+    ingestão real no provedor e disponibilidade 24/7 só recebem status após execução real.
+
+### R8.4 Segurança de runtime e Chaos Engineering integrado
+
+- Status: `pendente`
+- Repos: tx01v2, dx01v2, tx02v2, dx02v2, tx03v2, dx03v2
+- Origem: pedido de OPA, scan contínuo e Chaos nas três nuvens, DEC-13
+- Dependências: R8.1, R8.2, R8.3, R4.6
+- Custo: scanners e experimentos têm requests/limits, concorrência e duração limitados; custos de
+  interrupção, métricas e reposição de capacidade constam dos exercícios.
+- Entregáveis:
+  - Gatekeeper em deny com políticas positivas/negativas, least privilege, hardening e isolamento.
+    Verificar assinatura, emissor e identidade do artefato também na admissão, com mecanismo
+    suportado por provedor (incluindo Binary Authorization no GCP ou equivalente documentado).
+  - Trivy Operator consegue analisar as imagens privadas do ECR, ACR e Artifact Registry com
+    identidade/credenciais de curta duração; relatório ausente não significa imagem limpa.
+  - Experimentos com hipótese, estado estável, abort e recuperação: pod, latência, CPU/memória e
+    perda de nó local. Matriz cloud define os experimentos suportados em cada provedor.
+  - Autopilot usa alternativas suportadas para falhas que não aceitam Chaos Daemon privilegiado;
+    o roteiro não promete desligamento de nó gerenciado pelo usuário onde não houver suporte.
+- Aceite:
+  - CI rejeita workload inseguro e imagem sem assinatura/assinante correto, detecta imagem
+    vulnerável privada simulada, executa hipóteses e recupera o app; scopes/contextos errados e
+    alvo fora do lab são recusados. A política de admissão gerenciada é validada offline.
+  - Testes não silenciam scanner sem acesso. Manifests/IAM dos três destinos e limites dos
+    experimentos passam nos checks offline; a execução cloud continua não homologada.
+
+## R9. Alta disponibilidade, backup e Disaster Recovery
+
+Uma rodada de seis PRs, um por TX/DX. Backups de objetos Kubernetes, volumes e banco são provas
+separadas. A segunda região não é substituída por outro namespace no mesmo cluster.
+
+### R9.1 HA dos bancos e recuperação verificável de dados
+
+- Status: `pendente`
+- Repos: tx01v2, dx01v2, tx02v2, dx02v2, tx03v2, dx03v2
+- Origem: pedido de PostgreSQL em HA, backups e continuidade de dados, DEC-13
+- Dependências: R8.3, R4.5, R7.2
+- Custo: perfis HA opt-in para RDS multi-AZ, PostgreSQL Flexible Server com HA e Cloud SQL regional;
+  calcular instâncias, armazenamento, WAL/backups, retenção e restauração em `docs/CUSTOS.md`.
+- Entregáveis:
+  - Opções de HA suportadas pelos três provedores com validação de região/SKU e defaults baratos;
+    backups automáticos, PITR, retenção e proteção contra exclusão parametrizados/testados.
+  - PostgreSQL local com backup real e WAL/PITR: inserir registros, destruir/corromper o alvo e
+    recuperar para ponto conhecido; verificar conteúdo, integridade e reconexão do app.
+  - Velero para objetos e volumes onde aplicável, CSI/data mover e permissões; explicar que o
+    banco gerenciado usa backup nativo, não o restore de ConfigMap do exercício anterior.
+  - Runbooks de restore isolado, troca de endpoint/segredo, failover HA e rollback da troca.
+- Aceite:
+  - CI comprova recuperação de registros e de PVC com checksum, quando há volume no cenário, e
+    falha com backup incompleto/corrompido. Restore de objetos sozinho não fecha este item.
+  - `terraform test` prova HA/PITR/retenção/negações nos três; não atribuir a kind a prova de
+    failover multi-AZ gerenciado. RPO/RTO locais são medidos com relógio e perda observada.
+
+### R9.2 DR entre regiões com failover e failback
+
+- Status: `pendente`
+- Repos: tx01v2, dx01v2, tx02v2, dx02v2, tx03v2, dx03v2
+- Origem: pedido explícito de Disaster Recovery multi-region, DEC-13
+- Dependências: R9.1, R8.1, R8.2
+- Custo: segunda região opt-in; computação standby, réplica/cópias de dados, egress, DNS, secrets,
+  registry, backups e retenção orçados. Escolher warm/pilot light com trade-offs descritos.
+- Entregáveis:
+  - IaC dos papéis primário/secundário em regiões distintas por nuvem; replicação/cópia do banco,
+    backups, artefatos, segredos/configuração e state remoto versionado/recuperável.
+  - Dois ambientes locais independentes A/B para simular perda completa do primário; promoção,
+    fencing contra split brain, roteamento, validação de dados e retorno controlado ao primário.
+  - Runbooks de failover/failback, pré-condições, aprovação humana, perda aceitável, reconciliação
+    e teardown; monitorar idade do backup/lag e capacidade efetiva de recuperar.
+- Aceite:
+  - CI executa perda de A, recuperação em B e failback, mede RPO/RTO contra metas do cenário,
+    confere registros e recusa promover quando não pode garantir um único escritor.
+  - Renders/testes IaC comprovam duas regiões e dependências independentes nas três nuvens;
+    failover real, latência/egress e RPO/RTO do serviço gerenciado aguardam homologação cloud.
+
+## R10. FinOps, capacidade e escala
+
+Uma rodada de seis PRs, um por TX/DX, com os dois itens abaixo.
+
+### R10.1 Autoscaling por demanda, carga e capacidade Spot
+
+- Status: `pendente`
+- Repos: tx01v2, dx01v2, tx02v2, dx02v2, tx03v2, dx03v2
+- Origem: pedido de EKS autoscaling, Autopilot/Spot e otimização, DEC-13
+- Dependências: R8.3, R8.4
+- Custo: limites de pods/nós, duração e cancelamento da carga, capacidade on-demand mínima e custo
+  máximo estimado por cenário; budget continua alerta, sem promessa de teto de faturamento.
+- Entregáveis:
+  - Controller de escala de nós EKS (Cluster Autoscaler ou Karpenter), não apenas min/max do node
+    group; AKS autoscaler e Autopilot com requests, limites e condições coerentes com HPA.
+  - Spot/tolerations/afinidade e fallback por nuvem, preservando componentes críticos; exercício de
+    interrupção, drenagem, PDB e redistribuição, sem depender de disponibilidade garantida de Spot.
+  - Carga reproduzível com SLO, HPA scale up/down, estabilização, quotas e saturação do banco;
+    aprender a diferença entre escalar pods, nós e capacidade de um serviço gerenciado.
+- Aceite:
+  - CI exercita HPA/carga, rescheduling e perda de capacidade no ambiente local com métricas e
+    critérios de sucesso/falha. Testes IaC/IAM verificam controllers e perfis de cada nuvem.
+  - Aumento/redução real de nós gerenciados e economia de Spot só recebem evidência após cloud;
+    não inferir autoscaling EKS a partir de `scaling_config` estático.
+
+### R10.2 FinOps com OpenCost, showback e rightsizing
+
+- Status: `pendente`
+- Repos: tx01v2, dx01v2, tx02v2, dx02v2, tx03v2, dx03v2
+- Origem: pedido de FinOps e otimização avançada, DEC-13
+- Dependências: R10.1
+- Custo: stack de custo opt-in; fontes, moeda, região, data e limites da estimativa por provedor;
+  incluir serviços externos ao cluster, armazenamento, backups/DR, NAT/LB/WAF e egress.
+- Entregáveis:
+  - OpenCost com métricas/dashboards por namespace/app/ambiente e dados de preço de cada provedor;
+    showback e labels/tags, custo ocioso/compartilhado e reconciliação com contas reais futura.
+  - VPA inicialmente em recomendação, requests/limits baseados em carga e comparação antes/depois;
+    não criar conflito automático entre VPA e HPA sobre o mesmo recurso.
+  - Estimativa de custo no PR/plan, budgets e alertas, expiração de ambientes temporários,
+    teardown seguro, inventário de sobras e relatório de custo por rodada.
+- Aceite:
+  - CI gera alocação de custo com dados determinísticos, prova labels obrigatórios e um cenário
+    caro rejeitado pelo limite configurado; ensaio de rightsizing mantém o SLO sob carga.
+  - Dashboards distinguem estimativa de fatura e cobrem custos fora dos pods. Testes de cleanup
+    recusam recursos alheios; não tratar OpenCost ou alerta de budget como limite financeiro real.
+
+## R11. Aceite do lab completo e currículo de fork
+
+### R11.1 Matriz de escopo, aulas e evidências finais
+
+- Status: `pendente`
+- Repos: tx00v2
+- Origem: pedido de lab completo para quem fizer fork, DEC-13
+- Dependências: R7.1, R7.2, R8.1, R8.2, R8.3, R8.4, R9.1, R9.2, R10.1, R10.2
+- Custo: sem nuvem no hub; catálogo separa custo local/Actions e perfis cloud core/full/HA/DR.
+- Entregáveis:
+  - Currículo de cada tecnologia com pré-requisito, arquitetura, objetivo, comandos, falha a
+    provocar, critério de sucesso, diagnóstico, recuperação, custo e limpeza; links dos seis labs.
+  - Matriz requisito × nuvem × implementação × teste × limite × PR/evidência; mesma aplicação,
+    versões compatíveis, contratos e documentação de fork conferidos pelo harness da família.
+  - Checklist de segurança/qualidade/operação e roteiro de homologação cloud futura; README e
+    publicação descrevem fielmente o que o CI demonstrou, sem vender produção ou operação 24/7.
+- Aceite:
+  - Todos os requisitos nomeados pelo Bruno têm item implementado e PRs mesclados com CI verde,
+    exercício reproduzível e tratamento explícito das diferenças entre provedores.
+  - Ensaio de fork com configuração limpa e CI completo passa sem secrets do mantenedor;
+    nenhuma lacuna técnica fica escondida como documentação. Homologação real mantém estado
+    separado, com contas/orçamento e domínio próprios, e correções futuras são registradas.
+
+## Marcos anteriores (R0 a R4)
+
+Os itens abaixo preservam o aceite histórico e seus PRs. O novo escopo está em R7 a R11; os
+limites identificados pela auditoria não são escondidos por estes status anteriores.
 
 ## R0. Fundação da v2
 
@@ -641,11 +922,12 @@ O resto da auditoria de segurança para forks de 2026-10-14 (a parte local entro
     máquina sem outro trabalho.
 - Evidência: [tx01v2#14](https://github.com/maringelix/tx01v2/pull/14), [dx01v2#14](https://github.com/maringelix/dx01v2/pull/14), [tx02v2#12](https://github.com/maringelix/tx02v2/pull/12), [dx02v2#10](https://github.com/maringelix/dx02v2/pull/10), [tx03v2#11](https://github.com/maringelix/tx03v2/pull/11), [dx03v2#12](https://github.com/maringelix/dx03v2/pull/12). Pre-flight do lab local (`scripts/local-lab.sh preflight`, que o `up` também faz) com o check `local-preflight` (`docker`, `kind` e `ip` simulados): daemons diferentes, rede ou rota sobreposta, porta do registry ocupada, rede de um lab anterior e lab de outro `LOCAL_STATE_DIR`. O `e2e-platform` dos dx tem o diretório de estado e o kubeconfig do próprio lab, o `make clean` é relativo ao Makefile, a guarda do `rm -rf` do `k8s.sh` está no dx02v2 e no dx03v2 (`policy-app`) e o `repo-guardrails.sh` confere o argumento. Google Cloud: o budget sem descontar créditos (`EXCLUDE_ALL_CREDITS`) e com e-mail obrigatório, o `DOCKER_CONFIG` temporário no deploy do dx03v2 e a configuração do gcloud só para o lab no RUNBOOK. Os docs dizem o que continua exigindo uma máquina sem outro trabalho.
 
-## R4. A plataforma completa nas nuvens (como código)
+## R4. Base da plataforma nas nuvens (marco anterior, como código)
 
 Concluída em 2026-10-16. Os três tx oferecem perfis `core` e `full`, e os três dx fazem o deploy do
 app por GitOps. Charts, imagens, overlays, custos, limites do GKE Autopilot e o caminho para quem faz
-fork estão documentados e verificados no CI. Tudo continua opcional; nada foi aplicado numa nuvem
+fork foram documentados e verificados no CI no aceite anterior. A integração completa dos apps,
+os limites do Autopilot e a coerência core/full estão reabertos em R8.1 a R8.4. Tudo continua opcional; nada foi aplicado numa nuvem
 (`não executado em nuvem (v2)`, DEC-11).
 
 ### R4.1 Perfis `core` e `full` da camada de plataforma na nuvem
@@ -918,18 +1200,18 @@ repositórios v1 (privados e arquivados; por isso não há links). "Feito" na co
 
 | Capacidade | v1 | v2 hoje | Item |
 |---|---|---|---|
-| Terraform com módulos e state remoto | implementado nas três nuvens | bootstrap e `terraform/envs/lab` nos três tx, com `terraform test` e provider mockado (código) | código; rodadas reais fora do escopo (DEC-11) |
+| Terraform com módulos e state remoto | implementado nas três nuvens | bootstrap e `terraform/envs/lab` nos três tx, com `terraform test` e provider mockado (código) | código; homologação real separada da construção (DEC-13) |
 | Testes e lint de IaC | só no tx01 | fmt, validate, lock files, tflint com ruleset, trivy e `terraform test` nos três tx | feito (R0.1) |
 | Kubernetes gerenciado | EKS 1.32, AKS, GKE Autopilot | EKS, AKS e GKE Autopilot 1.36 (código); kind 1.36 no lab local | S.2 |
 | Modo EC2/VM | implementado (EC2 com deploy por SSM; VM na Azure) | descartado (DEC-2) | nenhum |
-| Banco | RDS PostgreSQL, Azure SQL, Cloud SQL PostgreSQL | PostgreSQL 17 nas três (Azure SQL não portado, DEC-3); local só com TLS | nenhum |
+| Banco | RDS PostgreSQL, Azure SQL, Cloud SQL PostgreSQL | PostgreSQL 17 nas três (Azure SQL não portado, DEC-3); local com TLS; HA/restore completos pendentes | R9.1 |
 | Registry | ECR, ACR, Artifact Registry | os três (código) e o gêmeo local | código |
 | Entrada e load balancer | ALB só HTTP, ingress-nginx no AKS, Ingress do GCE | ALB com o Load Balancer Controller, AGC com Gateway API, Gateway da GKE (código); Istio Gateway local | código |
-| WAF da AWS | rate limit, Common, SQLi, KnownBadInputs | Common, KnownBadInputs, SQLi, IpReputation e rate limit por IP (código) | fora do escopo (DEC-11) |
-| WAF da Azure | opção de workflow (parcial) | AGC com DRS 2.1 e Bot Manager 1.1 em Prevention (código) | fora do escopo (DEC-11) |
-| Cloud Armor | sete regras pré-configuradas, rate limit, Adaptive Protection | sqli e xss (código) | fora do escopo (DEC-11) |
-| TLS | Let's Encrypt no AKS, certificado gerenciado no GKE, AWS só HTTP | cert-manager com a CA do lab local; overlay `aws-https` com ACM | fora do escopo (DEC-11) |
-| Service mesh | Istio no AKS e no GKE, mTLS `PERMISSIVE`, retries, timeouts, outlier, canário | Istio ambient local com mTLS `STRICT` e `AuthorizationPolicy` por identidade | R4.3 |
+| WAF da AWS | rate limit, Common, SQLi, KnownBadInputs | Common, KnownBadInputs, SQLi, IpReputation e rate limit por IP (código) | R8.1 |
+| WAF da Azure | opção de workflow (parcial) | AGC com DRS 2.1 e Bot Manager 1.1 em Prevention (código) | R8.1 |
+| Cloud Armor | sete regras pré-configuradas, rate limit, Adaptive Protection | sqli e xss (código) | R8.1 |
+| TLS | Let's Encrypt no AKS, certificado gerenciado no GKE, AWS só HTTP | cert-manager com a CA do lab local; overlay `aws-https` com ACM | R8.1 |
+| Service mesh | Istio no AKS e no GKE, mTLS `PERMISSIVE`, retries, timeouts, outlier, canário | Istio ambient local com mTLS `STRICT`; integração cloud e tráfego avançado pendentes | R8.2 |
 | GitOps | Argo CD instalado por workflow, Application quebrada no GCP | Argo CD local com commit, sync e self-heal; deploy do app por GitOps | R4.4 |
 | Prometheus e Grafana | instalados por workflow nas três nuvens | local, com ServiceMonitor, regras testadas com promtool e dashboard como código | R4.1, R4.2 |
 | Logs | Loki na AWS, Log Analytics na Azure | Loki + Alloy local | R4.1, R4.2 |
@@ -937,22 +1219,22 @@ repositórios v1 (privados e arquivados; por isso não há links). "Feito" na co
 | Tracing e APM | Application Insights e o Jaeger do Istio (parcial) | OpenTelemetry e Tempo locais; exportadores para X-Ray, Application Insights e Cloud Trace (código) | feito (R1.1, R1.4, R1.6) |
 | Trivy | imagens no CI | trivy config, gate de imagem no CI e Trivy Operator local | feito (R0.1, R0.3) |
 | tfsec, Checkov e gitleaks | no tx02 | trivy config (no lugar do tfsec) e gitleaks nos sete | feito (R0.1) |
-| OWASP ZAP | baseline no tx02 | ainda não | fora do escopo (DEC-11) |
-| SonarCloud ou SonarQube | só citado no dx03 | ainda não (SonarQube Community Build, DEC-1) | fora do escopo (DEC-11) |
-| CodeQL | ausente (só upload de SARIF) | ainda não | fora do escopo (DEC-11) |
+| OWASP ZAP | baseline no tx02 | ainda não | R7.1 |
+| SonarCloud ou SonarQube | só citado no dx03 | ainda não (SonarQube Community Build, DEC-1) | R7.1 |
+| CodeQL | ausente (só upload de SARIF) | ainda não | R7.1 |
 | Dependabot | planejado | mensal e agrupado nos sete | feito (R0.1) |
 | Gatekeeper | implementado | local em `deny`, com a suíte do gator | feito (R0.3), R4.6 |
 | NetworkPolicy e PDB | parcial | aplicados no kind e conferidos no harness | feito (R0.1) |
-| Backup | workflows manuais (AWS Backup, Azure SQL, Cloud SQL), sem Velero | Velero local com restore; backups gerenciados dos bancos (código) | R4.5 |
-| Chaos | Chaos Mesh manual no tx02: pod, rede, CPU, memória, desligamento de nó | local com hipóteses: pod kill, latência, stress, latência no banco | feito (R0.3, R1.3); falha de nó fora do escopo (DEC-11) |
-| DR multirregião | planejado (tudo numa região) | ainda não | fora do escopo (DEC-11) |
-| FinOps | budget no GCP, escala por workflow, sem OpenCost | budgets nos bootstraps, `docs/CUSTOS.md` por par, Spot no EKS | fora do escopo (DEC-11) |
-| Autoscaling | HPA; nós no AKS e no Autopilot; sem Cluster Autoscaler nem Karpenter | HPA 2–4 local; AKS 1–3 e Autopilot (código) | fora do escopo (DEC-11) |
+| Backup | workflows manuais (AWS Backup, Azure SQL, Cloud SQL), sem Velero | Velero local restaura objetos/ConfigMap; DX prova pg_dump/restore local; restore gerenciado, PVC e recuperação integrada pendentes | R9.1, R9.2 |
+| Chaos | Chaos Mesh manual no tx02: pod, rede, CPU, memória, desligamento de nó | local com hipóteses: pod kill, latência, stress, latência no banco | base feita (R0.3, R1.3); completar em R8.4 |
+| DR multirregião | planejado (tudo numa região) | ainda não | R9.2 |
+| FinOps | budget no GCP, escala por workflow, sem OpenCost | budgets nos bootstraps, `docs/CUSTOS.md` por par, Spot no EKS | R10.2 |
+| Autoscaling | HPA; nós no AKS e no Autopilot; sem Cluster Autoscaler nem Karpenter | HPA 2–4 local; AKS 1–3 e Autopilot (código) | R10.1 |
 | CI com OIDC | implementado | OIDC e Workload Identity Federation com `sub` exatos e testados | feito (R0.1) |
 | Segredos | parcial (Secrets do Kubernetes) | ESO com Secrets Manager, Key Vault e Secret Manager (código) e local | feito (R0.3) |
 | Várias nuvens | pilhas paralelas, sem failover | três pares e o hub com os checks de coerência | feito (R0.6) |
-| Teste de carga | planejado (auditoria) | ainda não | fora do escopo (DEC-11) |
-| Assinatura de imagem e Binary Authorization | planejado (auditorias) | ainda não | fora do escopo (DEC-11) |
+| Teste de carga | planejado (auditoria) | ainda não | R10.1 |
+| Assinatura de imagem e Binary Authorization | planejado (auditorias) | ainda não | R7.1 (assinatura/verificação; controle de admissão em R8.4) |
 
 ## Decisões registradas
 
@@ -968,11 +1250,14 @@ repositórios v1 (privados e arquivados; por isso não há links). "Feito" na co
 | DEC-8 | 2026-10-14 | R1 | Tempo pelo chart `grafana-community/tempo` 3.1.0; o `grafana/tempo` 1.24.4 está depreciado |
 | DEC-9 | 2026-10-14 | hub | No tx00v2 só o `static` é obrigatório; o `family` é informativo porque depende de seis outros repositórios |
 | DEC-10 | 2026-10-13 | lab | O lab local reconstrói a plataforma do v1 no Docker: ninguém precisa de conta de nuvem para aprender |
-| DEC-11 | 2026-10-15 | Bruno | Escopo: o lab fica pronto para fork, validado no Docker e no CI; nada é homologado numa nuvem real. Saem as rodadas reais, o ensaio de fork com outra conta, DR, FinOps, HTTPS nas nuvens, os extras de segurança e qualidade e as propostas |
+| DEC-11 | 2026-10-15 | Bruno | Histórico, escopo reaberto pela DEC-13: o lab fica pronto para fork, validado no Docker e no CI; nada é homologado numa nuvem real. Saem as rodadas reais, o ensaio de fork com outra conta, DR, FinOps, HTTPS nas nuvens, os extras de segurança e qualidade e as propostas |
 | DEC-12 | 2026-10-15 | Bruno | O tamanho `small` do lab local fica em 7 GB de Docker; a meta da R1.8 era 6 GB, onde a sonda de rollout perde requisições |
 
+| DEC-13 | 2026-10-16 | Bruno | Reabrir o escopo completo explicitamente pedido: DevSecOps/SonarQube, promoção de artefatos, TLS/DNS/WAF/IAM, mesh avançada, observabilidade integrada e durável, HA/backup/PITR/DR multi-region, Chaos e FinOps/escala nos três pares. Construir e provar no Docker/Actions; homologação cloud permanece uma execução separada e autorizada. Planejar R7 a R11 em 22 PRs de construção, revisando a estimativa se necessário |
+
 As decisões pendentes DP-1 a DP-5 (domínio, orçamento, segunda conta do GitHub, propostas e DR na
-nuvem) caíram com a DEC-11.
+nuvem) foram encerradas na DEC-11. A DEC-13 autoriza a construção do escopo nomeado; domínio,
+contas, orçamento e permissões para executar uma rodada real continuam sendo entradas do dono do fork.
 
 ## Riscos e limites conhecidos
 
@@ -981,14 +1266,16 @@ nuvem) caíram com a DEC-11.
   ficam no CI, nunca na máquina de desenvolvimento.
 - Tempo de CI: os jobs `e2e` levam de 12 a 15 minutos; o GitHub Actions não cobra repositórios
   públicos, mas limita os jobs simultâneos.
-- Nuvem: nada da v2 rodou numa nuvem, e isso não vai mudar aqui (DEC-11). Os números de custo são
+- Nuvem: nada da v2 rodou numa nuvem. A construção não autoriza sua execução; homologação cloud
+  exige rodada própria com orçamento revisado. Os números de custo atuais são
   preços de lista de outubro de 2026, sem impostos e sem transferência de dados; a primeira rodada de
   quem fizer fork pode achar erros que os testes com provider mockado não pegam.
 - O hub aponta drift, não impede: o `family` é informativo e roda nos PRs do hub, em todo push na
   `main` e toda segunda-feira.
 - Upstream: um catálogo de schemas quebrado, um chart removido ou uma CVE sem correção numa imagem
   base pode travar um check. A regra é parar, fixar com data e relatar, nunca enfraquecer o check.
-- Fork: o `FORK.md` não foi ensaiado com outra conta (fora do escopo). Os scripts só agem no que o
+- Fork: o `FORK.md` não foi ensaiado com outra conta; R8.1 e R11.1 exigem configuração limpa e CI
+  reproduzível. Os scripts só agem no que o
   lab criou (R0.7), mas os papéis de CI ainda pressupõem uma conta, assinatura ou projeto dedicados
   ao lab (R3.16) e o environment `lab` protegido (R3.15).
 
