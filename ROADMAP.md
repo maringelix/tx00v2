@@ -1,6 +1,6 @@
 # Roadmap do lab DevOps v2: pronto para fork
 
-Estado em 2026-10-15. Este arquivo é a fonte única do que falta para a família v2 ficar pronta: quem
+Estado em 2026-10-16. Este arquivo é a fonte única do que falta para a família v2 ficar pronta: quem
 fizer fork consegue rodar o lab inteiro no Docker da própria máquina e subir a infraestrutura, a
 plataforma e o app nas próprias contas da AWS, da Azure e do Google Cloud, só com o código e o
 `FORK.md` de cada repositório. Cada item diz o que entregar, como provar, quanto custa e do que
@@ -24,10 +24,10 @@ Decisão do Bruno em 2026-10-15 (DEC-11). O lab está pronto quando as quatro co
    na própria conta (R4).
 3. Seguro para quem faz fork: scripts e workflows só mexem no que o lab criou, o destroy sempre chega
    ao fim, as identidades de CI ficam presas ao fork e à `main`, e nada identifica a pessoa nos logs
-   públicos (R3).
+   públicos (R3). Feito.
 4. Coerência da família: o `make family` deste repositório fica verde.
 
-Faltam duas rodadas, uma por fase (R3 e R4), cada uma com um PR por repositório.
+Falta uma rodada, a R4, com um PR por repositório.
 
 ### Fora do escopo (DEC-11)
 
@@ -45,10 +45,10 @@ commit `736bbb7`). Voltam só com um pedido do Bruno, como item novo.
   checks novos nos rulesets.
 - As propostas além do v1.
 
-## 2. Onde estamos (2026-10-15)
+## 2. Onde estamos (2026-10-16)
 
 Os seis repositórios são públicos, têm harness, CI semanal, Dependabot mensal, ruleset com checks
-obrigatórios e rodam o lab local inteiro no CI. As fases R0 e R1 estão feitas. Nada da v2 rodou numa
+obrigatórios e rodam o lab local inteiro no CI. As fases R0, R1 e R3 estão feitas. Nada da v2 rodou numa
 nuvem.
 
 | Repositório | Papel | Jobs obrigatórios | Lab local | Nuvem |
@@ -138,13 +138,13 @@ Regras de execução (as mesmas da v2 desde o início; detalhes em [docs/GUARDRA
 | R1.8 | Dívida: perfil enxuto do e2e-platform para máquinas com menos de 8 GB | `feito` |
 | R1.9 | Dívida: instalação instável do servidor do Trivy Operator | `feito` |
 | R1.10 | Dívida: timeout do webhook do ESO no lab local do tx03v2 | `feito` |
-| R3.10 | Permission boundary no papel de apply da AWS | `pendente` |
-| R3.13 | `leftovers.sh` da Azure e do Google Cloud só culpam o que é do lab | `pendente` |
-| R3.14 | Destroy que sempre chega ao fim | `pendente` |
-| R3.15 | OIDC e Workload Identity Federation presos a IDs imutáveis e à `main` | `pendente` |
-| R3.16 | Papéis de CI mais estreitos fora de uma conta dedicada | `pendente` |
-| R3.17 | Logs públicos sem identificadores e smoke sem token em texto puro | `pendente` |
-| R3.18 | Efeitos colaterais na máquina de quem faz fork | `pendente` |
+| R3.10 | Permission boundary no papel de apply da AWS | `feito` |
+| R3.13 | `leftovers.sh` da Azure e do Google Cloud só culpam o que é do lab | `feito` |
+| R3.14 | Destroy que sempre chega ao fim | `feito` |
+| R3.15 | OIDC e Workload Identity Federation presos a IDs imutáveis e à `main` | `feito` |
+| R3.16 | Papéis de CI mais estreitos fora de uma conta dedicada | `feito` |
+| R3.17 | Logs públicos sem identificadores e smoke sem token em texto puro | `feito` |
+| R3.18 | Efeitos colaterais na máquina de quem faz fork | `feito` |
 | R4.1 | Perfis `core` e `full` da camada de plataforma na nuvem | `pendente` |
 | R4.2 | ADR: observabilidade no cluster ou gerenciada, por nuvem | `pendente` |
 | R4.3 | Istio ambient nas três nuvens | `pendente` |
@@ -163,21 +163,19 @@ Regras de execução (as mesmas da v2 desde o início; detalhes em [docs/GUARDRA
 | S.8 | Menções a "contract v1" que descrevem a versão 2 | `feito` |
 | S.9 | Primeira revisão trimestral conjunta da família | `pendente` |
 
-## 5. As duas rodadas que faltam
+## 5. A rodada que falta
 
 ```mermaid
 flowchart LR
   R0["R0 fundação (feito)"] --> R1["R1 observabilidade 2.0, alertas, chaos, rollout (feito)"]
-  R1 --> R3["R3 segurança para quem faz fork"]
+  R1 --> R3["R3 segurança para quem faz fork (feito)"]
   R3 --> R4["R4 plataforma completa na nuvem (código) e o caminho do fork"]
   S["S sustentação e calendário"] -.-> R4
 ```
 
-1. R3: R3.10 e R3.13 a R3.18, nos seis repositórios de lab.
-2. R4: R4.1 a R4.8, nos seis repositórios de lab. O R4.8 fecha o caminho do fork até a própria nuvem.
+R4: R4.1 a R4.8, nos seis repositórios de lab. O R4.8 fecha o caminho do fork até a própria nuvem.
 
-Os itens S entram quando a data chega (uma versão nova, uma exceção que vence), fora das duas
-rodadas.
+Os itens S entram quando a data chega (uma versão nova, uma exceção que vence), fora da rodada.
 
 ## R0. Fundação da v2
 
@@ -505,12 +503,12 @@ chave nova é o endpoint OTLP do Collector).
 
 ## R3. Segurança para quem faz fork
 
-O resto da auditoria de segurança para forks de 2026-10-14 (a parte local entrou em R0.7). Primeira
-das duas rodadas que faltam.
+O resto da auditoria de segurança para forks de 2026-10-14 (a parte local entrou em R0.7). Feita em
+2026-10-15 e 2026-10-16.
 
 ### R3.10 Permission boundary no papel de apply da AWS
 
-- Status: `pendente`
+- Status: `feito`
 - Repos: tx01v2
 - Origem: dívida v2 (`planejado` no `docs/GUARDRAILS.md` do tx01v2; o papel de apply pode criar papéis `tx01v2-*`)
 - Dependências: nenhuma
@@ -521,10 +519,11 @@ das duas rodadas que faltam.
 - Aceite:
   - `terraform test` prova a condição e o boundary em todos os papéis do lab; reaplicar o bootstrap
     antes da próxima rodada.
+- Evidência: [tx01v2#14](https://github.com/maringelix/tx01v2/pull/14). A permission boundary `tx01v2-lab-boundary` do bootstrap vai em todo papel que o apply cria; o papel do apply cria ou troca o boundary de um papel só com ele e não consegue editá-lo nem tirá-lo (`boundary.tftest.hcl`, `terraform test` com provider mockado, `verificado no CI`). Reaplicar o bootstrap antes da próxima rodada em nuvem.
 
 ### R3.13 `leftovers.sh` da Azure e do Google Cloud só culpam o que é do lab
 
-- Status: `pendente`
+- Status: `feito`
 - Repos: tx02v2, tx03v2
 - Origem: auditoria de segurança para forks (2026-10-14); a parte da AWS entrou em R0.7
 - Dependências: R0.7
@@ -538,10 +537,11 @@ das duas rodadas que faltam.
 - Aceite:
   - Um teste offline com `az` e `gcloud` simulados (como o do `deploy-gcp.sh` do dx03v2) prova a
     classificação numa assinatura e num projeto que também têm recursos de outro trabalho.
+- Evidência: [tx02v2#12](https://github.com/maringelix/tx02v2/pull/12), [tx03v2#11](https://github.com/maringelix/tx03v2/pull/11). O check `leftovers-flow` de cada um roda o `leftovers.sh` contra um `az` e um `gcloud` simulados numa assinatura e num projeto que também têm recursos de outro trabalho: só o que é do lab (tag, grupo, label, nome, rede, peças do load balancer do namespace do app) é sobra, o resto sai como `INFO` ("not the lab's"), e toda chamada nomeia a assinatura ou o projeto (`--subscription`, `--project`), sem depender do `az account set` nem de variável do shell. A seção das sobras dos RUNBOOKs só dá comandos de remoção para itens do lab.
 
 ### R3.14 Destroy que sempre chega ao fim
 
-- Status: `pendente`
+- Status: `feito`
 - Repos: tx01v2, tx02v2, tx03v2
 - Origem: auditoria de segurança para forks (2026-10-14)
 - Dependências: nenhuma
@@ -557,10 +557,11 @@ das duas rodadas que faltam.
 - Aceite:
   - Um teste offline com as CLIs simuladas mostra que um uninstall que falha ainda leva ao destroy e
     à checagem de sobras.
+- Evidência: [tx01v2#14](https://github.com/maringelix/tx01v2/pull/14), [tx02v2#12](https://github.com/maringelix/tx02v2/pull/12), [tx03v2#11](https://github.com/maringelix/tx03v2/pull/11). O `scripts/destroy.sh` de cada tx roda o uninstall, segue para o `terraform destroy` mesmo quando o uninstall falha e termina sempre com o `leftovers.sh`. Na AWS e no Google Cloud ele apaga pela API as peças do load balancer que o controlador deixou (só as do lab); na Azure o controlador não é dono de nada (o AGC é do Terraform) e o Key Vault em soft delete sai com o comando exato de purge. O workflow de destroy tem o input `force_unlock_id` (só ele solta um lock) e os RUNBOOKs documentam a recuperação de um apply interrompido. Check `destroy-flow` com as CLIs simuladas.
 
 ### R3.15 OIDC e Workload Identity Federation presos a IDs imutáveis e à `main`
 
-- Status: `pendente`
+- Status: `feito`
 - Repos: tx01v2, dx01v2, tx02v2, dx02v2, tx03v2, dx03v2
 - Origem: auditoria de segurança para forks (2026-10-14)
 - Dependências: nenhuma
@@ -573,10 +574,11 @@ das duas rodadas que faltam.
     (hoje só um repositório público recebe a proteção).
 - Aceite:
   - `terraform test` prova os sujeitos e as condições; o `FORK.md` explica de onde vêm os IDs.
+- Evidência: [tx01v2#14](https://github.com/maringelix/tx01v2/pull/14), [dx01v2#14](https://github.com/maringelix/dx01v2/pull/14), [tx02v2#12](https://github.com/maringelix/tx02v2/pull/12), [dx02v2#10](https://github.com/maringelix/dx02v2/pull/10), [tx03v2#11](https://github.com/maringelix/tx03v2/pull/11), [dx03v2#12](https://github.com/maringelix/dx03v2/pull/12). Os papéis, as identidades federadas e o provider do Workload Identity Federation aceitam o `sub` imutável (`repo:<dono>@<id>/<repo>@<id>:<contexto>`; no Google Cloud também a condição por `repository_owner_id` e `repository_id`), com os IDs numéricos como variáveis do bootstrap, provado com `terraform test`. O `repo-guardrails.sh` (o mesmo arquivo nos seis) falha, em vez de pular, quando não protege o environment `lab`, deixa só a `main` nele, confere o `sub` do repositório e recusa um argumento que não seja o repositório do clone. Um repositório criado antes de 2026-07-15 precisa aderir às claims imutáveis; o script avisa.
 
 ### R3.16 Papéis de CI mais estreitos fora de uma conta dedicada
 
-- Status: `pendente`
+- Status: `feito`
 - Repos: tx01v2, tx02v2, tx03v2
 - Origem: auditoria de segurança para forks (2026-10-14)
 - Dependências: R3.10
@@ -592,10 +594,12 @@ das duas rodadas que faltam.
 - Aceite:
   - `terraform test` prova as permissões; os docs dizem o que ainda exige conta, assinatura ou projeto
     dedicados ao lab.
+- Evidência: [tx01v2#14](https://github.com/maringelix/tx01v2/pull/14), [tx02v2#12](https://github.com/maringelix/tx02v2/pull/12), [tx03v2#11](https://github.com/maringelix/tx03v2/pull/11), [tx03v2#12](https://github.com/maringelix/tx03v2/pull/12). AWS: o plan lê os serviços do lab no lugar do `ReadOnlyAccess` da conta, e o provider OIDC que já existe é lido por data source e nunca mudado. Azure: a identidade do plan só tem `Reader` e a leitura do state, e o plan roda com `-refresh=false`. Google Cloud: o pre-flight que recusa um projeto com cluster, instância SQL ou segredo de outro trabalho (tx03v2#11) e o apply sem `roles/editor`, `secretmanager.admin` e `iam.serviceAccountUser` no projeto (tx03v2#12): o admin de cada serviço do lab, um papel de segredos sem `secretmanager.versions.access` e o `serviceAccountUser` só na conta dos nós, que o bootstrap passou a criar. `terraform test` prova as permissões.
+  - Mudado em 2026-10-16, no Google Cloud: os papéis do apply ficam do projeto inteiro, não presos aos recursos `tx03v2-lab-*`, porque um papel não pode ser preso ao nome de um recurso que ainda não existe (a condição por nome vale para um recurso que já existe, não para a chamada que o cria). A restrição ficou na conta dos nós e no pre-flight, e o projeto dedicado continua obrigatório (`docs/GUARDRAILS.md` do tx03v2, SEC-20). Os papéis foram escolhidos pela documentação dos serviços, não por um apply real: a variável `apply_extra_project_roles` do bootstrap acrescenta o papel que faltar quando um apply real falhar com `PERMISSION_DENIED`.
 
 ### R3.17 Logs públicos sem identificadores e smoke sem token em texto puro
 
-- Status: `pendente`
+- Status: `feito`
 - Repos: tx01v2, dx01v2, tx02v2, dx02v2, tx03v2, dx03v2
 - Origem: auditoria de segurança para forks (2026-10-14)
 - Dependências: nenhuma
@@ -607,10 +611,11 @@ das duas rodadas que faltam.
     nuvens ficou fora do escopo, DEC-11).
 - Aceite:
   - O `policy-workflows` prova as máscaras; o plan de exemplo do CI sai sem esses valores.
+- Evidência: [tx01v2#14](https://github.com/maringelix/tx01v2/pull/14), [dx01v2#14](https://github.com/maringelix/dx01v2/pull/14), [tx02v2#12](https://github.com/maringelix/tx02v2/pull/12), [dx02v2#10](https://github.com/maringelix/dx02v2/pull/10), [tx03v2#11](https://github.com/maringelix/tx03v2/pull/11), [dx03v2#12](https://github.com/maringelix/dx03v2/pull/12). Os CIDRs (AWS e Azure), os object IDs (Azure) e os membros (Google Cloud) que nomeiam quem opera o lab são secrets mascarados elemento a elemento; o resumo do job e o artefato do plan trocam o que foi mascarado, e o `policy-workflows` exige as duas coisas. O smoke não manda o token de admin por HTTP puro para outra máquina (só por HTTPS ou para `127.0.0.1`), e os `deploy-*.sh` dos dx nem leem o token quando o ponto de entrada é HTTP.
 
 ### R3.18 Efeitos colaterais na máquina de quem faz fork
 
-- Status: `pendente`
+- Status: `feito`
 - Repos: tx01v2, dx01v2, tx02v2, dx02v2, tx03v2, dx03v2
 - Origem: auditoria de segurança para forks (2026-10-14)
 - Dependências: nenhuma
@@ -630,13 +635,14 @@ das duas rodadas que faltam.
 - Aceite:
   - Cada entregável com um teste ou um check do harness; os docs dizem o que continua exigindo uma
     máquina sem outro trabalho.
+- Evidência: [tx01v2#14](https://github.com/maringelix/tx01v2/pull/14), [dx01v2#14](https://github.com/maringelix/dx01v2/pull/14), [tx02v2#12](https://github.com/maringelix/tx02v2/pull/12), [dx02v2#10](https://github.com/maringelix/dx02v2/pull/10), [tx03v2#11](https://github.com/maringelix/tx03v2/pull/11), [dx03v2#12](https://github.com/maringelix/dx03v2/pull/12). Pre-flight do lab local (`scripts/local-lab.sh preflight`, que o `up` também faz) com o check `local-preflight` (`docker`, `kind` e `ip` simulados): daemons diferentes, rede ou rota sobreposta, porta do registry ocupada, rede de um lab anterior e lab de outro `LOCAL_STATE_DIR`. O `e2e-platform` dos dx tem o diretório de estado e o kubeconfig do próprio lab, o `make clean` é relativo ao Makefile, a guarda do `rm -rf` do `k8s.sh` está no dx02v2 e no dx03v2 (`policy-app`) e o `repo-guardrails.sh` confere o argumento. Google Cloud: o budget sem descontar créditos (`EXCLUDE_ALL_CREDITS`) e com e-mail obrigatório, o `DOCKER_CONFIG` temporário no deploy do dx03v2 e a configuração do gcloud só para o lab no RUNBOOK. Os docs dizem o que continua exigindo uma máquina sem outro trabalho.
 
 ## R4. A plataforma completa nas nuvens (como código)
 
 Hoje a camada de plataforma da nuvem instala só o mínimo (controlador de entrada, ESO e Collector);
 os READMEs dos três tx dizem `planejado` para "os mesmos add-ons no EKS/AKS/GKE". Esta fase leva o
 que o lab local prova para a nuvem, com as mesmas versões e digests, sempre opcional e com custo
-escrito. É a segunda das duas rodadas que faltam; nada daqui é aplicado numa nuvem (DEC-11).
+escrito. É a rodada que falta; nada daqui é aplicado numa nuvem (DEC-11).
 
 ### R4.1 Perfis `core` e `full` da camada de plataforma na nuvem
 
