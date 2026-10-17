@@ -1,12 +1,14 @@
 # Roadmap do lab DevOps v2: escopo completo para aprender e operar
 
-Estado em 2026-10-16, após o pedido explícito do Bruno de completar a lista de tecnologias
-(DEC-13). **A construção do escopo completo ainda não terminou.** R0, R1, R3 e R4 entregaram a base
-do lab e encerraram o escopo reduzido anterior; R7 a R11 abaixo cobrem as lacunas agora aceitas.
+Estado em 2026-10-17, após o pedido explícito do Bruno de completar a lista de tecnologias
+(DEC-13). **Construção entregue em 22 PRs (R7–R11).** Os 21 PRs de implementação estão mesclados
+com CI verde; R11 consolida este aceite no hub. R0, R1, R3 e R4 preservam a base anterior.
+A v2 continua `não executado em nuvem (v2)`.
 
 Esta é a fonte única de escopo, sequência, aceite e evidências. A
-[auditoria do escopo](docs/AUDITORIA_ESCOPO_2026-10-16.md) confronta o pedido com o código atual dos
-sete repositórios. Nenhum recurso novo está entregue só por entrar neste plano.
+[auditoria do escopo](docs/AUDITORIA_ESCOPO_2026-10-16.md) preserva o retrato anterior à construção.
+O [aceite](docs/ACEITE_FINAL.md), o [currículo](docs/CURRICULO.md) e os PRs abaixo descrevem
+a implementação atual. Nenhum recurso está entregue só por entrar neste plano.
 
 ## 1. O que é "pronto" no escopo completo
 
@@ -49,22 +51,22 @@ O escopo implementa a lista nomeada neste arquivo. Ferramentas alternativas adic
 produtos, suporte comercial e um serviço hospedado permanentemente não surgem automaticamente de
 "etc."; entram como nova decisão de escopo.
 
-## 2. Onde estamos (auditoria de 2026-10-16)
+## 2. Onde estamos (2026-10-17)
 
-| Área | Prova atual | Construção pendente |
+| Área | Construção e prova | Limite de execução |
 |---|---|---|
-| EKS, AKS e GKE Autopilot | Terraform e testes mockados; kind no CI | autoscaling por demanda no EKS; cenários de capacidade/Spot nas três; execução gerenciada real ainda não ocorreu |
-| React + Node.js + PostgreSQL | mesma aplicação full-stack nos três DX, testes e deploy local | promover a imagem validada por digest; release com mudança/migração/rollback exercitados |
-| CI/CD e segurança | GitHub Actions, Trivy, gitleaks, lint/tipos/coverage, GitOps | SonarQube, SAST e quality gate de promoção, cadeia de artefatos e testes negativos dos gates |
-| Rede, TLS, WAF e IAM | redes privadas, LBs/WAFs e federação como código; TLS por CA local | DNS/ACME/TLS cloud completos, WAF exercitado localmente, revisão dos privilégios amplos de apply |
-| Observabilidade e OTel | Prometheus/Grafana/Loki/Tempo/Collector locais; exportadores cloud; integração Slack opcional | componentes cloud-full dos apps, retenção durável, sinais/alertas gerenciados e provas de recuperação |
-| Mesh, políticas e Chaos | Istio ambient, Gatekeeper e Chaos locais; charts cloud | tráfego L7 avançado, mesh suportada no Autopilot, scan de imagens privadas e exercícios cloud portáveis |
-| Dados, HA, BKP e DR | PostgreSQL TLS; backups gerenciados básicos; Velero restaura objetos K8s | HA nas três, restore de dados/PITR/PVs aplicáveis, segunda região, failover/failback e RPO/RTO medidos |
-| FinOps | budgets, estimativas e Spot EKS | OpenCost/showback, rightsizing/VPA, custo atribuído, carga e limites de escala |
-| Operação em nuvem/24x7 | nenhuma execução real da v2 | homologação com contas/orçamento próprios e evidência operacional; não demonstrável apenas com Docker |
+| EKS, AKS e GKE Autopilot | Terraform com perfis baratos/HA/DR; mocks; kind real no CI; capacidade/SLO/custo nos e2e | Control planes gerenciados e escala de nós ainda sem execução cloud |
+| React + Node.js + PostgreSQL | Mesma aplicação nos três DX; release por digest, conteúdo novo, migração e rollback exercitados | Deploy na conta real ainda sem execução |
+| CI/CD e segurança | SonarQube/gate real, CodeQL, Trivy, gitleaks, ZAP, cobertura, artefatos e fixtures negativas | Publicação cloud usa identidades/registry próprios do fork |
+| Rede, TLS, WAF e IAM | DNS/TLS, redes privadas, federação, boundaries e políticas como código; HTTPS no kind | Motor WAF, emissão pública e negação IAM reais exigem homologação |
+| Observabilidade e OTel | App full integrado, PVC/retenção, sinais correlacionados, alertas e exportadores nativos | Slack externo, ingestão gerenciada e operação 24/7 sem execução |
+| Mesh, policies e Chaos | Tráfego L7, mTLS/identidades, admissão, scan e hipóteses exercitados; caminho gerenciado no Autopilot | Superfície cloud depende do provedor; Autopilot não recebe daemon privilegiado incompatível |
+| Dados, HA, BKP e DR | HA/PITR nas três; backup físico/WAL, PVC/checksum, A/B independente, fencing e failback no CI | Failover/DR dos serviços gerenciados ainda sem execução |
+| FinOps | OpenCost/showback, preços regionais, budget/expiração, VPA Off e carga verificados no CI da R10 | Estimativa não é fatura; economia Spot não é comprovada localmente |
+| Operação cloud | Roteiro de homologação e limpeza por par | Contas/orçamento/domínio próprios; nenhuma execução real da v2 |
 
-Detalhes, caminhos de arquivos e limites estão na auditoria vinculada acima. Instalar charts não
-prova automaticamente que o app está monitorado, protegido pela malha ou recuperável.
+Detalhes, caminhos executáveis e limites estão na matriz de aceite. Instalar charts não prova
+automaticamente que o app está monitorado, protegido pela malha ou recuperável.
 
 ## 3. Como executar e acompanhar
 
@@ -134,17 +136,17 @@ Regras:
 | R4.6 | Gatekeeper, Trivy Operator e Chaos Mesh na nuvem | `feito` |
 | R4.7 | Dimensionamento e custo do perfil `full` | `feito` |
 | R4.8 | Do fork à própria nuvem, de ponta a ponta | `feito` |
-| R7.1 | SonarQube, SAST e gates de qualidade e segurança | `pendente` |
-| R7.2 | Promover o artefato aprovado, com migração e rollback | `pendente` |
-| R8.1 | Entrada segura, identidade e caminho de fork coerente | `pendente` |
-| R8.2 | Mesh e gerenciamento avançado de tráfego nos três Kubernetes | `pendente` |
-| R8.3 | Observabilidade do app, retenção e integrações gerenciadas | `pendente` |
-| R8.4 | Segurança de runtime e Chaos Engineering integrado | `pendente` |
-| R9.1 | HA dos bancos e recuperação verificável de dados | `pendente` |
-| R9.2 | DR entre regiões com failover e failback | `pendente` |
-| R10.1 | Autoscaling por demanda, carga e capacidade Spot | `pendente` |
-| R10.2 | FinOps com OpenCost, showback e rightsizing | `pendente` |
-| R11.1 | Matriz de escopo, aulas e evidências finais | `pendente` |
+| R7.1 | SonarQube, SAST e gates de qualidade e segurança | `feito` |
+| R7.2 | Promover o artefato aprovado, com migração e rollback | `feito` |
+| R8.1 | Entrada segura, identidade e caminho de fork coerente | `feito` |
+| R8.2 | Mesh e gerenciamento avançado de tráfego nos três Kubernetes | `feito` |
+| R8.3 | Observabilidade do app, retenção e integrações gerenciadas | `feito` |
+| R8.4 | Segurança de runtime e Chaos Engineering integrado | `feito` |
+| R9.1 | HA dos bancos e recuperação verificável de dados | `feito` |
+| R9.2 | DR entre regiões com failover e failback | `feito` |
+| R10.1 | Autoscaling por demanda, carga e capacidade Spot | `feito` |
+| R10.2 | FinOps com OpenCost, showback e rightsizing | `feito` |
+| R11.1 | Matriz de escopo, aulas e evidências finais | `feito` |
 | S.1 | Node.js 26 LTS nos apps | `pendente` |
 | S.2 | Kubernetes 1.37 na família e kubectl alinhado | `pendente` |
 | S.3 | Istio 1.31 para 1.33 | `pendente` |
@@ -157,22 +159,23 @@ Regras:
 
 ## 5. Plano de entregas e quantidade de PRs
 
-**Previsão: 22 PRs de construção após esta revisão do roadmap.** Esta revisão documental usa um
-PR próprio e não implementa os recursos planejados. A conta é `3 + 6 + 6 + 6 + 1`; não é uma
-garantia de prazo nem um teto que obrigue a esconder correções.
+**Entrega: 22 PRs de construção, na conta `3 + 6 + 6 + 6 + 1`.** Os 21 PRs dos pares
+estão mesclados e o PR R11 deste hub fecha a contagem. Após este fechamento, restam
+**0 PRs de construção da DEC-13**. A revisão que planejou o escopo e as correções adicionais
+registradas no histórico não são recontadas entre os 22.
 
-| Rodada | Entrega coesa | Repositórios | PRs previstos |
+| Rodada | Entrega coesa | Repositórios | PRs entregues |
 |---|---|---|---:|
 | R7 | DevSecOps e release: SonarQube/SAST/gates, artefato por digest, migração e rollback | dx01v2, dx02v2, dx03v2 | 3 |
 | R8 | Plataforma cloud completa integrada ao app: TLS/DNS/WAF/IAM, mesh, observabilidade durável, policies/scanning e Chaos | um TX e um DX por nuvem | 6 |
 | R9 | Continuidade de dados: HA, backup/PITR/restore, DR entre regiões, failover/failback | um TX e um DX por nuvem | 6 |
 | R10 | FinOps e capacidade: autoscaling/Spot, OpenCost/showback, VPA/rightsizing e carga | um TX e um DX por nuvem | 6 |
 | R11 | Aceite final, currículo e matriz de evidências do escopo completo | tx00v2 | 1 |
-| **Total restante de construção** | | | **22** |
+| **Total de construção** | | | **22** |
 
-R8 reúne os itens da plataforma num único contrato por par; R9 reúne proteção e recuperação dos
-dados no mesmo fluxo. São os blocos maiores e devem ser revistos antes de codificar. O acabamento
-didático faz parte de cada PR, não de outra rodada nos seis repositórios.
+R8 reuniu os itens da plataforma num contrato por par; R9 reuniu proteção e recuperação dos
+dados no mesmo fluxo. As aulas e os runbooks acompanham as implementações nos seis
+repositórios, consolidados no currículo e na matriz de aceite.
 
 Ordem por rodada: tx01v2 → dx01v2, tx02v2 → dx02v2, tx03v2 → dx03v2; pares independentes podem
 avançar em paralelo. R7 começa nos DX; R8 integra a nova cadeia de entrega. HA/DR e FinOps recebem
@@ -199,7 +202,7 @@ Uma rodada de três PRs, um por DX, incluindo os dois itens abaixo.
 
 ### R7.1 SonarQube, SAST e gates de qualidade e segurança
 
-- Status: `pendente`
+- Status: `feito`
 - Repos: dx01v2, dx02v2, dx03v2
 - Origem: pedido do Bruno em 2026-10-16, DEC-1 e DEC-13
 - Dependências: R0.4, R1.4
@@ -220,10 +223,11 @@ Uma rodada de três PRs, um por DX, incluindo os dois itens abaixo.
     qualidade, SAST, DAST e artefato sem assinatura/identidade correta bloqueiam a promoção.
   - Um fork sem serviços pagos consegue executar as aulas; indisponibilidade do scanner não vira
     aprovação. Os gates funcionam antes da primeira publicação, sem PR com secrets de produção.
+- Evidência: [dx01v2#17](https://github.com/maringelix/dx01v2/pull/17), [dx02v2#12](https://github.com/maringelix/dx02v2/pull/12), [dx03v2#14](https://github.com/maringelix/dx03v2/pull/14)
 
 ### R7.2 Promover o artefato aprovado, com migração e rollback
 
-- Status: `pendente`
+- Status: `feito`
 - Repos: dx01v2, dx02v2, dx03v2
 - Origem: auditoria do fluxo de deploy e pedido de CI/CD com zero downtime, DEC-13
 - Dependências: R7.1, R4.4
@@ -240,6 +244,7 @@ Uma rodada de três PRs, um por DX, incluindo os dois itens abaixo.
     definido no teste, versão nova atendendo e versão anterior restaurada após falha induzida.
   - Nenhum caminho de deploy contorna gates, troca o digest ou promove outro SHA. O mesmo fluxo de
     release é renderizado/validado para as três nuvens; execução real permanece separada.
+- Evidência: [dx01v2#17](https://github.com/maringelix/dx01v2/pull/17), [dx02v2#12](https://github.com/maringelix/dx02v2/pull/12), [dx03v2#14](https://github.com/maringelix/dx03v2/pull/14)
 
 ## R8. Plataforma cloud completa integrada à aplicação
 
@@ -248,7 +253,7 @@ provedor precisam de implementação suportada e exercício equivalente explíci
 
 ### R8.1 Entrada segura, identidade e caminho de fork coerente
 
-- Status: `pendente`
+- Status: `feito`
 - Repos: tx01v2, dx01v2, tx02v2, dx02v2, tx03v2, dx03v2
 - Origem: pedido de redes/WAF/SSL/DNS/least privilege e lacunas de fork, DEC-13
 - Dependências: R7.2, R3.16, R4.8
@@ -270,10 +275,11 @@ provedor precisam de implementação suportada e exercício equivalente explíci
   - Ensaio offline a partir de configuração de fork nova cobre core/full e falhas de pré-requisito;
     checks offline validam políticas e scripts recusam contextos/alvos fora do lab. A negação
     efetiva pelo IAM aguarda homologação cloud.
+- Evidência: [tx01v2#16](https://github.com/maringelix/tx01v2/pull/16), [dx01v2#18](https://github.com/maringelix/dx01v2/pull/18), [tx02v2#14](https://github.com/maringelix/tx02v2/pull/14), [dx02v2#13](https://github.com/maringelix/dx02v2/pull/13), [tx03v2#15](https://github.com/maringelix/tx03v2/pull/15), [dx03v2#15](https://github.com/maringelix/dx03v2/pull/15)
 
 ### R8.2 Mesh e gerenciamento avançado de tráfego nos três Kubernetes
 
-- Status: `pendente`
+- Status: `feito`
 - Repos: tx01v2, dx01v2, tx02v2, dx02v2, tx03v2, dx03v2
 - Origem: pedido de service mesh e tráfego avançado nas três nuvens, DEC-13
 - Dependências: R8.1, R4.3
@@ -292,10 +298,11 @@ provedor precisam de implementação suportada e exercício equivalente explíci
     não autorizada e observa isolamento de falhas; não basta renderizar VirtualService/HTTPRoute.
   - Manifests e testes de contrato cobrem os três destinos; a prova local declara o que não
     demonstra sobre o serviço gerenciado e o runbook inclui diagnóstico/teardown da malha.
+- Evidência: [tx01v2#16](https://github.com/maringelix/tx01v2/pull/16), [dx01v2#18](https://github.com/maringelix/dx01v2/pull/18), [tx02v2#14](https://github.com/maringelix/tx02v2/pull/14), [dx02v2#13](https://github.com/maringelix/dx02v2/pull/13), [tx03v2#15](https://github.com/maringelix/tx03v2/pull/15), [dx03v2#15](https://github.com/maringelix/dx03v2/pull/15)
 
 ### R8.3 Observabilidade do app, retenção e integrações gerenciadas
 
-- Status: `pendente`
+- Status: `feito`
 - Repos: tx01v2, dx01v2, tx02v2, dx02v2, tx03v2, dx03v2
 - Origem: pedido de observabilidade completa, OpenTelemetry, Cloud Monitoring e Slack, DEC-13
 - Dependências: R8.1, R1.6, R4.2
@@ -314,10 +321,11 @@ provedor precisam de implementação suportada e exercício equivalente explíci
     reiniciar componentes preserva os dados esperados no horizonte de retenção declarado.
   - Policies/IAM/exportadores nativos são verificados offline; entrega ao Slack externo,
     ingestão real no provedor e disponibilidade 24/7 só recebem status após execução real.
+- Evidência: [tx01v2#16](https://github.com/maringelix/tx01v2/pull/16), [dx01v2#18](https://github.com/maringelix/dx01v2/pull/18), [tx02v2#14](https://github.com/maringelix/tx02v2/pull/14), [dx02v2#13](https://github.com/maringelix/dx02v2/pull/13), [tx03v2#15](https://github.com/maringelix/tx03v2/pull/15), [dx03v2#15](https://github.com/maringelix/dx03v2/pull/15)
 
 ### R8.4 Segurança de runtime e Chaos Engineering integrado
 
-- Status: `pendente`
+- Status: `feito`
 - Repos: tx01v2, dx01v2, tx02v2, dx02v2, tx03v2, dx03v2
 - Origem: pedido de OPA, scan contínuo e Chaos nas três nuvens, DEC-13
 - Dependências: R8.1, R8.2, R8.3, R4.6
@@ -339,6 +347,7 @@ provedor precisam de implementação suportada e exercício equivalente explíci
     alvo fora do lab são recusados. A política de admissão gerenciada é validada offline.
   - Testes não silenciam scanner sem acesso. Manifests/IAM dos três destinos e limites dos
     experimentos passam nos checks offline; a execução cloud continua não homologada.
+- Evidência: [tx01v2#16](https://github.com/maringelix/tx01v2/pull/16), [dx01v2#18](https://github.com/maringelix/dx01v2/pull/18), [tx02v2#14](https://github.com/maringelix/tx02v2/pull/14), [dx02v2#13](https://github.com/maringelix/dx02v2/pull/13), [tx03v2#15](https://github.com/maringelix/tx03v2/pull/15), [dx03v2#15](https://github.com/maringelix/dx03v2/pull/15)
 
 ## R9. Alta disponibilidade, backup e Disaster Recovery
 
@@ -347,7 +356,7 @@ separadas. A segunda região não é substituída por outro namespace no mesmo c
 
 ### R9.1 HA dos bancos e recuperação verificável de dados
 
-- Status: `pendente`
+- Status: `feito`
 - Repos: tx01v2, dx01v2, tx02v2, dx02v2, tx03v2, dx03v2
 - Origem: pedido de PostgreSQL em HA, backups e continuidade de dados, DEC-13
 - Dependências: R8.3, R4.5, R7.2
@@ -366,10 +375,11 @@ separadas. A segunda região não é substituída por outro namespace no mesmo c
     falha com backup incompleto/corrompido. Restore de objetos sozinho não fecha este item.
   - `terraform test` prova HA/PITR/retenção/negações nos três; não atribuir a kind a prova de
     failover multi-AZ gerenciado. RPO/RTO locais são medidos com relógio e perda observada.
+- Evidência: [tx01v2#17](https://github.com/maringelix/tx01v2/pull/17), [dx01v2#19](https://github.com/maringelix/dx01v2/pull/19), [tx02v2#17](https://github.com/maringelix/tx02v2/pull/17), [dx02v2#14](https://github.com/maringelix/dx02v2/pull/14), [tx03v2#16](https://github.com/maringelix/tx03v2/pull/16), [dx03v2#16](https://github.com/maringelix/dx03v2/pull/16)
 
 ### R9.2 DR entre regiões com failover e failback
 
-- Status: `pendente`
+- Status: `feito`
 - Repos: tx01v2, dx01v2, tx02v2, dx02v2, tx03v2, dx03v2
 - Origem: pedido explícito de Disaster Recovery multi-region, DEC-13
 - Dependências: R9.1, R8.1, R8.2
@@ -387,6 +397,7 @@ separadas. A segunda região não é substituída por outro namespace no mesmo c
     confere registros e recusa promover quando não pode garantir um único escritor.
   - Renders/testes IaC comprovam duas regiões e dependências independentes nas três nuvens;
     failover real, latência/egress e RPO/RTO do serviço gerenciado aguardam homologação cloud.
+- Evidência: [tx01v2#17](https://github.com/maringelix/tx01v2/pull/17), [dx01v2#19](https://github.com/maringelix/dx01v2/pull/19), [tx02v2#17](https://github.com/maringelix/tx02v2/pull/17), [dx02v2#14](https://github.com/maringelix/dx02v2/pull/14), [tx03v2#16](https://github.com/maringelix/tx03v2/pull/16), [dx03v2#16](https://github.com/maringelix/dx03v2/pull/16)
 
 ## R10. FinOps, capacidade e escala
 
@@ -394,7 +405,7 @@ Uma rodada de seis PRs, um por TX/DX, com os dois itens abaixo.
 
 ### R10.1 Autoscaling por demanda, carga e capacidade Spot
 
-- Status: `pendente`
+- Status: `feito`
 - Repos: tx01v2, dx01v2, tx02v2, dx02v2, tx03v2, dx03v2
 - Origem: pedido de EKS autoscaling, Autopilot/Spot e otimização, DEC-13
 - Dependências: R8.3, R8.4
@@ -412,10 +423,11 @@ Uma rodada de seis PRs, um por TX/DX, com os dois itens abaixo.
     critérios de sucesso/falha. Testes IaC/IAM verificam controllers e perfis de cada nuvem.
   - Aumento/redução real de nós gerenciados e economia de Spot só recebem evidência após cloud;
     não inferir autoscaling EKS a partir de `scaling_config` estático.
+- Evidência: [tx01v2#18](https://github.com/maringelix/tx01v2/pull/18), [dx01v2#20](https://github.com/maringelix/dx01v2/pull/20), [tx02v2#18](https://github.com/maringelix/tx02v2/pull/18), [dx02v2#15](https://github.com/maringelix/dx02v2/pull/15), [tx03v2#17](https://github.com/maringelix/tx03v2/pull/17), [dx03v2#17](https://github.com/maringelix/dx03v2/pull/17)
 
 ### R10.2 FinOps com OpenCost, showback e rightsizing
 
-- Status: `pendente`
+- Status: `feito`
 - Repos: tx01v2, dx01v2, tx02v2, dx02v2, tx03v2, dx03v2
 - Origem: pedido de FinOps e otimização avançada, DEC-13
 - Dependências: R10.1
@@ -433,12 +445,13 @@ Uma rodada de seis PRs, um por TX/DX, com os dois itens abaixo.
     caro rejeitado pelo limite configurado; ensaio de rightsizing mantém o SLO sob carga.
   - Dashboards distinguem estimativa de fatura e cobrem custos fora dos pods. Testes de cleanup
     recusam recursos alheios; não tratar OpenCost ou alerta de budget como limite financeiro real.
+- Evidência: [tx01v2#18](https://github.com/maringelix/tx01v2/pull/18), [dx01v2#20](https://github.com/maringelix/dx01v2/pull/20), [tx02v2#18](https://github.com/maringelix/tx02v2/pull/18), [dx02v2#15](https://github.com/maringelix/dx02v2/pull/15), [tx03v2#17](https://github.com/maringelix/tx03v2/pull/17), [dx03v2#17](https://github.com/maringelix/dx03v2/pull/17)
 
 ## R11. Aceite do lab completo e currículo de fork
 
 ### R11.1 Matriz de escopo, aulas e evidências finais
 
-- Status: `pendente`
+- Status: `feito`
 - Repos: tx00v2
 - Origem: pedido de lab completo para quem fizer fork, DEC-13
 - Dependências: R7.1, R7.2, R8.1, R8.2, R8.3, R8.4, R9.1, R9.2, R10.1, R10.2
@@ -456,6 +469,7 @@ Uma rodada de seis PRs, um por TX/DX, com os dois itens abaixo.
   - Ensaio de fork com configuração limpa e CI completo passa sem secrets do mantenedor;
     nenhuma lacuna técnica fica escondida como documentação. Homologação real mantém estado
     separado, com contas/orçamento e domínio próprios, e correções futuras são registradas.
+- Evidência: [dx01v2#17](https://github.com/maringelix/dx01v2/pull/17), [dx02v2#12](https://github.com/maringelix/dx02v2/pull/12), [dx03v2#14](https://github.com/maringelix/dx03v2/pull/14), [tx01v2#16](https://github.com/maringelix/tx01v2/pull/16), [dx01v2#18](https://github.com/maringelix/dx01v2/pull/18), [tx02v2#14](https://github.com/maringelix/tx02v2/pull/14), [dx02v2#13](https://github.com/maringelix/dx02v2/pull/13), [tx03v2#15](https://github.com/maringelix/tx03v2/pull/15), [dx03v2#15](https://github.com/maringelix/dx03v2/pull/15), [tx01v2#17](https://github.com/maringelix/tx01v2/pull/17), [dx01v2#19](https://github.com/maringelix/dx01v2/pull/19), [tx02v2#17](https://github.com/maringelix/tx02v2/pull/17), [dx02v2#14](https://github.com/maringelix/dx02v2/pull/14), [tx03v2#16](https://github.com/maringelix/tx03v2/pull/16), [dx03v2#16](https://github.com/maringelix/dx03v2/pull/16), [tx01v2#18](https://github.com/maringelix/tx01v2/pull/18), [dx01v2#20](https://github.com/maringelix/dx01v2/pull/20), [tx02v2#18](https://github.com/maringelix/tx02v2/pull/18), [dx02v2#15](https://github.com/maringelix/dx02v2/pull/15), [tx03v2#17](https://github.com/maringelix/tx03v2/pull/17), [dx03v2#17](https://github.com/maringelix/dx03v2/pull/17); [currículo](docs/CURRICULO.md), [matriz de aceite](docs/ACEITE_FINAL.md) e registro conferido por delivery/family-evidence. O fechamento do hub é o PR que integra estes materiais.
 
 ## Marcos anteriores (R0 a R4)
 

@@ -214,3 +214,81 @@ RUNBOOK de desenvolvimento exportava o banco de desenvolvimento.
 - R7 a R11 passam a conter 11 itens pendentes, agrupados em 22 PRs de construção previstos
   após a revisão do roadmap: 3 + 6 + 6 + 6 + 1. Esta revisão não implementa os recursos;
   homologação cloud e possíveis correções futuras têm estado separado.
+
+## 2026-10-16 a 2026-10-17: R7, DevSecOps e releases
+
+- Três PRs de construção: [dx01v2#17](https://github.com/maringelix/dx01v2/pull/17),
+  [dx02v2#12](https://github.com/maringelix/dx02v2/pull/12) e
+  [dx03v2#14](https://github.com/maringelix/dx03v2/pull/14).
+- SonarQube Community Build descartável com quality gate real e fixture negativa,
+  CodeQL/SAST, ZAP, Trivy/gitleaks/cobertura; SBOM, proveniência e assinatura keyless.
+  A promoção verifica revisão, checksum e identidade, sem rebuild durante deploy.
+- Release local com revisões de conteúdo diferentes, migração expand/contract,
+  tráfego contínuo, falha induzida de readiness e rollback para conteúdo conhecido.
+  Nenhuma publicação ou implantação numa conta cloud é inferida desses testes.
+
+## 2026-10-17: R8, plataforma integrada nas três clouds
+
+- Seis PRs de construção: [tx01v2#16](https://github.com/maringelix/tx01v2/pull/16),
+  [dx01v2#18](https://github.com/maringelix/dx01v2/pull/18),
+  [tx02v2#14](https://github.com/maringelix/tx02v2/pull/14),
+  [dx02v2#13](https://github.com/maringelix/dx02v2/pull/13),
+  [tx03v2#15](https://github.com/maringelix/tx03v2/pull/15) e
+  [dx03v2#15](https://github.com/maringelix/dx03v2/pull/15).
+- Contratos de DNS/TLS/WAF, caminhos core/full, revisão de IAM e identidade,
+  observabilidade do app com retenção, políticas/admissão e scan privado.
+  Mesh L7 e Chaos têm exercícios portáveis e limites próprios de cada provedor;
+  GKE Autopilot usa mesh gerenciada compatível, sem instalar ambient privilegiado.
+- O CI mede canary/retries/outlier, nega identidade indevida, correlaciona sinais
+  e testa recuperação. O provedor gerenciado, WAF nativo e TLS público seguem
+  sem execução real. Ajustes Azure adicionais
+  [tx02v2#15](https://github.com/maringelix/tx02v2/pull/15) e
+  [tx02v2#16](https://github.com/maringelix/tx02v2/pull/16) preservaram os gates;
+  não são recontados entre os 22 PRs planejados.
+
+## 2026-10-17: R9, continuidade dos dados
+
+- Seis PRs de construção: [tx01v2#17](https://github.com/maringelix/tx01v2/pull/17),
+  [dx01v2#19](https://github.com/maringelix/dx01v2/pull/19),
+  [tx02v2#17](https://github.com/maringelix/tx02v2/pull/17),
+  [dx02v2#14](https://github.com/maringelix/dx02v2/pull/14),
+  [tx03v2#16](https://github.com/maringelix/tx03v2/pull/16) e
+  [dx03v2#16](https://github.com/maringelix/dx03v2/pull/16).
+- HA/PITR/DR opt-in como IaC, runtime e contratos regionais; credenciais atuais
+  copiadas por fluxo privado restrito ao destino. AWS usa réplica RDS/ECR e
+  backup secundário; Azure usa réplica/ACR, leitura de recuperação e escrow Kopia;
+  GCP usa réplica Cloud SQL, backup multirregional e caminho CSI.
+- Provas locais reais: backup físico e WAL até ponto conhecido, corrupção recusada,
+  bytes originais apagados/PVC novo com checksum, A/B em redes e volumes independentes,
+  fencing com primário vivo recusado, perda total, RPO/RTO medidos e failback
+  preservando a gravação de B. O CI não executa o failover dos serviços gerenciados.
+
+## 2026-10-17: R10, capacidade e FinOps
+
+- Seis PRs de construção: [tx01v2#18](https://github.com/maringelix/tx01v2/pull/18), [dx01v2#20](https://github.com/maringelix/dx01v2/pull/20), [tx02v2#18](https://github.com/maringelix/tx02v2/pull/18), [dx02v2#15](https://github.com/maringelix/dx02v2/pull/15), [tx03v2#17](https://github.com/maringelix/tx03v2/pull/17), [dx03v2#17](https://github.com/maringelix/dx03v2/pull/17).
+- Cluster Autoscaler real no EKS com Pod Identity e tags de descoberta; autoscaler AKS
+  e opções Spot/taints/fallback nas três clouds. OpenCost interno, preços regionais
+  revisados, serviços externos, owner/ambiente, dashboards, VPA em recomendação e
+  gate de estimativa/orçamento/expiração antes de plan/apply. Destroy cloud segue manual.
+- Os três TX provaram HPA, PDB, drenagem e custo positivo medido no namespace; os
+  três DX provaram SLO pelo Gateway, HPA up/down, requests candidatos antes/depois,
+  quota recusando excesso e saturação/recuperação real do pool PostgreSQL.
+  Full usa três nós; small preserva um nó/7 GiB e passou separadamente.
+- O CI encontrou e corrigiu a ordem de instalação de dependências do teste de labels,
+  a leitura assíncrona de alocação e o caminho symlink do cliente montado em ConfigMap.
+  O teste de regressão recusa o guard antigo que encerrava sem executar carga.
+- Nada rodou numa conta cloud; requests menores e preços simulados não comprovam
+  economia de fatura nem escalabilidade/Spot dos serviços gerenciados.
+
+## 2026-10-17: R11, aceite e currículo do escopo completo
+
+- Os 21 PRs de implementação R7–R10 estão mesclados com seus checks aplicáveis verdes.
+  O fechamento deste hub completa os 22 PRs planejados pela DEC-13.
+- Currículo com 17 aulas, matriz requisito × cloud × implementação × teste × limite
+  × rodada/PR, roteiro de homologação futura, READMEs e roadmap reconciliados.
+- O registro ENTREGAS.json é conferido por fixtures e por commits mesclados na main.
+  Os checks da família incluem os arquivos/pins FinOps, clientes idênticos e CI
+  independente sem credenciais cloud do mantenedor. A segunda conta GitHub real
+  não foi usada; a prova de execução é em runners limpos do Actions.
+- Homologação cloud e sustentação continuam com estados próprios. Não há serviço
+  operado 24/7 nem infraestrutura v2 já aprovada numa conta real por este fechamento.

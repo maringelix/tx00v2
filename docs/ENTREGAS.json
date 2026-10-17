@@ -1,0 +1,112 @@
+{
+  "decision": "DEC-13",
+  "plannedPullRequests": 22,
+  "hubClosurePullRequests": 1,
+  "pullRequests": [
+    {
+      "round": "R7",
+      "repo": "dx01v2",
+      "number": 17
+    },
+    {
+      "round": "R7",
+      "repo": "dx02v2",
+      "number": 12
+    },
+    {
+      "round": "R7",
+      "repo": "dx03v2",
+      "number": 14
+    },
+    {
+      "round": "R8",
+      "repo": "tx01v2",
+      "number": 16
+    },
+    {
+      "round": "R8",
+      "repo": "dx01v2",
+      "number": 18
+    },
+    {
+      "round": "R8",
+      "repo": "tx02v2",
+      "number": 14
+    },
+    {
+      "round": "R8",
+      "repo": "dx02v2",
+      "number": 13
+    },
+    {
+      "round": "R8",
+      "repo": "tx03v2",
+      "number": 15
+    },
+    {
+      "round": "R8",
+      "repo": "dx03v2",
+      "number": 15
+    },
+    {
+      "round": "R9",
+      "repo": "tx01v2",
+      "number": 17
+    },
+    {
+      "round": "R9",
+      "repo": "dx01v2",
+      "number": 19
+    },
+    {
+      "round": "R9",
+      "repo": "tx02v2",
+      "number": 17
+    },
+    {
+      "round": "R9",
+      "repo": "dx02v2",
+      "number": 14
+    },
+    {
+      "round": "R9",
+      "repo": "tx03v2",
+      "number": 16
+    },
+    {
+      "round": "R9",
+      "repo": "dx03v2",
+      "number": 16
+    },
+    {
+      "round": "R10",
+      "repo": "tx01v2",
+      "number": 18
+    },
+    {
+      "round": "R10",
+      "repo": "dx01v2",
+      "number": 20
+    },
+    {
+      "round": "R10",
+      "repo": "tx02v2",
+      "number": 18
+    },
+    {
+      "round": "R10",
+      "repo": "dx02v2",
+      "number": 15
+    },
+    {
+      "round": "R10",
+      "repo": "tx03v2",
+      "number": 17
+    },
+    {
+      "round": "R10",
+      "repo": "dx03v2",
+      "number": 17
+    }
+  ]
+}

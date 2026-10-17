@@ -49,17 +49,19 @@ FAMILY_FILES_ALL=(
   .github/ISSUE_TEMPLATE/config.yml .github/ISSUE_TEMPLATE/bug_report.yml .github/ISSUE_TEMPLATE/cloud_run_report.yml
   .github/workflows/ci.yml .github/rulesets/main.json
   docs/SUSTENTACAO.md docs/GUARDRAILS.md docs/HARNESS.md docs/CONTRATO.md docs/RUNBOOK.md docs/ARQUITETURA.md
-  docs/PUBLICACAO.md docs/LAB_LOCAL.md
+  docs/PUBLICACAO.md docs/LAB_LOCAL.md docs/CONTINUIDADE.md docs/FINOPS.md
   tools/versions.env tools/checksums.txt
   scripts/install-tools.sh scripts/update-tool-checksums.sh scripts/harness.sh scripts/repo-guardrails.sh
 )
 FAMILY_FILES_TX=(
   docs/CUSTOS.md docs/LICOES_APRENDIDAS.md platform/versions.env platform/local/versions.env
+  platform/finops/versions.env platform/finops/values/opencost.yaml platform/finops/values/vpa.yaml
+  scripts/local/capacity-drill.sh scripts/lib/finops.sh terraform/envs/local/kind-config-ha.yaml
   platform/local/install.sh platform/local/check.sh scripts/local-lab.sh scripts/leftovers.sh scripts/leftovers-local.sh
 )
 FAMILY_FILES_DX=(
   docs/API.md .nvmrc package.json package-lock.json api/package.json web/package.json
-  scripts/deploy-local.sh scripts/e2e-platform.sh
+  scripts/deploy-local.sh scripts/e2e-platform.sh scripts/capacity-app.sh e2e/capacity.mjs scripts/tests/cost-labels.sh
 )
 # Byte-identical files: in the six lab repositories, in the six and the hub, and inside each role
 # (docs/GUARDRAILS.md, SUP-03). The hub has its own scripts/repo-guardrails.sh (no environment `lab`).
@@ -67,7 +69,7 @@ FAMILY_IDENTICAL_ALL=(scripts/repo-guardrails.sh)
 FAMILY_IDENTICAL_HUB=(LICENSE CLAUDE.md .github/CODEOWNERS)
 FAMILY_IDENTICAL_TX=(.editorconfig .gitattributes .pre-commit-config.yaml .github/rulesets/main.json scripts/install-tools.sh)
 FAMILY_IDENTICAL_DX=(.editorconfig .gitattributes .pre-commit-config.yaml .github/rulesets/main.json
-  scripts/update-tool-checksums.sh .nvmrc)
+  scripts/update-tool-checksums.sh .nvmrc e2e/capacity.mjs e2e/capacity.test.mjs)
 # Tool versions that may differ between the infrastructure and the application repositories, each
 # with its reason and the roadmap item that ends the exception.
 FAMILY_VERSION_EXCEPTIONS=(
@@ -75,7 +77,7 @@ FAMILY_VERSION_EXCEPTIONS=(
 )
 # Paths of the local lab of a tx repository: a dx repository that pins an older commit while one of
 # them changed is behind the platform it claims to test (check family-ref).
-FAMILY_LOCAL_LAB_PATHS=(platform/local terraform/envs/local scripts/local-lab.sh scripts/local scripts/leftovers-local.sh)
+FAMILY_LOCAL_LAB_PATHS=(platform/local platform/finops terraform/envs/local scripts/local-lab.sh scripts/local scripts/lib/finops.sh scripts/lib/local.sh scripts/leftovers-local.sh)
 
 # ---------------------------------------------------------------------------------------------
 # Check registry and helpers
@@ -676,6 +678,7 @@ check_family_versions() {
   for r in "${FAMILY_TX[@]}"; do
     env_lines "$r" "${FD[$r]}/platform/versions.env"
     env_lines "$r" "${FD[$r]}/platform/local/versions.env"
+    env_lines "$r" "${FD[$r]}/platform/finops/versions.env"
   done | compare_keys "charts and versions of the tx platforms" "" || rc=1
   return "$rc"
 }
@@ -915,8 +918,32 @@ check_family_links() {
   return "$rc"
 }
 
-# Evidence: the PR links of the done items of ROADMAP.md and of docs/HISTORICO.md are merged, that
-# is, main of the repository has its squash commit "<title> (#n)".
+# Standalone workflows keep the fork runnable without the maintainer's cloud secrets.
+check_family_fork() {
+  local r file rc=0 job
+  family_dirs
+  for r in "${FAMILY_LAB[@]}"; do
+    file="${FD[$r]}/.github/workflows/ci.yml"
+    if grep -nE 'secrets[.]|aws-actions/configure-aws-credentials|azure/login|google-github-actions/auth' "$file"; then
+      echo "$r: standalone CI must not depend on maintainer secrets or authenticate to a cloud"
+      rc=1
+    fi
+    for job in static test e2e; do
+      grep -qE "^  $job:" "$file" || { echo "$r: missing standalone CI job $job"; rc=1; }
+    done
+    if [[ "$r" == dx* ]]; then
+      for job in images continuity e2e-platform e2e-platform-small; do
+        grep -qE "^  $job:" "$file" || { echo "$r: missing application proof $job"; rc=1; }
+      done
+    fi
+    grep -qF 'LOCAL_TOPOLOGY: ha' "$file" || { echo "$r: missing three-node CI topology"; rc=1; }
+    grep -qE 'LOCAL_FINOPS:.*1' "$file" || { echo "$r: missing FinOps runtime proof"; rc=1; }
+  done
+  ((rc == 0)) && echo 'six standalone CI flows need no maintainer/cloud secrets and retain full, small and capacity proofs'
+  return "$rc"
+}
+
+# Evidence: ledger/history/done-item PRs have their squash commits on main.
 check_family_evidence() {
   local rc=0 repo n d log checked=0
   [[ -f ROADMAP.md && -f docs/HISTORICO.md ]] || {
@@ -948,6 +975,7 @@ check_family_evidence() {
         done && /^- Evidência:/ { print }
         /^## / { done = 0 }' ROADMAP.md
       cat docs/HISTORICO.md
+      jq -r '.pullRequests[] | "https://github.com/maringelix/" + .repo + "/pull/" + (.number|tostring)' docs/ENTREGAS.json
     } | grep -oE 'https://github\.com/maringelix/[a-z0-9]+/pull/[0-9]+' |
       sed -E 's|https://github\.com/maringelix/([a-z0-9]+)/pull/([0-9]+)|\1 \2|' | sort -u
   )
@@ -962,12 +990,15 @@ register_checks() {
   register static policy-workflows check_policy_workflows
   register static docs-links check_docs_links
   register static roadmap check_roadmap
+  register static delivery 'bash scripts/check-delivery.sh'
+  register static delivery-fixtures 'bash scripts/test-delivery.sh'
   register static actionlint check_actionlint
   register static shellcheck check_shellcheck
   register static gitleaks check_gitleaks
   register family family-structure check_family_structure
   register family family-table check_family_table
   register family family-contract check_family_contract
+  register family family-fork check_family_fork
   register family family-ref check_family_ref
   register family family-versions check_family_versions
   register family family-digests check_family_digests

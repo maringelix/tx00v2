@@ -14,8 +14,8 @@ purpose, so the clouds can be compared fairly. Every repository is checked by a 
 needs no cloud account, and the whole platform of the v1 lab runs on a local kind cluster in CI.
 **Nothing of v2 has run in a cloud yet**: the cloud paths are code with tests.
 
-This repository holds no infrastructure and no app. It links the family, keeps the roadmap of what is
-still missing for the lab to be ready for forks ([ROADMAP.md](ROADMAP.md), pt-BR): anyone who forks it
+This repository holds no infrastructure and no app. It links the family, keeps the scope and delivery
+record ([ROADMAP.md](ROADMAP.md), pt-BR): anyone who forks it
 runs it locally on Docker and in their own clouds; cloud homologation requires a separate authorized run;
 the rules the seven repositories follow ([docs/GUARDRAILS.md](docs/GUARDRAILS.md)) and a harness
 that checks the six lab repositories against each other.
@@ -39,12 +39,14 @@ application repository pins the infrastructure commit its platform e2e uses
 
 ## Where to start
 
-1. Read the reference pair: [tx01v2](https://github.com/maringelix/tx01v2) and
+1. Follow the [curriculum](docs/CURRICULO.md) and read the reference pair:
+   [tx01v2](https://github.com/maringelix/tx01v2) and
    [dx01v2](https://github.com/maringelix/dx01v2). The Azure and Google Cloud pairs are ports of it.
 2. Run the local lab, no account needed: `make e2e` in tx01v2 (Docker with 8 GB for the `full`
    profile, 7 GB with `LOCAL_SIZE=small`; [docs/LAB_LOCAL.md](https://github.com/maringelix/tx01v2/blob/main/docs/LAB_LOCAL.md)),
    then `make e2e-platform` in dx01v2.
-3. Pick an item of [ROADMAP.md](ROADMAP.md); the execution rules are in its section 3.
+3. Use the [acceptance matrix](docs/ACEITE_FINAL.md) to find each technology, its test and its limits.
+   Capacity/FinOps exercises use three-node kind with 12 GiB recommended; keep small on one node.
 4. Forking the lab for a team: [FORK.md](FORK.md).
 
 ## Status of the hub
@@ -56,17 +58,17 @@ application repository pins the infrastructure commit its platform e2e uses
 | Repository settings as code (ruleset requiring `static`, secret scanning, private vulnerability reporting) | `verified locally` | `scripts/repo-guardrails.sh` applied and read back with `gh api` on 2026-10-14 |
 | Cloud | not applicable | the hub talks to no cloud and has no cloud credentials |
 
-## The family at a glance (2026-10-16)
+## The family at a glance (2026-10-17)
 
 | Capability | Status | Where |
 |---|---|---|
 | Harness, CI (`static`, `test`, `e2e`; apps also `images`, `e2e-platform`), rulesets, Dependabot, weekly CI | `verified in CI` | the six repositories |
-| The v1 platform on a local kind lab: Istio ambient, Gateway API + cert-manager, External Secrets, Prometheus, Alertmanager, Grafana, Loki, Argo CD, Gatekeeper, Trivy Operator, Velero, Chaos Mesh (34 probes per infrastructure repository) | `verified in CI` | job `e2e` of tx01v2, tx02v2, tx03v2 |
-| The app on that platform through GitOps (18 probes per application repository) | `verified in CI` | job `e2e-platform` of dx01v2, dx02v2, dx03v2 |
-| Round 1: OpenTelemetry traces (Collector + Tempo), Slack sink alerts, chaos with hypotheses, local rollout probe (same content) | `verified in CI` | ROADMAP.md, items R1.1 to R1.6; release changes/rollback planned in R7.2 |
+| Local kind platform: Istio ambient, Gateway API + cert-manager, External Secrets, Prometheus, Alertmanager, Grafana, Loki/Tempo/OTel, Argo CD, Gatekeeper, Trivy Operator, Velero, Chaos Mesh | `verified in CI` | job `e2e` of tx01v2, tx02v2, tx03v2 |
+| The app through GitOps, distinct release content, migration and rollback; SonarQube, SAST, DAST and artifact gates | `verified in CI` | R7/R8 and app jobs `test`, `images`, `e2e-platform` |
+| HA/backup/PITR, restored volume bytes, independent A/B recovery, fencing, measured local RPO/RTO and failback | `verified in CI` | R9; TX `e2e` and DX `continuity` |
 | Cloud paths of the three clouds (bootstrap, apply, platform layer, deploy, destroy + leftovers) | `not run in the cloud (v2)` | `docs/RUNBOOK.md` of each repository |
-| Cloud core/full chart baseline and GitOps deploy paths | `verified in CI`; `not run in the cloud (v2)` | completed R4 baseline; full app integration remains pending |
-| Complete scope: SonarQube/SAST, artifact promotion, TLS/DNS, advanced mesh, durable observability, HA/restore/multi-region DR, Chaos and FinOps/scaling | `planned`: 22 construction PRs in R7–R11 | [ROADMAP.md](ROADMAP.md), [scope audit](docs/AUDITORIA_ESCOPO_2026-10-16.md) |
+| Cloud core/full platform and app integration: TLS/DNS/WAF, identity, advanced mesh and durable observability | `verified in CI`; `not run in the cloud (v2)` | R8; provider configuration/mocks and portable kind exercises |
+| Complete scope: R7–R11, including FinOps/scaling and final curriculum | construction complete: 22 PRs | [ROADMAP.md](ROADMAP.md), [acceptance matrix](docs/ACEITE_FINAL.md), [PR ledger](docs/ENTREGAS.json) |
 
 ## Harness
 
@@ -97,7 +99,10 @@ The docs of this repository are in Brazilian Portuguese.
 
 | Doc | Content |
 |---|---|
-| [ROADMAP.md](ROADMAP.md) | everything still missing, item by item: status, repositories, origin, deliverables, acceptance, cost, dependencies; the v1 → v2 map and the decisions |
+| [ROADMAP.md](ROADMAP.md) | scope and delivery evidence: status, repositories, deliverables, acceptance, cost, dependencies and decisions |
+| [docs/CURRICULO.md](docs/CURRICULO.md) | 17 lessons with prerequisites, commands, deliberate failures, acceptance, recovery, cost and cleanup |
+| [docs/ACEITE_FINAL.md](docs/ACEITE_FINAL.md) | requirement × cloud × implementation × test × limit; future cloud homologation checklist |
+| [docs/ENTREGAS.json](docs/ENTREGAS.json) | machine-checked ledger of the 21 implementation PRs plus this hub closure |
 | [docs/GUARDRAILS.md](docs/GUARDRAILS.md) | the rules of the family and where each one is enforced |
 | [docs/HARNESS.md](docs/HARNESS.md) | the checks of the hub, what they prove and what they do not |
 | [docs/HISTORICO.md](docs/HISTORICO.md) | what was done, round by round, with the pull requests |

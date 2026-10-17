@@ -8,6 +8,11 @@ All notable changes to this project are documented here. The format follows
 
 ### Changed
 
+- Closed DEC-13 construction in 22 PRs (21 merged implementation PRs plus this hub
+  closure): DevSecOps/releases, integrated cloud platform, data/volume recovery and
+  independent A/B failover/failback, capacity and FinOps. All implementation PRs have
+  green applicable CI. Cloud homologation remains unexecuted; the original scope audit
+  is preserved as a dated historical snapshot.
 - Reopened the full three-cloud learning scope after the 2026-10-16 audit (DEC-13). R7–R11 plan
   22 construction PRs for DevSecOps/releases, integrated cloud platform, HA/backup/DR and
   FinOps/scaling, plus final acceptance. Earlier milestones retain their evidence; installing
@@ -16,6 +21,10 @@ All notable changes to this project are documented here. The format follows
 
 ### Added
 
+- A 17-lesson curriculum, requirement-by-cloud acceptance matrix and machine-readable
+  delivery ledger. New harness fixtures reject incomplete/wrong-pair ledgers;
+  family checks retain secret-free standalone CI, capacity proofs, current FinOps
+  files and byte-identical app load clients.
 - The family hub of the v2 lab (2026-10-14): README in English and Brazilian Portuguese with the
   family table and the references of the lab.
 - `ROADMAP.md` (pt-BR): what a complete lab in the three clouds means, where the family stands, the
