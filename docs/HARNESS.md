@@ -94,3 +94,11 @@ avisa e diz o comando (`git update-index --chmod=+x <arquivo>`).
 | `family-versions` ou `family-actions` vermelhos no começo do mês | o Dependabot mesclou num repositório e não nos outros | mescle o mesmo bump nos outros |
 | `not executable in the git index` | commit feito no Windows | `git update-index --chmod=+x <arquivo>` |
 | `tool-versions` vermelho | ferramenta de outra versão no PATH | `make tools` (o harness põe `.tools/bin` na frente do PATH) |
+
+## Aceite R7–R11
+
+O check static delivery valida a contagem de 21 PRs de implementação mais um fechamento do hub,
+as rodadas e os seis repositórios em docs/ENTREGAS.json. family-evidence verifica os merges
+na main; family-ref inclui FinOps e seus helpers; family-versions inclui os novos pins.
+family-fork recusa secrets/auth cloud no CI independente e preserva as provas full/small/HA.
+O currículo e a matriz estão em [CURRICULO.md](CURRICULO.md) e [ACEITE_FINAL.md](ACEITE_FINAL.md).

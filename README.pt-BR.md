@@ -14,8 +14,8 @@ propósito, para a comparação entre as nuvens ser justa. Todo repositório é 
 local que não precisa de conta de nuvem, e a plataforma inteira do lab v1 roda num cluster kind local
 no CI. **Nada da v2 rodou numa nuvem ainda**: os caminhos de nuvem são código com testes.
 
-Este repositório não tem infraestrutura nem app. Ele liga a família, guarda o roadmap do que ainda
-falta para o lab ficar pronto para fork ([ROADMAP.md](ROADMAP.md)): quem fizer fork roda tudo no Docker
+Este repositório não tem infraestrutura nem app. Ele liga a família, guarda o escopo e o registro de
+entregas ([ROADMAP.md](ROADMAP.md)): quem fizer fork roda tudo no Docker
 local e nas próprias nuvens; a homologação cloud exige uma rodada autorizada separada. Guarda as regras que os
 sete repositórios seguem ([docs/GUARDRAILS.md](docs/GUARDRAILS.md)) e um harness que confere os seis
 repositórios do lab uns contra os outros.
@@ -39,13 +39,15 @@ repositório de aplicação fixa o commit da infraestrutura que o e2e da platafo
 
 ## Por onde começar
 
-1. Leia o par de referência: [tx01v2](https://github.com/maringelix/tx01v2) e
+1. Siga o [currículo](docs/CURRICULO.md) e leia o par de referência:
+   [tx01v2](https://github.com/maringelix/tx01v2) e
    [dx01v2](https://github.com/maringelix/dx01v2). Os pares da Azure e do Google Cloud são portes dele.
 2. Rode o lab local, sem conta: `make e2e` no tx01v2 (Docker com 8 GB para o perfil `full`, 7 GB
    com `LOCAL_SIZE=small`;
    [docs/LAB_LOCAL.md](https://github.com/maringelix/tx01v2/blob/main/docs/LAB_LOCAL.md)), depois
    `make e2e-platform` no dx01v2.
-3. Escolha um item do [ROADMAP.md](ROADMAP.md); as regras de execução estão na seção 3 dele.
+3. Use a [matriz de aceite](docs/ACEITE_FINAL.md) para localizar cada tecnologia, teste e limite.
+   Capacidade/FinOps usa kind com três nós e recomenda 12 GiB; small continua com um nó.
 4. Fork do lab para um time: [FORK.md](FORK.md).
 
 ## Status do hub
@@ -57,17 +59,17 @@ repositório de aplicação fixa o commit da infraestrutura que o e2e da platafo
 | Configurações do repositório como código (ruleset exigindo o `static`, secret scanning, reporte privado de vulnerabilidades) | `verificado localmente` | `scripts/repo-guardrails.sh` aplicado e lido de volta com `gh api` em 2026-10-14 |
 | Nuvem | não se aplica | o hub não fala com nuvem e não tem credenciais de nuvem |
 
-## A família em um quadro (2026-10-16)
+## A família em um quadro (2026-10-17)
 
 | Capacidade | Status | Onde |
 |---|---|---|
 | Harness, CI (`static`, `test`, `e2e`; nos apps também `images` e `e2e-platform`), rulesets, Dependabot, CI semanal | `verificado no CI` | os seis repositórios |
-| A plataforma do v1 num lab kind local: Istio ambient, Gateway API + cert-manager, External Secrets, Prometheus, Alertmanager, Grafana, Loki, Argo CD, Gatekeeper, Trivy Operator, Velero, Chaos Mesh (34 sondas por repositório de infraestrutura) | `verificado no CI` | job `e2e` do tx01v2, do tx02v2 e do tx03v2 |
-| O app nessa plataforma por GitOps (18 sondas por repositório de aplicação) | `verificado no CI` | job `e2e-platform` do dx01v2, do dx02v2 e do dx03v2 |
-| Rodada 1: traces com OpenTelemetry (Collector + Tempo), alertas no sink Slack, chaos com hipóteses, sonda de rollout local (mesmo conteúdo) | `verificado no CI` | ROADMAP.md, itens R1.1 a R1.6; release com alteração/rollback planejada em R7.2 |
+| Plataforma kind local: Istio ambient, Gateway API + cert-manager, External Secrets, Prometheus, Alertmanager, Grafana, Loki/Tempo/OTel, Argo CD, Gatekeeper, Trivy Operator, Velero, Chaos Mesh | `verificado no CI` | job `e2e` do tx01v2, do tx02v2 e do tx03v2 |
+| App por GitOps, release com conteúdo diferente, migração e rollback; SonarQube, SAST, DAST e gates de artefatos | `verificado no CI` | R7/R8 e jobs `test`, `images`, `e2e-platform` dos apps |
+| HA/backup/PITR, bytes de volume restaurados, recuperação A/B independente, fencing, RPO/RTO locais medidos e failback | `verificado no CI` | R9; `e2e` dos TX e `continuity` dos DX |
 | Caminhos de nuvem das três nuvens (bootstrap, apply, camada de plataforma, deploy, destroy + sobras) | `não executado em nuvem (v2)` | `docs/RUNBOOK.md` de cada repositório |
-| Base de charts cloud core/full e caminhos de deploy GitOps | `verificado no CI`; `não executado em nuvem (v2)` | base R4 concluída; integração completa do app pendente |
-| Escopo completo: SonarQube/SAST, promoção de artefatos, TLS/DNS, mesh avançada, observabilidade durável, HA/restore/DR multi-region, Chaos e FinOps/escala | `planejado`: 22 PRs de construção em R7–R11 | [ROADMAP.md](ROADMAP.md), [auditoria de escopo](docs/AUDITORIA_ESCOPO_2026-10-16.md) |
+| Plataforma cloud core/full integrada ao app: TLS/DNS/WAF, identidade, mesh avançada e observabilidade durável | `verificado no CI`; `não executado em nuvem (v2)` | R8; configuração/mocks dos provedores e exercícios portáveis no kind |
+| Escopo completo: R7–R11, incluindo FinOps/escala e currículo final | construção concluída: 22 PRs | [ROADMAP.md](ROADMAP.md), [matriz de aceite](docs/ACEITE_FINAL.md), [registro de PRs](docs/ENTREGAS.json) |
 
 ## Harness
 
@@ -96,7 +98,10 @@ No Windows sem WSL, rode num container descartável (veja [docs/HARNESS.md](docs
 
 | Doc | Conteúdo |
 |---|---|
-| [ROADMAP.md](ROADMAP.md) | tudo o que falta, item por item: status, repositórios, origem, entregáveis, aceite, custo, dependências; o mapa v1 → v2 e as decisões |
+| [ROADMAP.md](ROADMAP.md) | escopo e evidências de entrega: status, repositórios, entregáveis, aceite, custo, dependências e decisões |
+| [docs/CURRICULO.md](docs/CURRICULO.md) | 17 aulas com pré-requisitos, comandos, falhas induzidas, aceite, recuperação, custo e limpeza |
+| [docs/ACEITE_FINAL.md](docs/ACEITE_FINAL.md) | requisito × nuvem × implementação × teste × limite; checklist de homologação futura |
+| [docs/ENTREGAS.json](docs/ENTREGAS.json) | registro conferido pelo harness: 21 PRs de implementação e o fechamento deste hub |
 | [docs/GUARDRAILS.md](docs/GUARDRAILS.md) | as regras da família e onde cada uma é aplicada |
 | [docs/HARNESS.md](docs/HARNESS.md) | os checks do hub, o que provam e o que não provam |
 | [docs/HISTORICO.md](docs/HISTORICO.md) | o que foi feito, rodada por rodada, com os pull requests |

@@ -49,5 +49,13 @@ and `family-links` checks look for them as they are.
 | tx03v2 | [tx03v2/FORK.md](https://github.com/maringelix/tx03v2/blob/main/FORK.md) |
 | dx03v2 | [dx03v2/FORK.md](https://github.com/maringelix/dx03v2/blob/main/FORK.md) |
 
-These steps were never rehearsed with a second GitHub account: that rehearsal is out of the scope of
-the roadmap (DEC-11 in [ROADMAP.md](ROADMAP.md)).
+The standalone CI runs on clean Actions runners without maintainer/cloud secrets; family-fork
+checks that this property and the required runtime jobs remain present. A second real GitHub account
+was not used. See the [acceptance matrix](docs/ACEITE_FINAL.md) and [curriculum](docs/CURRICULO.md).
+
+## Capacity, prices and expiration
+
+For R10, use LOCAL_TOPOLOGY=ha LOCAL_FINOPS=1 on the default size (12 GiB recommended).
+Keep small on one node/7 GiB. Cloud plans require current regional price input, budget, duration
+and expiration from each TX docs/FINOPS.md. Cloud workflows remain manual and protected by lab;
+an expired estimate never authorizes automatic destruction of an existing account.

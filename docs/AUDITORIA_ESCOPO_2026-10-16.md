@@ -1,5 +1,9 @@
 # Auditoria do escopo completo — 2026-10-16
 
+> Retrato histórico anterior às entregas R7–R11. Consulte o
+> [roadmap](../ROADMAP.md) e a [matriz de aceite](ACEITE_FINAL.md) para o estado
+> atual e as evidências. As lacunas abaixo descrevem o código auditado naquela data.
+
 ## Conclusão e critério
 
 **A construção do escopo completo pedido pelo Bruno ainda não terminou.** R0–R4 entregaram uma
