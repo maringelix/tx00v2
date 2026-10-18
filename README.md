@@ -58,7 +58,7 @@ application repository pins the infrastructure commit its platform e2e uses
 | Repository settings as code (ruleset requiring `static`, secret scanning, private vulnerability reporting) | `verified locally` | `scripts/repo-guardrails.sh` applied and read back with `gh api` on 2026-10-14 |
 | Cloud | not applicable | the hub talks to no cloud and has no cloud credentials |
 
-## The family at a glance (2026-10-17)
+## The family at a glance (2026-10-18)
 
 | Capability | Status | Where |
 |---|---|---|

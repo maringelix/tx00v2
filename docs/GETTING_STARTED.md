@@ -67,7 +67,7 @@ gh repo clone "$OWNER/$TX"
 gh repo clone "$OWNER/$DX"
 (cd "$TX" && bash scripts/repo-guardrails.sh "$OWNER/$TX")
 (cd "$DX" && bash scripts/repo-guardrails.sh "$OWNER/$DX")
-gh variable set TX0NV2_REPO --repo "$OWNER/$DX" --body "$OWNER/$TX"
+gh variable set "${TX^^}_REPO" --repo "$OWNER/$DX" --body "https://github.com/$OWNER/$TX.git"
 ```
 
 Guardrails needs permission to administer your repositories. It sets required CI, secret
@@ -103,8 +103,8 @@ services and pinned dependencies. No maintainer cloud credentials are needed. So
 disposable server/token; no paid Sonar account or persistent Sonar secret is required.
 
 Follow A01–A16 in the [curriculum](CURRICULUM.md). Each LOCAL_LAB covers installation, memory,
-probes, diagnostics and teardown. Heavy full/HA/Sonar/DR/load runs can stay in Actions; in Bruno's
-development workspace they must stay there.
+probes, diagnostics and teardown. Heavy full/HA/Sonar/DR/load runs can stay in Actions when your
+local machine does not have enough resources.
 
 On a sufficiently provisioned Linux/WSL host:
 
@@ -184,6 +184,7 @@ From your TX clone, read the provider bootstrap/runbook, then:
 
 ```bash
 cd "$TX"
+export PATH="$PWD/.tools/bin:$PATH"
 cp terraform/bootstrap/terraform.tfvars.example terraform/bootstrap/terraform.tfvars
 # Edit ignored tfvars with your values; review account, region and costs.
 terraform -chdir=terraform/bootstrap init -lockfile=readonly
@@ -215,6 +216,11 @@ Use **Settings → Secrets and variables → Actions** or gh in each fork.
 Use repository variables for terraform-plan inputs: plan does not use the lab environment.
 Use secrets for webhooks/passwords/operator lists. Secrets consumed only by protected jobs can
 live in lab; repository secrets also work. Do not publish output maps in issues/logs.
+
+Use repository secrets for the operator table below by default. Plan reads AWS endpoint/domain
+secrets, Azure API-range/admin/deployer lists and GCP deployer members without an environment;
+those must be repository secrets. Optional Slack/backup keys used only by protected jobs may
+instead live in lab. Setting a plan input only in lab makes it unavailable to terraform-plan.
 
 Import initial bootstrap maps from inside your TX clone:
 
@@ -287,8 +293,9 @@ existing key instead of silently rotating it.
 | GCP | LAB_DNS_ZONE_NAME/LAB_APP_DOMAIN_NAME/LAB_ENABLE_MANAGED_MESH=true for full; LAB_DB_PROFILE=core\|ha\|dr; LAB_HA_DB_TIER; LAB_DR_REGION/DR CIDRs; LAB_ACTIVE_REGION; backup/deletion/retention |
 
 For secondary deploy, AWS DX also needs selected LAB_DR_REGION; Azure DX needs
-AZURE_DR_APPCONFIG_ENDPOINT from lab output dr_appconfig_endpoint; GCP DX needs the DR settings
-in its runbook. A target/DNS setting is not database promotion.
+AZURE_DR_APPCONFIG_ENDPOINT from lab output dr_appconfig_endpoint. GCP DX uses target=secondary
+to select the recovery contract, cluster and GitOps branch; its region comes from that contract.
+A target/DNS setting is not database promotion.
 
 Complete optional definitions and constraints:
 

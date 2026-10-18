@@ -10,6 +10,7 @@ All notable changes to this project are documented here. The format follows
 
 - Standardized public documentation and filenames in English (DEC-14), consolidated each repo's
   README, translated the roadmap/curriculum/acceptance/history and coordinated all six lab ports.
+  The shared app interface now uses English text, HTML language and date formatting, with matching tests.
   Roadmap statuses/fields and family checks now use the English format without changing IDs,
   delivery evidence, contract semantics or cloud validation labels.
 - Closed DEC-13 construction in 22 PRs (21 merged implementation PRs plus this hub

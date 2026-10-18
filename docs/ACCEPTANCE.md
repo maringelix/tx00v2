@@ -75,7 +75,8 @@ the account/bootstrap/secret/workflow sequence.
 
 1. Choose one provider at a time, a dedicated account/project and bounded window. Check account
    credit/service/region limits; do not assume full/HA/DR fits a free tier.
-2. Configure forks, rulesets, protected lab and OIDC; enable Actions, align TX0NV2_REPO/pin and pass CI.
+2. Configure forks, rulesets, protected lab and OIDC; enable Actions, align the pair's TX01V2_REPO,
+   TX02V2_REPO or TX03V2_REPO URL/pin and pass CI.
 3. Review regional prices, maximum SKU/DR, budget/duration/expiry, owned DNS/domain/webhook.
    Preserve backup repository keys where required.
 4. Bootstrap, review plan, apply, install platform and promote through existing workflows,

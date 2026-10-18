@@ -19,7 +19,8 @@ for account creation, bootstrap, variables/secrets, pipeline order, validation a
    bootstrap trust `<owner>/tx0Nv2` and `<owner>/dx0Nv2`.
 2. In every fork, enable the workflows in the Actions tab, then run
    `scripts/repo-guardrails.sh <you>/<repo>` from a clone (GitHub copies no settings to a fork).
-3. In each application fork, set the repository variable `TX0NV2_REPO` to your infrastructure fork,
+3. In each application fork, set `TX01V2_REPO`, `TX02V2_REPO` or `TX03V2_REPO` to the HTTPS Git URL
+   of the matching infrastructure fork (for example `https://github.com/<owner>/tx01v2.git`),
    so the platform e2e clones your copy. Its `deploy/local/tx0Nv2.ref` must be a commit of that fork.
 4. Run the local lab from your forks: `make e2e` in the infrastructure repository, then
    `make e2e-platform` in the application repository.

@@ -552,7 +552,7 @@ earlier statuses do not hide limitations identified by the audit.
   - FORK.md in every repository: uncopied GitHub settings, local lab and own cloud accounts.
   - No default github_owner in bootstraps; repo-guardrails.sh enables Issues/fork-run approval
     and fails clearly until fork Actions are enabled.
-  - DX e2e-platform clones the configured TX0NV2_REPO.
+  - DX e2e-platform clones the configured TX01V2_REPO, TX02V2_REPO or TX03V2_REPO URL.
 - Acceptance:
   - Devcontainers checked with LOCAL_PROFILE=core make e2e on 2026-10-14; rehearsal using a
     second GitHub account was excluded under DEC-11.
