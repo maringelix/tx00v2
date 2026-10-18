@@ -275,4 +275,3 @@ real cloud validation; no cloud resources were created during the audit/correcti
   No real cloud resources were created; v2 remains `not run in the cloud (v2)`.
 
 Merged PRs: [tx01v2#21](https://github.com/maringelix/tx01v2/pull/21), [dx01v2#21](https://github.com/maringelix/dx01v2/pull/21), [tx02v2#20](https://github.com/maringelix/tx02v2/pull/20), [dx02v2#16](https://github.com/maringelix/dx02v2/pull/16), [tx03v2#19](https://github.com/maringelix/tx03v2/pull/19), [dx03v2#19](https://github.com/maringelix/dx03v2/pull/19).
-
