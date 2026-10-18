@@ -257,3 +257,22 @@ Four correction PRs merged with green applicable CI:
 The [hub family run](https://github.com/maringelix/tx00v2/actions/runs/39090472838) passed against
 those mains. These fixes are additional work, outside the original 22 count. They do not establish
 real cloud validation; no cloud resources were created during the audit/correction round.
+
+## 2026-10-18: English documentation and central onboarding (DEC-14)
+
+- Adopted English for public documentation, document filenames, contributor/agent guidance,
+  examples and the shared application interface. Each repository has one canonical README.
+- Translated and organized the roadmap, curriculum, acceptance, history, contracts, runbooks,
+  maintenance and historical lessons. Preserved scope IDs, contract versions, delivery ledger,
+  historical lessons and merged evidence.
+- Added the [central getting started guide](GETTING_STARTED.md): fork protections, credential-free
+  CI/local learning, account prerequisites, human bootstrap, exact per-repository variables and
+  secrets, reviewed costs, workflow order, approved publication/promotion, validation, DR and
+  cleanup in both regions.
+- Updated harness paths/language assertions and family checks; all three DX pins reference their
+  actual merged TX commits. All six cloud-repository PRs passed their complete applicable CI.
+- This is an additional documentation/onboarding round, outside the original 22 construction PRs.
+  No real cloud resources were created; v2 remains `not run in the cloud (v2)`.
+
+Merged PRs: [tx01v2#21](https://github.com/maringelix/tx01v2/pull/21), [dx01v2#21](https://github.com/maringelix/dx01v2/pull/21), [tx02v2#20](https://github.com/maringelix/tx02v2/pull/20), [dx02v2#16](https://github.com/maringelix/dx02v2/pull/16), [tx03v2#19](https://github.com/maringelix/tx03v2/pull/19), [dx03v2#19](https://github.com/maringelix/dx03v2/pull/19).
+
