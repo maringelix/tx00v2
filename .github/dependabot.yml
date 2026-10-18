@@ -1,5 +1,5 @@
 # Monthly dependency PRs: minor + patch grouped per ecosystem, majors one by one.
-# Review procedure: AGENTS.md (Dependency updater) and docs/SUSTENTACAO.md. The family check
+# Review procedure: AGENTS.md (Dependency updater) and docs/MAINTENANCE.md. The family check
 # family-actions wants one pin per action in the seven repositories: merge the same bump in the six lab
 # repositories in the same round. Harness tools (tools/) are updated by hand with
 # scripts/update-tool-checksums.sh.

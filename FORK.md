@@ -1,7 +1,8 @@
 # Forking the family
 
 The lab is seven repositories. Each lab repository has its own `FORK.md` with the details; this page
-is the order and the links between them.
+is the overview and the links between them. Follow the [complete getting started guide](docs/GETTING_STARTED.md)
+for account creation, bootstrap, variables/secrets, pipeline order, validation and teardown.
 
 ## What you need
 
@@ -10,7 +11,7 @@ is the order and the links between them.
   with `LOCAL_SIZE=small`), or the
   devcontainer of each lab repository. No cloud account.
 - For the cloud path: your own dedicated AWS account, Azure subscription or Google Cloud project. It
-  costs money; read the `docs/CUSTOS.md` of the pair first.
+  costs money; read the `docs/COSTS.md` of the pair first.
 
 ## Order
 
@@ -18,7 +19,8 @@ is the order and the links between them.
    bootstrap trust `<owner>/tx0Nv2` and `<owner>/dx0Nv2`.
 2. In every fork, enable the workflows in the Actions tab, then run
    `scripts/repo-guardrails.sh <you>/<repo>` from a clone (GitHub copies no settings to a fork).
-3. In each application fork, set the repository variable `TX0NV2_REPO` to your infrastructure fork,
+3. In each application fork, set `TX01V2_REPO`, `TX02V2_REPO` or `TX03V2_REPO` to the HTTPS Git URL
+   of the matching infrastructure fork (for example `https://github.com/<owner>/tx01v2.git`),
    so the platform e2e clones your copy. Its `deploy/local/tx0Nv2.ref` must be a commit of that fork.
 4. Run the local lab from your forks: `make e2e` in the infrastructure repository, then
    `make e2e-platform` in the application repository.
@@ -51,7 +53,7 @@ and `family-links` checks look for them as they are.
 
 The standalone CI runs on clean Actions runners without maintainer/cloud secrets; family-fork
 checks that this property and the required runtime jobs remain present. A second real GitHub account
-was not used. See the [acceptance matrix](docs/ACEITE_FINAL.md) and [curriculum](docs/CURRICULO.md).
+was not used. See the [acceptance matrix](docs/ACCEPTANCE.md) and [curriculum](docs/CURRICULUM.md).
 
 ## Capacity, prices and expiration
 

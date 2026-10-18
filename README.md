@@ -4,8 +4,6 @@ Family hub of the v2 DevOps lab: roadmap, family guardrails and cross-repo check
 
 [![ci](https://github.com/maringelix/tx00v2/actions/workflows/ci.yml/badge.svg)](https://github.com/maringelix/tx00v2/actions/workflows/ci.yml)
 
-[Português](README.pt-BR.md)
-
 ## What is this
 
 A public, educational DevOps lab in three clouds, built as six repositories: one infrastructure and
@@ -15,7 +13,7 @@ needs no cloud account, and the whole platform of the v1 lab runs on a local kin
 **Nothing of v2 has run in a cloud yet**: the cloud paths are code with tests.
 
 This repository holds no infrastructure and no app. It links the family, keeps the scope and delivery
-record ([ROADMAP.md](ROADMAP.md), pt-BR): anyone who forks it
+record ([ROADMAP.md](ROADMAP.md)): anyone who forks it
 runs it locally on Docker and in their own clouds; cloud homologation requires a separate authorized run;
 the rules the seven repositories follow ([docs/GUARDRAILS.md](docs/GUARDRAILS.md)) and a harness
 that checks the six lab repositories against each other.
@@ -33,21 +31,23 @@ that checks the six lab repositories against each other.
 | [`dx03v2`](https://github.com/maringelix/dx03v2) | GCP | application: the same app on GKE Autopilot | see its status matrix |
 
 Each pair talks through a versioned contract owned by the infrastructure repository (for AWS:
-[tx01v2 docs/CONTRATO.md](https://github.com/maringelix/tx01v2/blob/main/docs/CONTRATO.md)); the
+[tx01v2 docs/CONTRACT.md](https://github.com/maringelix/tx01v2/blob/main/docs/CONTRACT.md)); the
 application repository pins the infrastructure commit its platform e2e uses
 (`deploy/local/tx0Nv2.ref`).
 
 ## Where to start
 
-1. Follow the [curriculum](docs/CURRICULO.md) and read the reference pair:
+1. Start with the [complete getting started guide](docs/GETTING_STARTED.md): forks, accounts,
+   bootstrap, variables/secrets, pipeline order, validation and cleanup.
+2. Follow the [curriculum](docs/CURRICULUM.md) and read the reference pair:
    [tx01v2](https://github.com/maringelix/tx01v2) and
    [dx01v2](https://github.com/maringelix/dx01v2). The Azure and Google Cloud pairs are ports of it.
-2. Run the local lab, no account needed: `make e2e` in tx01v2 (Docker with 8 GB for the `full`
-   profile, 7 GB with `LOCAL_SIZE=small`; [docs/LAB_LOCAL.md](https://github.com/maringelix/tx01v2/blob/main/docs/LAB_LOCAL.md)),
+3. Run the local lab, no account needed: `make e2e` in tx01v2 (Docker with 8 GB for the `full`
+   profile, 7 GB with `LOCAL_SIZE=small`; [docs/LOCAL_LAB.md](https://github.com/maringelix/tx01v2/blob/main/docs/LOCAL_LAB.md)),
    then `make e2e-platform` in dx01v2.
-3. Use the [acceptance matrix](docs/ACEITE_FINAL.md) to find each technology, its test and its limits.
+4. Use the [acceptance matrix](docs/ACCEPTANCE.md) to find each technology, its test and its limits.
    Capacity/FinOps exercises use three-node kind with 12 GiB recommended; keep small on one node.
-4. Forking the lab for a team: [FORK.md](FORK.md).
+5. Forking overview: [FORK.md](FORK.md).
 
 ## Status of the hub
 
@@ -58,7 +58,7 @@ application repository pins the infrastructure commit its platform e2e uses
 | Repository settings as code (ruleset requiring `static`, secret scanning, private vulnerability reporting) | `verified locally` | `scripts/repo-guardrails.sh` applied and read back with `gh api` on 2026-10-14 |
 | Cloud | not applicable | the hub talks to no cloud and has no cloud credentials |
 
-## The family at a glance (2026-10-17)
+## The family at a glance (2026-10-18)
 
 | Capability | Status | Where |
 |---|---|---|
@@ -68,7 +68,7 @@ application repository pins the infrastructure commit its platform e2e uses
 | HA/backup/PITR, restored volume bytes, independent A/B recovery, fencing, measured local RPO/RTO and failback | `verified in CI` | R9; TX `e2e` and DX `continuity` |
 | Cloud paths of the three clouds (bootstrap, apply, platform layer, deploy, destroy + leftovers) | `not run in the cloud (v2)` | `docs/RUNBOOK.md` of each repository |
 | Cloud core/full platform and app integration: TLS/DNS/WAF, identity, advanced mesh and durable observability | `verified in CI`; `not run in the cloud (v2)` | R8; provider configuration/mocks and portable kind exercises |
-| Complete scope: R7–R11, including FinOps/scaling and final curriculum | construction complete: 22 PRs | [ROADMAP.md](ROADMAP.md), [acceptance matrix](docs/ACEITE_FINAL.md), [PR ledger](docs/ENTREGAS.json) |
+| Complete scope: R7–R11, including FinOps/scaling and final curriculum | construction complete: 22 PRs | [ROADMAP.md](ROADMAP.md), [acceptance matrix](docs/ACCEPTANCE.md), [PR ledger](docs/DELIVERIES.json) |
 
 ## Harness
 
@@ -95,27 +95,28 @@ On Windows without WSL, run it in a throwaway container (see [docs/HARNESS.md](d
 
 ## Docs
 
-The docs of this repository are in Brazilian Portuguese.
+Documentation is maintained in English across all seven repositories.
 
 | Doc | Content |
 |---|---|
+| [docs/GETTING_STARTED.md](docs/GETTING_STARTED.md) | complete fork-to-cloud sequence, accounts, bootstrap, variables/secrets, workflows, validation and cleanup |
 | [ROADMAP.md](ROADMAP.md) | scope and delivery evidence: status, repositories, deliverables, acceptance, cost, dependencies and decisions |
-| [docs/CURRICULO.md](docs/CURRICULO.md) | 17 lessons with prerequisites, commands, deliberate failures, acceptance, recovery, cost and cleanup |
-| [docs/ACEITE_FINAL.md](docs/ACEITE_FINAL.md) | requirement × cloud × implementation × test × limit; future cloud homologation checklist |
-| [docs/ENTREGAS.json](docs/ENTREGAS.json) | machine-checked ledger of the 21 implementation PRs plus this hub closure |
+| [docs/CURRICULUM.md](docs/CURRICULUM.md) | 17 lessons with prerequisites, commands, deliberate failures, acceptance, recovery, cost and cleanup |
+| [docs/ACCEPTANCE.md](docs/ACCEPTANCE.md) | requirement × cloud × implementation × test × limit; future cloud homologation checklist |
+| [docs/DELIVERIES.json](docs/DELIVERIES.json) | machine-checked ledger of the 21 implementation PRs plus this hub closure |
 | [docs/GUARDRAILS.md](docs/GUARDRAILS.md) | the rules of the family and where each one is enforced |
 | [docs/HARNESS.md](docs/HARNESS.md) | the checks of the hub, what they prove and what they do not |
-| [docs/HISTORICO.md](docs/HISTORICO.md) | what was done, round by round, with the pull requests |
-| [docs/SUSTENTACAO.md](docs/SUSTENTACAO.md) | routines of the hub and how to react when `family` turns red |
+| [docs/HISTORY.md](docs/HISTORY.md) | what was done, round by round, with the pull requests |
+| [docs/MAINTENANCE.md](docs/MAINTENANCE.md) | routines of the hub and how to react when `family` turns red |
 | [FORK.md](FORK.md) | forking the family |
 
 Reference docs of the lab, in [tx01v2](https://github.com/maringelix/tx01v2):
-[architecture](https://github.com/maringelix/tx01v2/blob/main/docs/ARQUITETURA.md),
-[local lab](https://github.com/maringelix/tx01v2/blob/main/docs/LAB_LOCAL.md),
+[architecture](https://github.com/maringelix/tx01v2/blob/main/docs/ARCHITECTURE.md),
+[local lab](https://github.com/maringelix/tx01v2/blob/main/docs/LOCAL_LAB.md),
 [runbook](https://github.com/maringelix/tx01v2/blob/main/docs/RUNBOOK.md),
-[costs](https://github.com/maringelix/tx01v2/blob/main/docs/CUSTOS.md),
-[sustainment](https://github.com/maringelix/tx01v2/blob/main/docs/SUSTENTACAO.md) and
-[lessons learned from v1](https://github.com/maringelix/tx01v2/blob/main/docs/LICOES_APRENDIDAS.md).
+[costs](https://github.com/maringelix/tx01v2/blob/main/docs/COSTS.md),
+[sustainment](https://github.com/maringelix/tx01v2/blob/main/docs/MAINTENANCE.md) and
+[lessons learned from v1](https://github.com/maringelix/tx01v2/blob/main/docs/LESSONS_LEARNED.md).
 
 ## Contributing
 

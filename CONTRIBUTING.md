@@ -21,12 +21,13 @@ own CONTRIBUTING.md; this hub only records the plan and the result.
 ## Rules that matter most
 
 - No secrets or real identifiers (account IDs, GUIDs, IPs, e-mails) anywhere, including examples.
-- A roadmap item is `feito` only with merged pull requests in `Evidência`.
+- A roadmap item is `done` only with merged pull requests in `Evidence`.
 - Do not weaken checks or add an exception without a reason and the roadmap item that ends it.
 - Pin new actions (full commit SHA + `# vX.Y.Z`) and tools (version + SHA256).
 - Never link the v1 repositories.
-- Docs live in Brazilian Portuguese (`ROADMAP.md`, `docs/`, `README.pt-BR.md`); `README.md`,
-  `AGENTS.md`, `CONTRIBUTING.md`, `SECURITY.md`, `CHANGELOG.md` and `FORK.md` in English.
+- Public documentation, templates, agent instructions and new document filenames use English.
+- Update [GETTING_STARTED.md](docs/GETTING_STARTED.md) when workflow inputs, variables, secrets,
+  profiles or the operating sequence change.
 
 The full rule list is in [docs/GUARDRAILS.md](docs/GUARDRAILS.md); agents and humans also follow
 [AGENTS.md](AGENTS.md).
