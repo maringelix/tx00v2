@@ -14,16 +14,16 @@ jq -e '
   ([.pullRequests[] | select(.round=="R8")] | length == 6) and
   ([.pullRequests[] | select(.round=="R9")] | length == 6) and
   ([.pullRequests[] | select(.round=="R10")] | length == 6)
-' docs/ENTREGAS.json >/dev/null
+' docs/DELIVERIES.json >/dev/null
 jq -e '[.pullRequests[] | select(.round=="R7") | .repo] | sort ==
-  (["dx01v2","dx02v2","dx03v2"] | sort)' docs/ENTREGAS.json >/dev/null
+  (["dx01v2","dx02v2","dx03v2"] | sort)' docs/DELIVERIES.json >/dev/null
 for round in R8 R9 R10; do
   jq -e --arg round "$round" '
     [.pullRequests[] | select(.round==$round) | .repo] | sort ==
     (["tx01v2","dx01v2","tx02v2","dx02v2","tx03v2","dx03v2"] | sort)
-  ' docs/ENTREGAS.json >/dev/null
+  ' docs/DELIVERIES.json >/dev/null
 done
-for file in docs/CURRICULO.md docs/ACEITE_FINAL.md; do
+for file in docs/CURRICULUM.md docs/ACCEPTANCE.md; do
   [[ -s "$file" ]] || { echo "missing acceptance material: $file"; exit 1; }
 done
 echo '21 implementation PR entries + 1 hub closure = 22; each round and cloud pair represented'

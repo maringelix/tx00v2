@@ -7,12 +7,12 @@ body:
     attributes:
       value: |
         Every item of ROADMAP.md has the same fields; fill them so the item can be copied as is.
-        Items beyond the v1 lab start as `proposta` and need the maintainer's OK.
+        Items beyond the v1 lab start as `proposal` and need the maintainer's OK.
   - type: input
     id: title
     attributes:
       label: Title
-      placeholder: "Perfil DR no lab local: segundo cluster e banco standby"
+      placeholder: "Local DR profile: second cluster and standby database"
     validations:
       required: true
   - type: input
@@ -58,4 +58,4 @@ body:
     id: dependencies
     attributes:
       label: Dependencies
-      placeholder: "R1.9, DP-1 (or: nenhuma)"
+      placeholder: "R1.9, DP-1 (or: none)"

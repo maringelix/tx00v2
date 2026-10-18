@@ -1,76 +1,75 @@
-# Guardrails da família v2
+# v2 family guardrails
 
-As regras que valem para os sete repositórios (os seis do lab e este hub) e onde cada uma é aplicada.
-Cada repositório do lab tem o próprio `docs/GUARDRAILS.md`, com as regras da sua nuvem (IAM, rede,
-contrato); quando uma regra daqui também está lá, o "Onde" aponta o check de cada lado.
+Rules for all seven repositories (the six labs and this hub), with their enforcement points.
+Each lab has its own `docs/GUARDRAILS.md` for provider-specific IAM, networking and contract rules.
+For shared rules, “Enforced by” identifies the checks on each side.
 
-Tipos: `bloqueante` (um check obrigatório falha), `alerta` (um check informativo falha: o `family`
-deste hub) e `processo` (revisão e rotina, sem check automático).
+Types: `blocking` (a required check fails), `warning` (an informative check fails, such as this
+hub's `family` job), and `process` (review and maintenance without an automatic check).
 
-## Regras
+## Rules
 
-| ID | Regra | Por quê | Onde é aplicada | Tipo |
+| ID | Rule | Reason | Enforced by | Type |
 |---|---|---|---|---|
-| SEC-01 | Nunca segredos nem identificadores reais (IDs de conta, assinatura, tenant e projeto, GUIDs, hostnames, IPs públicos, e-mails); só placeholders | repositórios públicos, que o time vai copiar | `gitleaks` e `policy-identifiers` em cada repositório e aqui | bloqueante |
-| SEC-02 | A nuvem só por OIDC ou Workload Identity Federation, com `sub` exatos; nenhuma chave estática | uma chave vazada não expira sozinha | testes do bootstrap de cada tx; `policy-workflows` | bloqueante |
-| SEC-03 | O `ci.yml` nunca pede `id-token: write`; OIDC só nos workflows de nuvem, com o environment `lab` | o CI de um PR não pode falar com a nuvem | `policy-workflows` dos sete | bloqueante |
-| SEC-04 | O hub não tem credencial nem workflow de nuvem; o estágio `family` só lê repositórios públicos | o hub não aumenta a superfície de ataque | `policy-workflows` deste repositório | bloqueante |
-| SEC-05 | Scripts e testes só agem no que o lab criou: nenhum alvo vem de variável de ambiente genérica; os scripts de nuvem conferem a tag ou o label do cluster antes de mudar algo; kubeconfig de nuvem em arquivo temporário; `platform/local` e o `deploy-local.sh` só no contexto `kind-tx0Nv2-local`; testes de integração só num banco `*_test` | quem faz fork roda tudo na própria máquina e na própria nuvem, ao lado de outro trabalho | `policy-scripts` dos tx; `requireTestDatabase` e `test:api` dos dx; `require_lab_context` | bloqueante |
-| SUP-01 | Tudo fixado: ferramentas por versão + SHA256, actions por SHA de 40 caracteres + `# vX.Y.Z`, imagens por digest, charts por versão + SHA256, providers com lock files de quatro plataformas, npm exato com lockfile | build reprodutível e cadeia de suprimentos conferível | checks de cada repositório; `family-actions`, `family-digests`, `family-versions` aqui | bloqueante |
-| SUP-02 | As versões compartilhadas são iguais na família: ferramentas dentro de cada papel (e entre os papéis, salvo exceção registrada), charts dos três tx, um digest por imagem, um pin por action; o servidor Velero efetivo é igual nos três tx e cada cloud usa seu plugin correto, fixado por digest | o mesmo lab nas três nuvens; uma diferença sem motivo é drift | `family-versions`, `family-digests`, `family-actions` | alerta |
-| SUP-03 | Arquivos que precisam ser idênticos: `scripts/repo-guardrails.sh` nos seis; `LICENSE`, `CLAUDE.md` e `CODEOWNERS` nos sete; `.editorconfig`, `.gitattributes`, `.pre-commit-config.yaml` e o ruleset dentro de cada papel, mais `scripts/install-tools.sh` nos tx e `scripts/update-tool-checksums.sh` e `.nvmrc` nos dx; as migrações do app nos três dx | uma correção num repositório chega aos outros | `family-identical` | alerta |
-| SUP-04 | Nada apodrece em silêncio: CI semanal, Dependabot mensal agrupado, calendário de fim de suporte, exceções de scanner com `statement` e `expired_at` de no máximo uns 7 meses | lab parado vira lab quebrado | `ci.yml` (schedule), `trivyignore-policy` de cada repositório, seção S do ROADMAP | bloqueante |
-| CI-01 | O CI é o harness: os jobs só chamam `make <target>` | o que passa localmente passa no CI | revisão; `ci.yml` de cada repositório | processo |
-| CI-02 | `HARNESS_STRICT=1` no CI: todo SKIP vira FAIL | nada é pulado em silêncio | `ci.yml` e `scripts/harness.sh` dos sete | bloqueante |
-| CI-03 | Nunca enfraquecer um gate: nada de `continue-on-error`, `\|\| true` ou `\|\| echo` em check, `--no-verify`, check desligado, limite de cobertura baixado | um gate fraco dá falsa confiança | `policy-workflows` dos sete; revisão | bloqueante |
-| CI-04 | Checks obrigatórios no ruleset: tx `static`, `test`, `e2e`; dx `static`, `test`, `images`, `e2e`, `e2e-platform`; hub `static` | o lab local é gate de merge, não disciplina | `.github/rulesets/main.json` + `scripts/repo-guardrails.sh` de cada repositório; `policy-workflows` aqui | bloqueante |
-| CI-05 | Jobs com `runs-on: ubuntu-24.04`, `timeout-minutes`, `concurrency` e `permissions: contents: read` no topo; `persist-credentials: false` em todo checkout | runner previsível, sem job pendurado nem token sobrando | `policy-workflows` dos sete | bloqueante |
-| CI-06 | CI independente dos seis labs sem secrets do mantenedor nem autenticação cloud; provas full/small/continuidade e HA/FinOps presentes | um fork reproduz o comportamento portável em runners limpos | `family-fork` | alerta |
-| MUD-01 | Uma rodada por vez: o item nasce no par de referência (tx01v2, dx01v2) e é portado na mesma rodada, um PR por repositório | os pares não se separam | revisão; ROADMAP seção 3 | processo |
-| MUD-02 | O tx entra antes do dx; o PR do dx fixa o commit mesclado do tx em `deploy/local/tx0Nv2.ref`, e nenhum commit depois dele muda o lab local | o e2e-platform do dx testa a plataforma atual | `family-ref` | alerta |
-| MUD-03 | Contrato versionado: mudança só com PRs coordenados nos dois lados e versão nova; o título do `docs/CONTRATO.md` é igual nos dois lados e a versão do contrato local é a que o dx exige | o app não quebra por uma chave que sumiu | checks de contrato de cada repositório; `family-contract` aqui | bloqueante |
-| MUD-04 | Paridade do app: uma mudança em `api/` ou `web/` vai para os três dx na mesma rodada | a comparação entre as nuvens é justa | `family-app` (dependências e código, a menos de nomes e comentários) | alerta |
-| DOC-01 | Só afirmar o que foi verificado, com os rótulos `verificado no CI`, `verificado localmente`, `não executado em nuvem (v2)`, `planejado` | quem copia o lab confia no que está escrito | `repo-structure` de cada repositório; revisão | bloqueante |
-| DOC-02 | Sem autoelogios nem emojis; README com no máximo 250 linhas | docs objetivos | `repo-structure` | bloqueante |
-| DOC-03 | Nunca linkar os repositórios v1 (privados e arquivados) | link quebrado e conteúdo antigo | `docs-links` aqui; `family-table` | bloqueante |
-| DOC-04 | Todo README (inglês e português) tem a tabela da família com os outros seis repositórios | quem chega por qualquer porta acha o resto | `family-table` | alerta |
-| DOC-05 | O ROADMAP segue o formato: campos obrigatórios, status válidos, repositórios conhecidos, dependências que existem, visão geral igual aos itens | o roadmap é conferível, não um texto solto | `roadmap` | bloqueante |
-| DOC-06 | Item `feito` tem PRs mesclados na `Evidência`; o `docs/HISTORICO.md` só cita PRs mesclados | o status não fica mais forte que a prova | `family-evidence` | alerta |
-| DOC-07 | Os arquivos do padrão v2 existem em cada repositório do lab (README nas duas línguas, AGENTS, FORK, docs de guardrails, harness, sustentação, contrato, runbook, arquitetura, publicação, lab local) | o padrão é o mesmo nos seis | `family-structure` | alerta |
-| DOC-08 | Os links do hub para arquivos da família (`blob/main/...`) existem | docs do hub sem link quebrado | `family-links` | alerta |
-| DOC-09 | Registro DEC-13 com 3 PRs de apps no R7, seis por rodada R8/R9/R10 e um fechamento do hub; currículo e matriz presentes | a conta de 22 tem cobertura de todos os pares e evidências conferíveis | `delivery`, `delivery-fixtures` e `family-evidence` | bloqueante/alerta |
-| CUSTO-01 | Nenhuma ação na nuvem sem o pedido explícito de um humano para aquela ação; toda rodada termina no mesmo dia com destroy, checagem de sobras e `cloud_run_report` | quem paga é quem roda | workflows de nuvem só por `workflow_dispatch` com o environment `lab`; `AGENTS.md` de cada repositório | processo |
-| CUSTO-02 | Orçamento e alertas ligados por padrão nos bootstraps; o padrão é o mais barato que funciona; todo item com custo diz quanto e de onde vem o preço | ninguém leva susto na fatura | testes do bootstrap de cada tx; campo `Custo` do ROADMAP | bloqueante |
-| CUSTO-03 | Preços regionais revisados, duração e expiração <=24 h antes de plan/apply; teardown cloud continua manual | estimativa/budget não são teto de faturamento nem autorização para destruir uma conta | gates FinOps e docs de cada TX | bloqueante/processo |
-| AGT-01 | Agentes seguem o `AGENTS.md` do repositório em que trabalham e param antes de: ação em nuvem, mudança de contrato, alargamento de IAM, rede ou RBAC, ignore novo, reescrita de histórico | agentes trabalham rápido; os erros também | `AGENTS.md` dos sete | processo |
-| AGT-02 | Uma rodada pesada de lab local por vez (8 GB de Docker para o perfil `full`) | o editor e o Docker travam com duas | `AGENTS.md` dos repositórios do lab | processo |
+| SEC-01 | No secrets or real identifiers: account, subscription, tenant/project IDs, GUIDs, hostnames, public IPs or email addresses; placeholders only | public repositories that other people copy | `gitleaks` and `policy-identifiers` in every repository | blocking |
+| SEC-02 | Cloud authentication uses OIDC or Workload Identity Federation with exact subjects; no static keys | a leaked static key does not expire by itself | TX bootstrap tests; `policy-workflows` | blocking |
+| SEC-03 | `ci.yml` never requests `id-token: write`; cloud OIDC belongs in cloud workflows; mutating jobs use protected `lab` | PR CI must not access cloud resources; read-only plan has its own restricted identity | `policy-workflows` in all seven | blocking |
+| SEC-04 | The hub has no cloud credentials or cloud workflow; `family` only reads public repositories | keep the hub's attack surface small | hub `policy-workflows` | blocking |
+| SEC-05 | Scripts/tests act only on lab resources: no target from generic environment overrides; cloud scripts check cluster tags/labels and use temporary kubeconfigs; `platform/local` and `deploy-local.sh` require `kind-tx0Nv2-local`; integration tests require a `*_test` database | fork owners run beside unrelated work on their own machines/accounts | TX `policy-scripts`; DX `requireTestDatabase` and `test:api`; `require_lab_context` | blocking |
+| SUP-01 | Pin tools by version + SHA256, actions by 40-character SHA + `# vX.Y.Z`, images by digest, charts by version + SHA256, providers with four-platform lockfiles, npm with exact versions + lockfile | reproducible builds and inspectable supply chain | repository checks; hub `family-actions`, `family-digests`, `family-versions` | blocking |
+| SUP-02 | Shared versions match: tools within each role and across roles except documented exceptions; charts across TX; one digest per image and one pin per action; effective Velero server matches across TX with the correct digest-pinned provider plugin | unexplained differences are drift | `family-versions`, `family-digests`, `family-actions` | warning |
+| SUP-03 | Byte-identical files: `scripts/repo-guardrails.sh` in six; `LICENSE`, `CLAUDE.md`, `CODEOWNERS` in seven; `.editorconfig`, `.gitattributes`, `.pre-commit-config.yaml`, ruleset within each role; TX `scripts/install-tools.sh`; DX `scripts/update-tool-checksums.sh`, `.nvmrc`, capacity fixtures and app migrations | fixes reach all equivalent repositories | `family-identical` | warning |
+| SUP-04 | Weekly CI, grouped monthly Dependabot, dated support calendar, scanner exceptions with `statement` and `expired_at` within about seven months | idle labs still age | scheduled `ci.yml`, each repository's `trivyignore-policy`, ROADMAP section S | blocking |
+| CI-01 | CI is the harness: jobs call `make <target>` | local checks and CI use the same implementation | review; each `ci.yml` | process |
+| CI-02 | CI sets `HARNESS_STRICT=1`: every SKIP becomes FAIL | no silent omissions | all seven harnesses and `ci.yml` files | blocking |
+| CI-03 | Never weaken gates with `continue-on-error`, `\|\| true`, `\|\| echo`, `--no-verify`, disabled checks or reduced coverage | weak gates create false confidence | all seven `policy-workflows`; review | blocking |
+| CI-04 | Required ruleset checks: TX `static`, `test`, `e2e`; DX `static`, `test`, `images`, `e2e`, `e2e-platform`; hub `static` | local lab validation is a merge gate | rulesets, `scripts/repo-guardrails.sh`, hub `policy-workflows` | blocking |
+| CI-05 | Jobs use `ubuntu-24.04`, `timeout-minutes`, `concurrency`, top-level read-only contents permission and `persist-credentials: false` | predictable runners, bounded jobs and credentials | all seven `policy-workflows` | blocking |
+| CI-06 | Standalone lab CI needs no maintainer secrets or cloud authentication; full/small/continuity and HA/FinOps exercises remain present | forks reproduce portable behavior on clean runners | `family-fork` | warning |
+| MUD-01 | Build a capability in the AWS reference pair and port it in the same round, one cohesive PR per repository | keep pairs aligned | review; ROADMAP section 3 | process |
+| MUD-02 | Merge TX before DX; DX pins the merged TX commit in `deploy/local/tx0Nv2.ref`, with no later local platform changes | DX tests the current platform | `family-ref` | warning |
+| MUD-03 | Contract changes need coordinated PRs and a version bump; `docs/CONTRACT.md` has the same title on both sides; local published/required versions agree | missing keys must not break the app | repository contract checks; hub `family-contract` | blocking |
+| MUD-04 | Port changes to `api/` or `web/` to all three DX repositories in the same round | fair comparison between providers | `family-app` compares dependencies/code after name/comment normalization | warning |
+| DOC-01 | Claims use evidence labels: `verified in CI`, `verified locally`, `not run in the cloud (v2)`, `planned` | readers can distinguish proof from intent | repository `repo-structure`; review | blocking |
+| DOC-02 | No self-praise or emojis; README at most 250 lines | factual documentation | `repo-structure` | blocking |
+| DOC-03 | Never link private, archived v1 repositories | avoid broken links and stale dependencies | hub `docs-links`; `family-table` | blocking |
+| DOC-04 | Each English README includes the family table linking the other repositories | every entry point leads to the family | `family-table` | warning |
+| DOC-05 | ROADMAP has required fields, valid statuses, known repositories, existing dependencies and an overview matching its items | a checkable delivery plan | `roadmap` | blocking |
+| DOC-06 | `done` items have merged PRs in `Evidence`; `docs/HISTORY.md` cites merged PRs only | status stays within its proof | `family-evidence` | warning |
+| DOC-07 | Each lab has the v2 standard files: English README, AGENTS, FORK, guardrails, harness, maintenance, contract, runbook, architecture, publishing and local lab docs | consistent structure across six labs | `family-structure` | warning |
+| DOC-08 | Hub links to family paths (`blob/main/...`) exist | working navigation | `family-links` | warning |
+| DOC-09 | DEC-13 ledger has three R7 app PRs, six per R8/R9/R10 and one hub closure; curriculum and acceptance matrix exist | checkable coverage of the 22 deliveries | `delivery`, `delivery-fixtures`, `family-evidence` | blocking/warning |
+| DOC-10 | Public prose, templates, agent instructions and document filenames use English; central onboarding follows actual workflows | one maintained learning path | review; `repo-structure`, `docs-links`, `family-structure` | process/blocking |
+| CUSTO-01 | Cloud actions need explicit human authorization for that action; each round ends the same day with destroy, leftovers and `cloud_run_report` | the operator pays | manual cloud workflows; protected `lab` on mutations; repository AGENTS | process |
+| CUSTO-02 | Bootstrap budgets/alerts enabled by default; cheapest working defaults; costs name amount and source | avoid unexpected bills | TX bootstrap tests; ROADMAP `Cost` | blocking |
+| CUSTO-03 | Reviewed regional prices, duration and expiry <=24 hours before plan/apply; cloud teardown remains manual | estimates/budgets are neither billing caps nor permission to destroy an account | TX FinOps gates/docs | blocking/process |
+| AGT-01 | Follow the repository AGENTS and pause before cloud actions, contract changes, wider IAM/network/RBAC, new ignores or history rewrites unless already authorized | agent mistakes propagate quickly | all seven AGENTS | process |
+| AGT-02 | One heavy local lab run at a time (8 GB Docker for basic full; HA/FinOps recommends 12 GiB); heavy validation for Bruno's workspace stays in Actions | protect host resources | lab AGENTS | process |
 
-## Exceções
+## Exceptions
 
-Uma exceção é sempre explícita, com o motivo e o item do roadmap que acaba com ela:
+Every exception has a reason and an ending roadmap item:
 
-- Versões diferentes entre os papéis: `FAMILY_VERSION_EXCEPTIONS` em `scripts/harness.sh` (hoje só o
-  `KUBECTL_VERSION`, 1.37 nos tx e 1.36 nos dx, até o item S.2 do roadmap). O check imprime cada
-  exceção em toda execução.
-- Exceções de scanner dos repositórios do lab: `.trivyignore.yaml` com `statement` e `expired_at`.
-- Para acrescentar uma: um PR que diz por que, com o item do roadmap que a remove; nunca para deixar
-  um check verde.
+- Tool differences between roles: `FAMILY_VERSION_EXCEPTIONS` in `scripts/harness.sh` currently
+  records only `KUBECTL_VERSION`: TX 1.37, DX 1.36 until S.2. Every run prints it.
+- Lab scanner exceptions live in `.trivyignore.yaml` with `statement` and `expired_at`.
+- Add an exception through a PR explaining why and naming its removal item; never to hide a failure.
 
-## Limites
+## Limits
 
-- O estágio `family` é informativo: ele aponta drift, mas não impede um repositório do lab de mesclar
-  algo inconsistente. Ele roda nos PRs do hub, em todo push na `main` e toda segunda-feira.
-- O `family` confere a `main` de cada repositório (ou checkouts locais com `FAMILY_SOURCE`); um PR
-  aberto num repositório do lab só aparece depois do merge.
-- A paridade do app compara dependências e o código de `api/src` e `web/src` sem nomes e comentários
-  de linha inteira; testes e o smoke (`e2e/`) diferem por desenho (cada nuvem tem a sua borda).
-- O hub não prova nada na nuvem: nada da v2 rodou numa nuvem.
+- `family` is informative: it reports drift but cannot prevent a lab repository from merging
+  inconsistent work. It runs on hub PRs, every main push and Mondays.
+- It reads each repository's main (or local checkouts with `FAMILY_SOURCE`); open lab PRs appear
+  after merge.
+- App parity compares dependencies and `api/src`/`web/src` after stripping repository names,
+  full-line comments and blank lines. Tests and smoke (`e2e/`) differ because provider edges differ.
+- The hub proves no real cloud behavior. Nothing of v2 has run in a cloud.
 
-## Como verificar
+## Verification
 
 ```bash
 make tools
-HARNESS_STRICT=1 make verify      # SEC, CI, DOC-01 a DOC-05 deste repositório
-make family                       # SUP-02, SUP-03, MUD-02 a MUD-04, DOC-04, DOC-06 a DOC-08
+HARNESS_STRICT=1 make verify      # this repository's SEC, CI and DOC rules
+make family                      # shared versions, parity, refs, structure, links and evidence
 scripts/harness.sh list
 ```

@@ -27,34 +27,34 @@ HARNESS_ONLY="${HARNESS_ONLY:-}"
 export HARNESS_WORK_DIR
 
 REQUIRED_FILES=(
-  README.md README.pt-BR.md ROADMAP.md AGENTS.md CLAUDE.md CONTRIBUTING.md SECURITY.md CHANGELOG.md LICENSE FORK.md
+  README.md ROADMAP.md AGENTS.md CLAUDE.md CONTRIBUTING.md SECURITY.md CHANGELOG.md LICENSE FORK.md
   .editorconfig .gitattributes .gitignore .pre-commit-config.yaml Makefile
   .github/CODEOWNERS .github/dependabot.yml .github/pull_request_template.md
   .github/ISSUE_TEMPLATE/config.yml .github/ISSUE_TEMPLATE/bug_report.yml .github/ISSUE_TEMPLATE/roadmap_item.yml
   .github/workflows/ci.yml .github/rulesets/main.json
-  docs/GUARDRAILS.md docs/HARNESS.md docs/HISTORICO.md docs/SUSTENTACAO.md
+  docs/GUARDRAILS.md docs/HARNESS.md docs/HISTORY.md docs/MAINTENANCE.md docs/GETTING_STARTED.md
   tools/versions.env tools/checksums.txt
   scripts/install-tools.sh scripts/update-tool-checksums.sh scripts/harness.sh scripts/repo-guardrails.sh
   scripts/lib/common.sh scripts/lib/tools.sh scripts/lib/family.sh
 )
-ROADMAP_STATUSES="feito|em andamento|pendente|bloqueado|proposta"
+ROADMAP_STATUSES="done|in progress|pending|blocked|proposal"
 V1_LINK_RE='github\.com/maringelix/(tx|dx)0[0-9]([^0-9v]|$)'
 
 # Files of the v2 standard every lab repository has (docs/GUARDRAILS.md, DOC-07), plus the ones of
 # each role.
 FAMILY_FILES_ALL=(
-  README.md README.pt-BR.md AGENTS.md CLAUDE.md CONTRIBUTING.md SECURITY.md CHANGELOG.md LICENSE FORK.md
+  README.md AGENTS.md CLAUDE.md CONTRIBUTING.md SECURITY.md CHANGELOG.md LICENSE FORK.md
   .editorconfig .gitattributes .gitignore .pre-commit-config.yaml Makefile .devcontainer/devcontainer.json
   .github/CODEOWNERS .github/dependabot.yml .github/pull_request_template.md
   .github/ISSUE_TEMPLATE/config.yml .github/ISSUE_TEMPLATE/bug_report.yml .github/ISSUE_TEMPLATE/cloud_run_report.yml
   .github/workflows/ci.yml .github/rulesets/main.json
-  docs/SUSTENTACAO.md docs/GUARDRAILS.md docs/HARNESS.md docs/CONTRATO.md docs/RUNBOOK.md docs/ARQUITETURA.md
-  docs/PUBLICACAO.md docs/LAB_LOCAL.md docs/CONTINUIDADE.md docs/FINOPS.md
+  docs/MAINTENANCE.md docs/GUARDRAILS.md docs/HARNESS.md docs/CONTRACT.md docs/RUNBOOK.md docs/ARCHITECTURE.md
+  docs/PUBLISHING.md docs/LOCAL_LAB.md docs/CONTINUITY.md docs/FINOPS.md
   tools/versions.env tools/checksums.txt
   scripts/install-tools.sh scripts/update-tool-checksums.sh scripts/harness.sh scripts/repo-guardrails.sh
 )
 FAMILY_FILES_TX=(
-  docs/CUSTOS.md docs/LICOES_APRENDIDAS.md platform/versions.env platform/local/versions.env
+  docs/COSTS.md docs/LESSONS_LEARNED.md platform/versions.env platform/local/versions.env
   platform/finops/versions.env platform/finops/values/opencost.yaml platform/finops/values/vpa.yaml
   scripts/local/capacity-drill.sh scripts/lib/finops.sh terraform/envs/local/kind-config-ha.yaml
   platform/local/install.sh platform/local/check.sh scripts/local-lab.sh scripts/leftovers.sh scripts/leftovers-local.sh
@@ -239,25 +239,32 @@ check_repo_structure() {
       rc=1
     }
   fi
-  for f in README.md README.pt-BR.md; do
-    [[ -f "$f" ]] || continue
-    if (($(wc -l <"$f") > 250)); then
-      echo "$f: more than 250 lines"
+  if [[ -f README.md ]]; then
+    if (($(wc -l <README.md) > 250)); then
+      echo 'README.md: more than 250 lines'
       rc=1
     fi
-    if grep -nE 'production-grade|production-ready|enterprise|best-in-class|world-class' "$f"; then
-      echo "$f: no self-ratings"
+    if grep -nE 'production-grade|production-ready|enterprise|best-in-class|world-class' README.md; then
+      echo 'README.md: no self-ratings'
       rc=1
     fi
-  done
+  fi
   grep -qF 'not run in the cloud (v2)' README.md || {
     echo "README.md: the status tables must use the label 'not run in the cloud (v2)'"
     rc=1
   }
-  grep -qF 'não executado em nuvem (v2)' README.pt-BR.md || {
-    echo "README.pt-BR.md: the status tables must use the label 'não executado em nuvem (v2)'"
+  grep -qF 'Documentation is maintained in English' README.md || {
+    echo 'README.md: declare the canonical English documentation language'
     rc=1
   }
+  grep -qF 'use English' AGENTS.md || {
+    echo 'AGENTS.md: preserve the English documentation rule'
+    rc=1
+  }
+  if [[ -e README.pt-BR.md ]]; then
+    echo 'README.pt-BR.md: use one canonical English README'
+    rc=1
+  fi
   need git
   # No emojis in the docs (pictographs, dingbats, variation selector).
   local -a md=()
@@ -449,13 +456,13 @@ check_roadmap() {
     function close_item(   i) {
       if (cur == "") return
       for (i = 1; i <= nreq; i++) if (!((cur, req[i]) in field)) { printf "ROADMAP.md: item %s has no field \"%s\"\n", cur, req[i]; bad = 1 }
-      if (status[cur] == "feito" && evidence[cur] == 0) { printf "ROADMAP.md: item %s is feito without a PR link in \"Evidência\"\n", cur; bad = 1 }
+      if (status[cur] == "done" && evidence[cur] == 0) { printf "ROADMAP.md: item %s is done without a PR link in \"Evidence\"\n", cur; bad = 1 }
       cur = ""
     }
     BEGIN {
       ns = split(statuses, s, "|"); for (i = 1; i <= ns; i++) okstatus[s[i]] = 1
       nr = split(repos, r, " "); for (i = 1; i <= nr; i++) okrepo[r[i]] = 1
-      nreq = split("Status|Repos|Origem|Dependências|Custo|Entregáveis|Aceite", req, "|")
+      nreq = split("Status|Repos|Origin|Dependencies|Cost|Deliverables|Acceptance", req, "|")
     }
     {
       line = $0
@@ -493,9 +500,9 @@ check_roadmap() {
         status[cur] = st
       } else if (name == "Repos") {
         k = split(value, rr, ","); for (i = 1; i <= k; i++) { x = rr[i]; gsub(/`/, "", x); x = trim(x); if (!(x in okrepo)) err("item " cur ": unknown repository \"" x "\"") }
-      } else if (name == "Dependências") {
+      } else if (name == "Dependencies") {
         deps[cur] = value
-      } else if (name == "Evidência") {
+      } else if (name == "Evidence") {
         if (value ~ /https:\/\/github\.com\/maringelix\/[a-z0-9]+\/pull\/[0-9]+/) evidence[cur] = 1
       }
     }
@@ -507,13 +514,13 @@ check_roadmap() {
         if (!(id in tstatus)) { printf "ROADMAP.md: item %s is missing from the overview table\n", id; bad = 1 }
         else if (tstatus[id] != status[id]) { printf "ROADMAP.md: %s is \"%s\" in the overview table but \"%s\" in the item\n", id, tstatus[id], status[id]; bad = 1 }
         v = deps[id]; gsub(/`/, "", v); v = trim(v)
-        if (v == "nenhuma") continue
+        if (v == "none") continue
         k = split(v, dd, ",")
         for (j = 1; j <= k; j++) {
           d = trim(dd[j]); sub(/[[:space:]].*$/, "", d)
           if (d ~ /^DP-[0-9]+$/) { if (!(d in decision)) { printf "ROADMAP.md: item %s depends on the unknown decision %s\n", id, d; bad = 1 } }
           else if (!(d in seen)) { printf "ROADMAP.md: item %s depends on the unknown item \"%s\"\n", id, d; bad = 1 }
-          else if (status[id] == "feito" && status[d] != "feito") { printf "ROADMAP.md: item %s is feito but depends on %s (%s)\n", id, d, status[d]; bad = 1 }
+          else if (status[id] == "done" && status[d] != "done") { printf "ROADMAP.md: item %s is done but depends on %s (%s)\n", id, d, status[d]; bad = 1 }
         }
       }
       for (id in tstatus) if (!(id in seen)) { printf "ROADMAP.md: the overview table lists %s, which has no item\n", id; bad = 1 }
@@ -571,31 +578,29 @@ check_family_structure() {
   return "$rc"
 }
 
-# Every README of the family (both languages) links the other repositories, and none links v1.
+# Every canonical English README links the other repositories, and none links v1.
 check_family_table() {
-  local rc=0 r f other d
+  local rc=0 r other d
   family_dirs
   for r in "$FAMILY_HUB" "${FAMILY_LAB[@]}"; do
     if [[ "$r" == "$FAMILY_HUB" ]]; then d="$REPO_ROOT"; else d="${FD[$r]}"; fi
-    for f in README.md README.pt-BR.md; do
-      for other in "$FAMILY_HUB" "${FAMILY_LAB[@]}"; do
-        [[ "$other" == "$r" ]] && continue
-        grep -qF "https://github.com/$FAMILY_UPSTREAM/$other)" "$d/$f" || {
-          echo "$r/$f: the family table does not link $other"
-          rc=1
-        }
-      done
-      if grep -nE "$V1_LINK_RE" "$d/$f"; then
-        echo "$r/$f: links a v1 repository"
+    for other in "$FAMILY_HUB" "${FAMILY_LAB[@]}"; do
+      [[ "$other" == "$r" ]] && continue
+      grep -qF "https://github.com/$FAMILY_UPSTREAM/$other)" "$d/README.md" || {
+        echo "$r/README.md: the family table does not link $other"
         rc=1
-      fi
+      }
     done
+    if grep -nE "$V1_LINK_RE" "$d/README.md"; then
+      echo "$r/README.md: links a v1 repository"
+      rc=1
+    fi
   done
-  ((rc == 0)) && echo "7 repositories x 2 READMEs: every family table links the other six"
+  ((rc == 0)) && echo "7 canonical English READMEs: every family table links the other six"
   return "$rc"
 }
 
-# Cloud contract: the title of docs/CONTRATO.md (version and date) is the same on both sides of a pair.
+# Cloud contract: the title of docs/CONTRACT.md (version and date) is the same on both sides of a pair.
 # Local contract: the version the dx deploy requires is the one the pinned tx commit and tx main publish.
 check_family_contract() {
   local rc=0 n tx dx ref t_title d_title t_ref_v t_main_v d_v
@@ -603,9 +608,9 @@ check_family_contract() {
   for n in 1 2 3; do
     tx="tx0${n}v2"
     dx="dx0${n}v2"
-    t_title="$(head -n 1 "${FD[$tx]}/docs/CONTRATO.md")"
-    d_title="$(head -n 1 "${FD[$dx]}/docs/CONTRATO.md")"
-    if [[ "$t_title" == "$d_title" && "$t_title" =~ vers[^\ ]*o\ [0-9]+ ]]; then
+    t_title="$(head -n 1 "${FD[$tx]}/docs/CONTRACT.md")"
+    d_title="$(head -n 1 "${FD[$dx]}/docs/CONTRACT.md")"
+    if [[ "$t_title" == "$d_title" && "$t_title" =~ version\ [0-9]+ ]]; then
       echo "$tx <-> $dx cloud contract: ${t_title#\# }"
     else
       echo "$tx <-> $dx cloud contract differs: '$t_title' vs '$d_title'"
@@ -946,8 +951,8 @@ check_family_fork() {
 # Evidence: ledger/history/done-item PRs have their squash commits on main.
 check_family_evidence() {
   local rc=0 repo n d log checked=0
-  [[ -f ROADMAP.md && -f docs/HISTORICO.md ]] || {
-    echo "missing ROADMAP.md or docs/HISTORICO.md"
+  [[ -f ROADMAP.md && -f docs/HISTORY.md ]] || {
+    echo "missing ROADMAP.md or docs/HISTORY.md"
     return 1
   }
   family_dirs
@@ -971,15 +976,15 @@ check_family_evidence() {
   done < <(
     {
       awk '/^### (R[0-9]+|S)\.[0-9]+ / { done = 0; next }
-        /^- Status: `feito`/ { done = 1; next }
-        done && /^- Evidência:/ { print }
+        /^- Status: `done`/ { done = 1; next }
+        done && /^- Evidence:/ { print }
         /^## / { done = 0 }' ROADMAP.md
-      cat docs/HISTORICO.md
-      jq -r '.pullRequests[] | "https://github.com/maringelix/" + .repo + "/pull/" + (.number|tostring)' docs/ENTREGAS.json
+      cat docs/HISTORY.md
+      jq -r '.pullRequests[] | "https://github.com/maringelix/" + .repo + "/pull/" + (.number|tostring)' docs/DELIVERIES.json
     } | grep -oE 'https://github\.com/maringelix/[a-z0-9]+/pull/[0-9]+' |
       sed -E 's|https://github\.com/maringelix/([a-z0-9]+)/pull/([0-9]+)|\1 \2|' | sort -u
   )
-  echo "$checked merged pull requests checked (done items of ROADMAP.md and docs/HISTORICO.md)"
+  echo "$checked merged pull requests checked (done items of ROADMAP.md and docs/HISTORY.md)"
   return "$rc"
 }
 

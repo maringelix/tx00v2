@@ -1,7 +1,8 @@
 # Forking the family
 
 The lab is seven repositories. Each lab repository has its own `FORK.md` with the details; this page
-is the order and the links between them.
+is the overview and the links between them. Follow the [complete getting started guide](docs/GETTING_STARTED.md)
+for account creation, bootstrap, variables/secrets, pipeline order, validation and teardown.
 
 ## What you need
 
@@ -10,7 +11,7 @@ is the order and the links between them.
   with `LOCAL_SIZE=small`), or the
   devcontainer of each lab repository. No cloud account.
 - For the cloud path: your own dedicated AWS account, Azure subscription or Google Cloud project. It
-  costs money; read the `docs/CUSTOS.md` of the pair first.
+  costs money; read the `docs/COSTS.md` of the pair first.
 
 ## Order
 
@@ -51,7 +52,7 @@ and `family-links` checks look for them as they are.
 
 The standalone CI runs on clean Actions runners without maintainer/cloud secrets; family-fork
 checks that this property and the required runtime jobs remain present. A second real GitHub account
-was not used. See the [acceptance matrix](docs/ACEITE_FINAL.md) and [curriculum](docs/CURRICULO.md).
+was not used. See the [acceptance matrix](docs/ACCEPTANCE.md) and [curriculum](docs/CURRICULUM.md).
 
 ## Capacity, prices and expiration
 

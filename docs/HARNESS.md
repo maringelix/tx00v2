@@ -1,70 +1,75 @@
-# Harness do tx00v2
+# tx00v2 harness
 
-Todo check deste repositório é uma função registrada em `scripts/harness.sh`. Os targets do `make` e
-os jobs do CI só chamam esse script. A saída é uma linha `PASS|FAIL|SKIP <check> (<s>s)` por check e
-um resumo; qualquer `FAIL` sai com código 1.
+Every check is a registered function in scripts/harness.sh. Make targets and CI jobs call that
+script. It prints PASS|FAIL|SKIP <check> (<seconds>s) and a summary; any failure exits 1.
 
-## Estágios
+## Stages
 
-| Estágio | Job de CI | Obrigatório | O que precisa |
+| Stage | CI job | Required | Prerequisites |
 |---|---|---|---|
-| `static` | `static` | sim (ruleset) | as ferramentas de `make tools` e git; nada de rede além do `make tools` |
-| `family` | `family` | não (informativo) | rede para clonar a `main` dos seis repositórios, ou `FAMILY_SOURCE` |
-| `all` | — | — | `static` + `family` |
-| `list` | — | — | só lista os checks |
+| static | static | yes, ruleset | make tools dependencies/git; no network after installation |
+| family | family | no, informative | network to clone six mains, or FAMILY_SOURCE |
+| all | — | — | static + family |
+| list | — | — | lists checks |
 
-O `family` não é obrigatório porque depende de seis outros repositórios: um merge lá pode deixá-lo
-vermelho sem nenhuma mudança aqui. Ele roda em todo PR, em todo push na `main` e toda segunda-feira
-às 06:00 UTC; vermelho é sinal de drift na família ([SUSTENTACAO.md](SUSTENTACAO.md), seção 3).
+Family depends on six other repositories: a merge there can fail it without changes here.
+It runs on PRs, main pushes and Mondays at 06:00 UTC. Failures indicate drift
+([MAINTENANCE.md](MAINTENANCE.md), section 3).
 
-## Checks do estágio `static`
+## Static checks
 
-| Check | Prova | Não prova |
+| Check | Proves | Does not prove |
 |---|---|---|
-| `tool-versions` | as ferramentas no PATH têm as versões de `tools/versions.env` | — |
-| `repo-structure` | arquivos obrigatórios; `CLAUDE.md` com `@AGENTS.md` e uma frase; READMEs com até 250 linhas, sem autoelogio e com os rótulos de status; docs sem emoji; LF em todo arquivo; bit de execução dos scripts no índice do git | a qualidade do texto |
-| `policy-identifiers` | nenhum ID de conta de 12 dígitos, GUID, e-mail ou IP público fora dos placeholders | identificadores escritos de outro jeito |
-| `policy-workflows` | actions fixadas por SHA de 40 caracteres com `# vX.Y.Z`, `permissions: contents: read` no topo, `concurrency`, `timeout-minutes`, `runs-on: ubuntu-24.04`, `persist-credentials: false`, nada de `continue-on-error` nem de engolir erro, nada de `id-token: write`; o job `static` existe e é exigido pelo ruleset; o job `family` existe e não é exigido | que o workflow faz o que deveria |
-| `docs-links` | links relativos dos `.md` apontam para arquivos que existem; links para `github.com/maringelix/...` só citam repositórios da família v2; nenhum link para os repositórios v1 | links externos que mudaram (o `family-links` cobre os da família) |
-| `roadmap` | todo item do `ROADMAP.md` tem os campos, um status válido, repositórios conhecidos e dependências que existem (itens ou `DP-n`); um item `feito` tem PR na `Evidência` e só depende de itens `feito`; a visão geral lista todos os itens com o mesmo status; todo ID citado existe | que um PR citado foi mesclado (o `family-evidence` cobre) |
-| `actionlint` | sintaxe e expressões dos workflows, com shellcheck nos `run:` | — |
-| `shellcheck` | todos os scripts com `--severity=style` | — |
-| `gitleaks` | nenhum segredo no histórico inteiro (ou no diretório, antes do primeiro commit) | segredos que o gitleaks não reconhece |
+| tool-versions | PATH tools match tools/versions.env | — |
+| repo-structure | required files; CLAUDE has @AGENTS.md plus one sentence; canonical English README <=250 lines, factual status labels/no self-ratings; no doc emojis; LF; indexed executable bits | prose quality or automatic language detection |
+| policy-identifiers | no non-placeholder 12-digit accounts, GUIDs, emails or public IPs | differently encoded identifiers |
+| policy-workflows | SHA/comment action pins, read-only global contents, concurrency/timeouts/ubuntu-24.04, no persisted checkout credentials/swallowed errors/id-token write; static required and family informative | intended workflow behavior |
+| docs-links | relative Markdown paths exist; GitHub family links name only known v2 repositories; no private archived v1 links | changed external destinations; family-links covers family paths |
+| roadmap | required fields, valid statuses/repos/dependencies, done items with Evidence PRs depending only on done items, matching overview, all mentioned IDs exist | whether PRs merged; family-evidence checks that |
+| delivery | DEC-13 ledger has 21 unique implementation PRs plus one hub closure, correct per-round/provider coverage and acceptance material | actual merges |
+| delivery-fixtures | incomplete/wrong-pair/non-app-R7 ledger mutations are rejected | implementation semantics |
+| actionlint | workflow syntax/expressions and shellcheck for run blocks | — |
+| shellcheck | scripts pass severity=style | — |
+| gitleaks | no recognized secrets in all history, or directory before first commit | unknown secret formats |
 
-## Checks do estágio `family`
+Roadmap statuses are done, in progress, pending, blocked, proposal; required fields are Status,
+Repos, Origin, Dependencies, Cost, Deliverables and Acceptance. Completed items add Evidence.
+Use none for no dependencies.
 
-| Check | Prova | Não prova |
+## Family checks
+
+| Check | Proves | Does not prove |
 |---|---|---|
-| `family-structure` | cada repositório do lab tem os arquivos do padrão v2, mais os do papel (tx: custos, lições, plataforma, lab local; dx: API, `.nvmrc`, `package.json`, deploy local, e2e da plataforma, o `.ref` do tx) | o conteúdo deles |
-| `family-table` | os doze READMEs dos seis (e os dois deste hub) linkam os outros repositórios da família e nenhum v1 | o resto do README |
-| `family-contract` | o título do `docs/CONTRATO.md` (versão e data) é igual nos dois lados de cada par; a versão do contrato local que o `deploy-local.sh` do dx exige é a que o tx publica no commit fixado e na `main` | cada chave do contrato (os checks de contrato de cada repositório cobrem) |
-| `family-ref` | o `deploy/local/tx0Nv2.ref` de cada dx é um commit da `main` do tx e nenhum commit depois dele mudou o lab local (`platform/local`, `terraform/envs/local`, `scripts/local-lab.sh`, `scripts/local`, `scripts/leftovers-local.sh`); imprime quantos commits o ref está atrás | que o e2e-platform passaria com a `main` do tx |
-| `family-versions` | `tools/versions.env`: chaves comuns iguais dentro de cada papel e na família inteira (com as exceções registradas, impressas a cada execução); `platform/versions.env` + `platform/local/versions.env`: chaves comuns iguais nos três tx | versões escritas fora desses arquivos |
-| `family-digests` | um digest por imagem `nome:tag` nos seis repositórios; dentro de cada papel, o mesmo conjunto de digests em cada arquivo compartilhado; no overlay cloud do Velero, o servidor efetivo (base + overlay) deve ser igual nos três tx e cada provedor deve ter exatamente seu plugin fixado por versão e digest | imagens referenciadas sem digest fora dos values do Velero (os checks de cada repositório recusam) |
-| `family-identical` | os arquivos da regra SUP-03 do [GUARDRAILS.md](GUARDRAILS.md) são idênticos byte a byte; os três dx têm as mesmas migrações | — |
-| `family-app` | os três dx têm as mesmas dependências, `engines` e `workspaces` nos três `package.json` e o mesmo código em `api/src` e `web/src`, a menos dos nomes dos repositórios, de comentários de linha inteira e de linhas em branco | testes e o smoke (`e2e/`), que diferem por desenho |
-| `family-actions` | cada action tem um único pin (SHA + tag) nos sete repositórios | — |
-| `family-links` | todo link dos docs do hub para `github.com/maringelix/<repo>/blob/main/<caminho>` (ou `tree`) aponta para um caminho que existe | a âncora dentro do arquivo |
-| `family-evidence` | todo PR citado na `Evidência` de um item `feito` e no `docs/HISTORICO.md` tem o commit de squash `(#n)` na `main` do repositório | que o PR fez o que o item diz (revisão) |
+| family-structure | six labs have English standard files and role-specific docs/code: TX costs/lessons/platform/local/FinOps; DX API/Node/packages/local deploy/platform e2e/TX ref | their content |
+| family-table | seven English READMEs link the other family repositories and no v1 | other README content |
+| family-contract | matching cloud contract title/version/date per pair; DX local required version equals TX publication at pin/main | every key; repository contract checks cover those |
+| family-fork | standalone CI has no maintainer secrets/cloud auth and retains full/small/continuity/HA/FinOps jobs | second-account settings or real cloud execution |
+| family-ref | DX pin is on TX main and no later commit changed local platform/FinOps, terraform/envs/local, local scripts/helpers/leftovers; reports lag | whether DX e2e would pass with latest main |
+| family-versions | common tool keys agree by role/across family except printed documented exceptions; TX platform/local/FinOps pins agree | versions outside these files |
+| family-digests | one digest per image name:tag; matching shared file digest sets by role; effective Velero base+overlay server matches with exactly the correct pinned provider plugin | undigested images outside Velero values; repository gates cover those |
+| family-identical | SUP-03 files are byte-identical and DX migrations match | — |
+| family-app | matching dependencies/engines/workspaces and api/src/web/src after removing repo names/full-line comments/blank lines | provider-specific tests/smoke |
+| family-actions | one action SHA/tag per action across seven | — |
+| family-links | hub blob/tree/main family links resolve to existing paths | heading anchors |
+| family-evidence | ledger, done-item Evidence and HISTORY PRs have squash subjects (#n) in repository main | that a PR satisfies its claimed scope; review covers that |
 
-## Variáveis
+## Variables
 
-| Variável | Efeito |
+| Variable | Effect |
 |---|---|
-| `HARNESS_STRICT=1` | todo SKIP vira FAIL (no CI) |
-| `HARNESS_VERBOSE=1` | mostra a saída dos checks que passaram |
-| `HARNESS_WORK_DIR` | diretório de trabalho: logs e os clones da família (padrão `$TMPDIR/tx00v2-harness`, nunca dentro do repositório) |
-| `HARNESS_ONLY=<regex>` | roda só os checks cujo nome casa (depuração local; nunca no CI) |
-| `FAMILY_OWNER` | dono dos seis repositórios que o `family` clona (padrão `maringelix`; no CI, `vars.FAMILY_OWNER` ou o dono do repositório) |
-| `FAMILY_SOURCE=<dir>` | usa os checkouts `<dir>/<repo>` como estão (qualquer branch), sem rede: serve para conferir um conjunto de PRs antes do merge |
+| HARNESS_STRICT=1 | every SKIP becomes FAIL in CI |
+| HARNESS_VERBOSE=1 | print passing checks' output |
+| HARNESS_WORK_DIR | scratch logs/clones/cache, default $TMPDIR/tx00v2-harness; never inside source |
+| HARNESS_ONLY=<regex> | matching checks only, for local debugging; never CI |
+| FAMILY_OWNER | six-repository owner, default maringelix; CI uses vars.FAMILY_OWNER or repository owner |
+| FAMILY_SOURCE=<dir> | existing <dir>/<repo> checkouts as-is, any branch, no cloning; coordinated-PR inspection |
 
-Os clones são parciais (`--filter=blob:none`): o histórico vem inteiro, os arquivos só quando um
-check precisa. Eles ficam em `$HARNESS_WORK_DIR/family` e são atualizados uma vez por execução.
+Partial clones use --filter=blob:none: full commit history with blobs fetched when needed.
+They live under $HARNESS_WORK_DIR/family and refresh once per run.
 
-## Windows sem WSL
+## Windows without WSL
 
-Um container descartável, sem nada escrito na pasta do repositório (útil quando ela está numa pasta
-sincronizada, como o OneDrive):
+A disposable light tool container avoids source-folder caches, useful under OneDrive:
 
 ```bash
 docker run --rm -v "$PWD:/src:ro" ubuntu:24.04 bash -c '
@@ -73,32 +78,32 @@ docker run --rm -v "$PWD:/src:ro" ubuntu:24.04 bash -c '
   make tools && HARNESS_STRICT=1 make verify && make family'
 ```
 
-Num clone do Windows os scripts podem perder o bit de execução no índice; o `repo-structure`
-avisa e diz o comando (`git update-index --chmod=+x <arquivo>`).
+Windows-created commits may lose indexed executable bits. repo-structure reports the correction:
+git update-index --chmod=+x <file>.
 
-## Como adicionar um check
+## Adding a check
 
-1. Escreva `check_<nome>` em `scripts/harness.sh`: imprime o que conferiu, `return 1` quando falha e
-   `skip "<motivo>"` só quando falta uma pré-condição local (ferramenta, rede).
-2. Registre em `register_checks` no estágio certo.
-3. Um invariante novo da família roda primeiro contra os repositórios atuais
-   (`FAMILY_SOURCE=<dir> make family`): se já for falso, vira um item do roadmap antes de virar check.
-4. Documente aqui e no [GUARDRAILS.md](GUARDRAILS.md); `make static family` verde antes do PR.
+1. Implement check_<name> in scripts/harness.sh; print inspected facts, return 1 on failure.
+   Use skip "<reason>" only for missing local prerequisites such as tools/network.
+2. Register in the correct stage.
+3. First run new family invariants against current repositories with FAMILY_SOURCE.
+   An already-false invariant becomes a roadmap item before enforcement.
+4. Document here and in [GUARDRAILS.md](GUARDRAILS.md); pass make static family before PR.
 
-## Problemas comuns
+## Common problems
 
-| Sintoma | Causa | O que fazer |
+| Symptom | Cause | Action |
 |---|---|---|
-| `SKIP family-*: github.com is not reachable` | sem rede | rode com rede ou `FAMILY_SOURCE` |
-| `family-ref` vermelho logo depois de um merge num tx | o dx ainda fixa o commit anterior | o PR do dx que atualiza `deploy/local/tx0Nv2.ref` resolve |
-| `family-versions` ou `family-actions` vermelhos no começo do mês | o Dependabot mesclou num repositório e não nos outros | mescle o mesmo bump nos outros |
-| `not executable in the git index` | commit feito no Windows | `git update-index --chmod=+x <arquivo>` |
-| `tool-versions` vermelho | ferramenta de outra versão no PATH | `make tools` (o harness põe `.tools/bin` na frente do PATH) |
+| SKIP family-*: github.com is not reachable | no network | restore network or use FAMILY_SOURCE |
+| family-ref fails after TX merge | DX pins earlier platform | merge the DX pin update |
+| family-versions/actions fail after monthly bumps | only one repo updated | coordinate remaining ports |
+| not executable in git index | Windows index mode | git update-index --chmod=+x <file> |
+| tool-versions fails | wrong PATH version | make tools; harness prepends .tools/bin |
 
-## Aceite R7–R11
+## R7–R11 acceptance
 
-O check static delivery valida a contagem de 21 PRs de implementação mais um fechamento do hub,
-as rodadas e os seis repositórios em docs/ENTREGAS.json. family-evidence verifica os merges
-na main; family-ref inclui FinOps e seus helpers; family-versions inclui os novos pins.
-family-fork recusa secrets/auth cloud no CI independente e preserva as provas full/small/HA.
-O currículo e a matriz estão em [CURRICULO.md](CURRICULO.md) e [ACEITE_FINAL.md](ACEITE_FINAL.md).
+delivery validates 21 implementation entries plus hub closure, rounds and repositories in
+docs/DELIVERIES.json. family-evidence checks merges; family-ref includes FinOps/helpers and
+family-versions includes its pins. family-fork preserves credential-free full/small/HA evidence.
+See [CURRICULUM.md](CURRICULUM.md), [ACCEPTANCE.md](ACCEPTANCE.md) and
+[GETTING_STARTED.md](GETTING_STARTED.md).

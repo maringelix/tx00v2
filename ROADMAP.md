@@ -1,1303 +1,1304 @@
-# Roadmap do lab DevOps v2: escopo completo para aprender e operar
+# DevOps lab v2 roadmap: complete learning and operations scope
 
-Estado em 2026-10-17, após o pedido explícito do Bruno de completar a lista de tecnologias
-(DEC-13). **Construção entregue em 22 PRs (R7–R11).** Os 21 PRs de implementação estão mesclados
-com CI verde; R11 consolida este aceite no hub. R0, R1, R3 e R4 preservam a base anterior.
-A v2 continua `não executado em nuvem (v2)`.
+Status as of 2026-10-18, following Bruno's explicit request to complete the technology list
+(DEC-13). **Construction delivered in 22 PRs (R7–R11).** The 21 implementation PRs merged with
+green CI; R11 records acceptance in this hub. R0, R1, R3 and R4 preserve the earlier foundation.
+v2 remains `not run in the cloud (v2)`.
 
-Esta é a fonte única de escopo, sequência, aceite e evidências. A
-[auditoria do escopo](docs/AUDITORIA_ESCOPO_2026-10-16.md) preserva o retrato anterior à construção.
-O [aceite](docs/ACEITE_FINAL.md), o [currículo](docs/CURRICULO.md) e os PRs abaixo descrevem
-a implementação atual. Nenhum recurso está entregue só por entrar neste plano.
+This is the single source of scope, sequence, acceptance and evidence. The
+[scope audit](docs/SCOPE_AUDIT_2026-10-16.md) preserves the snapshot before construction.
+The [acceptance matrix](docs/ACCEPTANCE.md), [curriculum](docs/CURRICULUM.md) and PRs below describe
+the current implementation. Adding a capability to a plan does not deliver it.
 
-## 1. O que é "pronto" no escopo completo
+## 1. What complete means
 
-Quem fizer fork deve conseguir aprender e reproduzir as capacidades abaixo, com o mesmo app
-React + Node.js + PostgreSQL nos três pares, infraestrutura como código, exercícios, diagnóstico,
-custos e limpeza. São três implantações da mesma aplicação; três produtos diferentes não fazem
-parte da regra de paridade da família.
+A fork owner should be able to learn and reproduce the capabilities below using the same
+React + Node.js + PostgreSQL app in all three pairs, with IaC, exercises, diagnosis, costs and
+cleanup. These are three deployments of the same application; three different products are
+outside the family parity rule.
 
-1. **Construção:** Terraform, manifests, imagens, workflows, contratos, runbooks e aulas contemplam
-   EKS/AKS/GKE Autopilot, aplicação, redes/TLS/DNS/WAF, identidade, segurança, observabilidade,
-   GitOps, HA, backup/restore, DR, Chaos e FinOps. Uma tecnologia instalada sem integração e sem
-   exercício não fecha seu item.
-2. **Prova reproduzível em Docker/CI:** testes de aplicação, políticas, renders, Terraform com
-   providers mockados e exercícios reais sobre kind/PostgreSQL validam o comportamento portável.
-   O pipeline deve provar também que rejeita configurações inseguras ou incompletas. Rodadas
-   pesadas, incluindo SonarQube, DR e carga, ficam no GitHub Actions; não no computador do Bruno.
-3. **Código preparado para as três nuvens:** cada capacidade tem implementação do provedor,
-   contrato, IAM, custos, quota/pré-requisitos e roteiro de operação/destruição. Uma limitação do
-   Autopilot exige um caminho suportado ou uma alternativa explícita; escrever "não suporta" não
-   equivale a entregar mesh, DR ou observabilidade.
-4. **Homologação cloud separada:** Docker não executa EKS, AKS, GKE, RDS, Cloud SQL ou IAM real. A
-   primeira rodada numa conta própria pode revelar ajustes. Emissão pública de certificados,
-   entrega externa no Slack, failover gerenciado, custo faturado e operação 24/7 só recebem
-   evidência de nuvem depois de uma execução autorizada. Até lá: `não executado em nuvem (v2)`.
-5. **Fork utilizável:** documentação por exercício, credenciais próprias, perfis de custo explícitos,
-   gates reproduzíveis sem assinatura comercial obrigatória, recuperação de falhas e teardown com
-   checagem de sobras. Domínio, webhook e contas cloud são fornecidos pelo dono do fork.
+1. **Construction:** Terraform, manifests, images, workflows, contracts, runbooks and lessons cover
+   EKS/AKS/GKE Autopilot, applications, networking/TLS/DNS/WAF, identity, security, observability,
+   GitOps, HA, backup/restore, DR, Chaos and FinOps. Installing a technology without integration
+   and an exercise does not close its item.
+2. **Reproducible Docker/CI evidence:** application tests, policies, renders, mocked Terraform
+   providers and real kind/PostgreSQL exercises validate portable behavior. The pipeline must
+   also reject unsafe or incomplete configuration. Heavy runs, including SonarQube, DR and load,
+   belong in GitHub Actions; they do not run on Bruno's machine.
+3. **Code prepared for three clouds:** every capability has provider implementation, contract,
+   IAM, costs, quota/prerequisites and operation/destruction steps. Autopilot limitations require
+   a supported path or an explicit alternative; a statement that something is unsupported does
+   not deliver mesh, DR or observability.
+4. **Separate cloud validation:** Docker does not run EKS, AKS, GKE, RDS, Cloud SQL or real IAM.
+   The first run in an operator's account may reveal fixes. Public certificates, external Slack
+   delivery, managed failover, billed costs and 24/7 operation need an authorized cloud run before
+   receiving cloud evidence. Until then: `not run in the cloud (v2)`.
+5. **Usable forks:** exercise documentation, operator-owned credentials, explicit cost profiles,
+   reproducible gates without mandatory commercial subscriptions, failure recovery and teardown
+   with leftover checks. The fork owner supplies the domain, webhook and cloud accounts.
 
-O padrão continua econômico. Perfis de plataforma completa, HA e DR são escolhas explícitas, com
-estimativas por hora/rodada e retenções descritas. Budget alerta; não é um bloqueio automático de
-gastos. "Produção", "24/7", "zero downtime" e "RPO/RTO" sempre dizem qual cenário foi medido.
+Economical defaults remain. Full platform, HA and DR are explicit choices with hourly/per-run
+estimates and retention policies. Budgets alert; they do not automatically cap spending.
+“Production”, “24/7”, “zero downtime” and “RPO/RTO” must identify the measured scenario.
 
-### O que mudou em relação ao fechamento anterior
+### Changes since the previous closure
 
-A DEC-11 havia retirado DR, FinOps, HTTPS cloud, SonarQube, tráfego avançado e outros itens. O pedido
-de 2026-10-16 reabre essas capacidades. Os dez PRs anteriores continuam mesclados; isso comprova as
-entregas daquela rodada, não o cumprimento de toda a lista ampliada. O histórico não é apagado.
+DEC-11 removed DR, FinOps, cloud HTTPS, SonarQube, advanced traffic management and other items.
+The request of 2026-10-16 reopened them. The previous ten PRs remain merged and prove that round's
+deliveries; they do not prove the expanded list. History is preserved.
 
-O escopo implementa a lista nomeada neste arquivo. Ferramentas alternativas adicionais, novos
-produtos, suporte comercial e um serviço hospedado permanentemente não surgem automaticamente de
-"etc."; entram como nova decisão de escopo.
+This scope implements the named list in this file. Additional alternative tools, new products,
+commercial support and a permanently hosted service require a new scope decision; “etc.” does
+not implicitly add them.
 
-## 2. Onde estamos (2026-10-17)
+## 2. Current state (2026-10-18)
 
-| Área | Construção e prova | Limite de execução |
+| Area | Construction and evidence | Execution limit |
 |---|---|---|
-| EKS, AKS e GKE Autopilot | Terraform com perfis baratos/HA/DR; mocks; kind real no CI; capacidade/SLO/custo nos e2e | Control planes gerenciados e escala de nós ainda sem execução cloud |
-| React + Node.js + PostgreSQL | Mesma aplicação nos três DX; release por digest, conteúdo novo, migração e rollback exercitados | Deploy na conta real ainda sem execução |
-| CI/CD e segurança | SonarQube/gate real, CodeQL, Trivy, gitleaks, ZAP, cobertura, artefatos e fixtures negativas | Publicação cloud usa identidades/registry próprios do fork |
-| Rede, TLS, WAF e IAM | DNS/TLS, redes privadas, federação, boundaries e políticas como código; HTTPS no kind | Motor WAF, emissão pública e negação IAM reais exigem homologação |
-| Observabilidade e OTel | App full integrado, PVC/retenção, sinais correlacionados, alertas e exportadores nativos | Slack externo, ingestão gerenciada e operação 24/7 sem execução |
-| Mesh, policies e Chaos | Tráfego L7, mTLS/identidades, admissão, scan e hipóteses exercitados; caminho gerenciado no Autopilot | Superfície cloud depende do provedor; Autopilot não recebe daemon privilegiado incompatível |
-| Dados, HA, BKP e DR | HA/PITR nas três; backup físico/WAL, PVC/checksum, A/B independente, fencing e failback no CI | Failover/DR dos serviços gerenciados ainda sem execução |
-| FinOps | OpenCost/showback, preços regionais, budget/expiração, VPA Off e carga verificados no CI da R10 | Estimativa não é fatura; economia Spot não é comprovada localmente |
-| Operação cloud | Roteiro de homologação e limpeza por par | Contas/orçamento/domínio próprios; nenhuma execução real da v2 |
+| EKS, AKS and GKE Autopilot | Terraform with economical/HA/DR profiles; mocks; real kind in CI; capacity/SLO/cost e2e | managed control planes and node scaling have no cloud run |
+| React + Node.js + PostgreSQL | same app in three DX; digest releases, changed content, migration and rollback exercised | no deployment in a real account |
+| CI/CD and security | real SonarQube/gate, CodeQL, Trivy, gitleaks, ZAP, coverage, artifacts and negative fixtures | cloud publication uses the fork's own identities/registry |
+| Networking, TLS, WAF and IAM | DNS/TLS, private networks, federation, boundaries and policies as code; HTTPS on kind | real WAF engines, public issuance and IAM denials need cloud validation |
+| Observability and OTel | integrated full app, PVC/retention, correlated signals, alerts and native exporters | external Slack, managed ingestion and 24/7 operation unexecuted |
+| Mesh, policies and Chaos | L7 traffic, mTLS/identities, admission, scanning and hypotheses exercised; managed Autopilot path | provider-dependent cloud surfaces; Autopilot excludes incompatible privileged daemons |
+| Data, HA, backup and DR | HA/PITR in all three; physical/WAL backup, PVC/checksum, independent A/B, fencing and failback in CI | managed-service failover/DR unexecuted |
+| FinOps | OpenCost/showback, regional prices, budget/expiry, VPA Off and load verified in R10 CI | estimates are not invoices; local tests do not prove Spot savings |
+| Cloud operations | validation and cleanup procedure per pair | operator-owned accounts/budget/domain; no real v2 run |
 
-Detalhes, caminhos executáveis e limites estão na matriz de aceite. Instalar charts não prova
-automaticamente que o app está monitorado, protegido pela malha ou recuperável.
+The acceptance matrix gives paths and limits. Installing charts does not automatically prove
+that an app is monitored, protected by the mesh or recoverable.
 
-## 3. Como executar e acompanhar
+## 3. Execution and tracking
 
-Campos de cada item: `Status`, `Repos`, `Origem`, `Dependências`, `Custo`, `Entregáveis`, `Aceite` e,
-quando `feito`, `Evidência` com PRs mesclados. O harness valida formato, dependências e a igualdade
-com a visão geral; o `family-evidence` confere os merges.
+Each item has `Status`, `Repos`, `Origin`, `Dependencies`, `Cost`, `Deliverables`, `Acceptance`
+and, when `done`, `Evidence` with merged PRs. The harness validates format, dependencies and the
+overview; `family-evidence` checks merges.
 
-| Status | Significado |
+| Status | Meaning |
 |---|---|
-| `feito` | entrega do item mesclada com CI verde, dentro dos limites do seu aceite |
-| `em andamento` | implementação/PR em curso ou parte dos repositórios mesclada |
-| `pendente` | escopo aceito, ainda não implementado |
-| `bloqueado` | depende de uma condição externa identificada |
-| `proposta` | sugestão ainda não aprovada pelo Bruno |
+| `done` | merged delivery with green CI, within its acceptance limits |
+| `in progress` | implementation/PR underway or only some repositories merged |
+| `pending` | accepted scope, not implemented yet |
+| `blocked` | depends on an identified external condition |
+| `proposal` | suggestion not yet approved by Bruno |
 
-Regras:
+Rules:
 
-1. AWS é a referência; os outros pares recebem a capacidade na mesma rodada, com as adaptações
-   exigidas pelo provedor. O app continua igual nos três DX.
-2. Um PR coeso por repositório por rodada. O tx entra antes do dx, que fixa o commit mesclado do tx
-   em `deploy/local/tx0Nv2.ref`. Mudanças de contrato exigem versão e PRs coordenados.
-3. Cada PR inclui implementação, testes pertinentes, aula/exercício, runbook, custo e changelog.
-   Não há um PR por ferramenta. Se uma entrega ficar impraticável de revisar, ela é dividida e a
-   previsão é atualizada; a contagem não é motivo para omitir testes ou misturar trabalho sem relação.
-4. Gates permanecem bloqueantes e dependências fixadas. Nada de `continue-on-error`, `|| true`,
-   scanner ignorado sem justificativa ou status mais forte que sua evidência.
-5. A construção usa Docker/CI e validação offline de IaC. Deploy, failover e ações que gastam numa
-   nuvem só ocorrem com autorização específica para a rodada e após revisar custo/plan.
-6. O hub mantém este plano e um PR final de aceite. Aulas e evidências técnicas entram nos PRs dos
-   pares; atualizações intermediárias podem ser agrupadas, sem criar um PR documental por checkbox.
-7. Histórico preservado: os marcos concluídos abaixo não são recontados como construção ausente.
-   As novas etapas fecham lacunas concretas, e a homologação real mantém um estado separado.
+1. AWS is the reference; port a capability to other pairs in the same round with provider-required
+   adaptations. The app remains the same across three DX repositories.
+2. One cohesive PR per repository per round. Merge TX before DX; DX pins the merged TX commit in
+   `deploy/local/tx0Nv2.ref`. Contract changes require a version bump and coordinated PRs.
+3. Each PR includes implementation, relevant tests, lesson/exercise, runbook, costs and changelog.
+   There is no PR per tool. Split a delivery that cannot be reviewed reasonably and update the
+   estimate; never omit tests or mix unrelated work to meet a count.
+4. Gates remain blocking and dependencies pinned. No `continue-on-error`, swallowed errors,
+   unexplained scanner ignores or claims stronger than evidence.
+5. Construction uses Docker/CI and offline IaC validation. Cloud deployment, failover and spending
+   require specific authorization for the run and reviewed cost/plan.
+6. The hub maintains this plan and a final acceptance PR. Technical lessons/evidence accompany
+   pair PRs; intermediate documentation can be grouped without a PR for every checkbox.
+7. Preserve history: completed milestones are not counted again as missing construction.
+   New stages close concrete gaps; real cloud validation retains a separate state.
 
-## 4. Visão geral
+## 4. Overview
 
 | ID | Item | Status |
 |---|---|---|
-| R0.1 | Os seis repositórios v2 públicos, com harness, CI e guardrails | `feito` |
-| R0.2 | O mesmo app nos três pares (regra de paridade) | `feito` |
-| R0.3 | Lab local com a plataforma completa do v1 | `feito` |
-| R0.4 | O lab local como gate de merge | `feito` |
-| R0.5 | Pronto para fork | `feito` |
-| R0.6 | Hub da família (este repositório) | `feito` |
-| R0.7 | Scripts que só agem no lab (segurança para quem faz fork) | `feito` |
-| R1.1 | Traces na plataforma local | `feito` |
-| R1.2 | Alertas no Slack | `feito` |
-| R1.3 | Chaos com hipóteses: latência de rede e stress | `feito` |
-| R1.4 | Traces no app e contrato v2 | `feito` |
-| R1.5 | Rollout sem downtime e latência entre a API e o banco | `feito` |
-| R1.6 | Exportadores de traces das nuvens, como código | `feito` |
-| R1.7 | Dívida: SHA256 do chart do Collector na nuvem do tx01v2 | `feito` |
-| R1.8 | Dívida: perfil enxuto do e2e-platform para máquinas com menos de 8 GB | `feito` |
-| R1.9 | Dívida: instalação instável do servidor do Trivy Operator | `feito` |
-| R1.10 | Dívida: timeout do webhook do ESO no lab local do tx03v2 | `feito` |
-| R3.10 | Permission boundary no papel de apply da AWS | `feito` |
-| R3.13 | `leftovers.sh` da Azure e do Google Cloud só culpam o que é do lab | `feito` |
-| R3.14 | Destroy que sempre chega ao fim | `feito` |
-| R3.15 | OIDC e Workload Identity Federation presos a IDs imutáveis e à `main` | `feito` |
-| R3.16 | Papéis de CI mais estreitos fora de uma conta dedicada | `feito` |
-| R3.17 | Logs públicos sem identificadores e smoke sem token em texto puro | `feito` |
-| R3.18 | Efeitos colaterais na máquina de quem faz fork | `feito` |
-| R4.1 | Perfis `core` e `full` da camada de plataforma na nuvem | `feito` |
-| R4.2 | ADR: observabilidade no cluster ou gerenciada, por nuvem | `feito` |
-| R4.3 | Istio ambient nas três nuvens | `feito` |
-| R4.4 | Argo CD na nuvem e deploy do app por GitOps | `feito` |
-| R4.5 | Velero com o object storage de cada nuvem | `feito` |
-| R4.6 | Gatekeeper, Trivy Operator e Chaos Mesh na nuvem | `feito` |
-| R4.7 | Dimensionamento e custo do perfil `full` | `feito` |
-| R4.8 | Do fork à própria nuvem, de ponta a ponta | `feito` |
-| R7.1 | SonarQube, SAST e gates de qualidade e segurança | `feito` |
-| R7.2 | Promover o artefato aprovado, com migração e rollback | `feito` |
-| R8.1 | Entrada segura, identidade e caminho de fork coerente | `feito` |
-| R8.2 | Mesh e gerenciamento avançado de tráfego nos três Kubernetes | `feito` |
-| R8.3 | Observabilidade do app, retenção e integrações gerenciadas | `feito` |
-| R8.4 | Segurança de runtime e Chaos Engineering integrado | `feito` |
-| R9.1 | HA dos bancos e recuperação verificável de dados | `feito` |
-| R9.2 | DR entre regiões com failover e failback | `feito` |
-| R10.1 | Autoscaling por demanda, carga e capacidade Spot | `feito` |
-| R10.2 | FinOps com OpenCost, showback e rightsizing | `feito` |
-| R11.1 | Matriz de escopo, aulas e evidências finais | `feito` |
-| S.1 | Node.js 26 LTS nos apps | `pendente` |
-| S.2 | Kubernetes 1.37 na família e kubectl alinhado | `pendente` |
-| S.3 | Istio 1.31 para 1.33 | `pendente` |
-| S.4 | Exceções do trivy que vencem em 2027-04-30 | `pendente` |
-| S.5 | nginx 1.32 nos apps | `pendente` |
-| S.6 | Amazon Linux 2023 nos nós do EKS | `pendente` |
-| S.7 | Schemas de CRD do kubeconform | `pendente` |
-| S.8 | Menções a "contract v1" que descrevem a versão 2 | `feito` |
-| S.9 | Primeira revisão trimestral conjunta da família | `pendente` |
+| R0.1 | Six public v2 repositories with harness, CI and guardrails | `done` |
+| R0.2 | Same app in all three pairs (parity rule) | `done` |
+| R0.3 | Local lab with the full v1 platform | `done` |
+| R0.4 | Local lab as a merge gate | `done` |
+| R0.5 | Ready for forks | `done` |
+| R0.6 | Family hub (this repository) | `done` |
+| R0.7 | Scripts restricted to lab resources (fork safety) | `done` |
+| R1.1 | Traces in the local platform | `done` |
+| R1.2 | Slack alerts | `done` |
+| R1.3 | Chaos hypotheses: network latency and stress | `done` |
+| R1.4 | App traces and contract v2 | `done` |
+| R1.5 | Rollout without downtime and API-to-database latency | `done` |
+| R1.6 | Cloud trace exporters as code | `done` |
+| R1.7 | Debt: cloud Collector chart SHA256 in tx01v2 | `done` |
+| R1.8 | Debt: smaller e2e-platform profile below 8 GB | `done` |
+| R1.9 | Debt: unstable Trivy Operator server installation | `done` |
+| R1.10 | Debt: ESO webhook timeout in tx03v2 local lab | `done` |
+| R3.10 | Permission boundary on the AWS apply role | `done` |
+| R3.13 | Azure/GCP leftovers.sh counts only lab resources | `done` |
+| R3.14 | Destroy always reaches completion | `done` |
+| R3.15 | OIDC/WIF pinned to immutable IDs and main | `done` |
+| R3.16 | Narrower CI roles outside dedicated accounts | `done` |
+| R3.17 | Public logs without identifiers and smoke without plaintext tokens | `done` |
+| R3.18 | Side effects on fork owners' machines | `done` |
+| R4.1 | Cloud platform core/full profiles | `done` |
+| R4.2 | ADR: in-cluster or managed observability per cloud | `done` |
+| R4.3 | Istio ambient in the three clouds | `done` |
+| R4.4 | Cloud Argo CD and GitOps app deployment | `done` |
+| R4.5 | Velero with each cloud's object storage | `done` |
+| R4.6 | Cloud Gatekeeper, Trivy Operator and Chaos Mesh | `done` |
+| R4.7 | Full profile sizing and costs | `done` |
+| R4.8 | Fork to own cloud, end to end | `done` |
+| R7.1 | SonarQube, SAST, quality and security gates | `done` |
+| R7.2 | Promote the approved artifact with migration/rollback | `done` |
+| R8.1 | Secure edge, identity and consistent fork path | `done` |
+| R8.2 | Mesh and advanced traffic in three Kubernetes platforms | `done` |
+| R8.3 | App observability, retention and managed integrations | `done` |
+| R8.4 | Integrated runtime security and Chaos Engineering | `done` |
+| R9.1 | Database HA and verifiable data recovery | `done` |
+| R9.2 | Cross-region DR, failover and failback | `done` |
+| R10.1 | Demand autoscaling, load and Spot capacity | `done` |
+| R10.2 | OpenCost FinOps, showback and rightsizing | `done` |
+| R11.1 | Scope matrix, lessons and final evidence | `done` |
+| S.1 | Node.js 26 LTS in apps | `pending` |
+| S.2 | Kubernetes 1.37 and aligned kubectl | `pending` |
+| S.3 | Istio 1.31 to 1.33 | `pending` |
+| S.4 | Trivy exceptions expiring 2027-04-30 | `pending` |
+| S.5 | nginx 1.32 in apps | `pending` |
+| S.6 | Amazon Linux 2023 on EKS nodes | `pending` |
+| S.7 | kubeconform CRD schemas | `pending` |
+| S.8 | “contract v1” references describing version 2 | `done` |
+| S.9 | First joint quarterly family review | `pending` |
 
-## 5. Plano de entregas e quantidade de PRs
+## 5. Delivery plan and PR count
 
-**Entrega: 22 PRs de construção, na conta `3 + 6 + 6 + 6 + 1`.** Os 21 PRs dos pares
-estão mesclados e o PR R11 deste hub fecha a contagem. Após este fechamento, restam
-**0 PRs de construção da DEC-13**. A revisão que planejou o escopo e as correções adicionais
-registradas no histórico não são recontadas entre os 22.
+**Delivered: 22 construction PRs, `3 + 6 + 6 + 6 + 1`.** The 21 pair PRs merged, and this
+hub's R11 PR closes the count. **Zero DEC-13 construction PRs remain.** The scope revision and
+additional corrections recorded in history are not counted again among those 22.
 
-| Rodada | Entrega coesa | Repositórios | PRs entregues |
+| Round | Cohesive delivery | Repositories | Delivered PRs |
 |---|---|---|---:|
-| R7 | DevSecOps e release: SonarQube/SAST/gates, artefato por digest, migração e rollback | dx01v2, dx02v2, dx03v2 | 3 |
-| R8 | Plataforma cloud completa integrada ao app: TLS/DNS/WAF/IAM, mesh, observabilidade durável, policies/scanning e Chaos | um TX e um DX por nuvem | 6 |
-| R9 | Continuidade de dados: HA, backup/PITR/restore, DR entre regiões, failover/failback | um TX e um DX por nuvem | 6 |
-| R10 | FinOps e capacidade: autoscaling/Spot, OpenCost/showback, VPA/rightsizing e carga | um TX e um DX por nuvem | 6 |
-| R11 | Aceite final, currículo e matriz de evidências do escopo completo | tx00v2 | 1 |
-| **Total de construção** | | | **22** |
+| R7 | DevSecOps/releases: SonarQube/SAST/gates, digest artifacts, migration/rollback | dx01v2, dx02v2, dx03v2 | 3 |
+| R8 | Integrated cloud platform: TLS/DNS/WAF/IAM, mesh, durable observability, policies/scanning/Chaos | TX + DX per cloud | 6 |
+| R9 | Data continuity: HA, backup/PITR/restore, cross-region DR, failover/failback | TX + DX per cloud | 6 |
+| R10 | FinOps/capacity: autoscaling/Spot, OpenCost/showback, VPA/rightsizing/load | TX + DX per cloud | 6 |
+| R11 | Final acceptance, curriculum and complete-scope evidence matrix | tx00v2 | 1 |
+| **Construction total** | | | **22** |
 
-R8 reuniu os itens da plataforma num contrato por par; R9 reuniu proteção e recuperação dos
-dados no mesmo fluxo. As aulas e os runbooks acompanham as implementações nos seis
-repositórios, consolidados no currículo e na matriz de aceite.
+R8 combined platform items into one contract per pair; R9 combined data protection/recovery.
+Lessons and runbooks accompany implementations in all six repositories and are consolidated
+in the curriculum and acceptance matrix.
 
-Ordem por rodada: tx01v2 → dx01v2, tx02v2 → dx02v2, tx03v2 → dx03v2; pares independentes podem
-avançar em paralelo. R7 começa nos DX; R8 integra a nova cadeia de entrega. HA/DR e FinOps recebem
-jobs separados para não sobrecarregar a prova básica do lab.
+Round order: tx01v2 → dx01v2, tx02v2 → dx02v2, tx03v2 → dx03v2; independent pairs may advance in
+parallel. R7 starts in DX; R8 integrates the release chain. HA/DR and FinOps have separate jobs
+to avoid overloading the basic lab exercise.
 
 ```mermaid
 flowchart LR
-  BASE["R0/R1/R3/R4: base construída"] --> R7["R7 CI/CD e DevSecOps: 3 PRs"]
-  R7 --> R8["R8 plataforma integrada: 6 PRs"]
-  R8 --> R9["R9 HA, backup e DR: 6 PRs"]
-  R8 --> R10["R10 escala e FinOps: 6 PRs"]
-  R9 --> R11["R11 aceite: 1 PR"]
+  BASE["R0/R1/R3/R4: completed foundation"] --> R7["R7 CI/CD and DevSecOps: 3 PRs"]
+  R7 --> R8["R8 integrated platform: 6 PRs"]
+  R8 --> R9["R9 HA, backup and DR: 6 PRs"]
+  R8 --> R10["R10 scaling and FinOps: 6 PRs"]
+  R9 --> R11["R11 acceptance: 1 PR"]
   R10 --> R11
 ```
 
-A validação real nas três nuvens é uma etapa operacional posterior, com contas, domínio, quotas,
-webhook e orçamento próprios. Executar essa validação não é, por si, um PR. Correções que ela
-revelar entram como trabalho adicional com evidência, sem prometer antecipadamente uma quantidade.
-O calendário S continua separado das 22 entregas de construção.
+Real validation in three clouds is a later operational stage with operator-owned accounts, domain,
+quotas, webhook and budget. Running it does not itself require a PR. Any discovered fixes become
+additional work with evidence; their count cannot be promised in advance. The S maintenance
+calendar remains separate from the 22 construction deliveries.
 
-## R7. DevSecOps e entrega de releases
+## R7. DevSecOps and release delivery
 
-Uma rodada de três PRs, um por DX, incluindo os dois itens abaixo.
+Three PRs, one per DX, covering both items below.
 
-### R7.1 SonarQube, SAST e gates de qualidade e segurança
+### R7.1 SonarQube, SAST, quality and security gates
 
-- Status: `feito`
+- Status: `done`
 - Repos: dx01v2, dx02v2, dx03v2
-- Origem: pedido do Bruno em 2026-10-16, DEC-1 e DEC-13
-- Dependências: R0.4, R1.4
-- Custo: sem assinatura comercial obrigatória; SonarQube e DAST em jobs isolados no Actions;
-  recursos e limites do runner documentados, sem subir esse conjunto na máquina do Bruno.
-- Entregáveis:
-  - SonarQube Community Build reproduzível com banco, scanner fixado e análise de cobertura;
-    quality gate real bloqueia a promoção. Explicar a análise de branch principal da edição
-    Community e não depender de decoração de PR ou multibranch de edição comercial.
-  - SAST em PR (CodeQL quando sua licença permitir no fork público), Trivy, gitleaks, cobertura e
-    OWASP ZAP contra a aplicação local. Caminho seguro de PR vindo de fork, sem entregar secrets.
-  - SBOM, proveniência e assinatura keyless de imagens; verificação antes de promover. Fixar
-    identidade/emissor esperados, sem aceitar qualquer assinatura válida.
-  - Aula com defeito de qualidade, vulnerabilidade e segredo fictício; relatórios redigidos,
-    critérios de correção e política de exceções com prazo, sem enfraquecer os gates existentes.
-- Aceite:
-  - CI faz uma análise Sonar real e lê o resultado do gate; fixtures negativas demonstram que
-    qualidade, SAST, DAST e artefato sem assinatura/identidade correta bloqueiam a promoção.
-  - Um fork sem serviços pagos consegue executar as aulas; indisponibilidade do scanner não vira
-    aprovação. Os gates funcionam antes da primeira publicação, sem PR com secrets de produção.
-- Evidência: [dx01v2#17](https://github.com/maringelix/dx01v2/pull/17), [dx02v2#12](https://github.com/maringelix/dx02v2/pull/12), [dx03v2#14](https://github.com/maringelix/dx03v2/pull/14)
+- Origin: Bruno's request of 2026-10-16, DEC-1 and DEC-13
+- Dependencies: R0.4, R1.4
+- Cost: no mandatory commercial subscription; SonarQube and DAST in isolated Actions jobs;
+  documented runner resources/limits, without running the suite on Bruno's machine.
+- Deliverables:
+  - Reproducible SonarQube Community Build with database, pinned scanner and coverage analysis;
+    a real quality gate blocks promotion. Explain Community main-branch analysis without relying
+    on commercial PR decoration or multibranch features.
+  - PR SAST (CodeQL where the public fork's license permits), Trivy, gitleaks, coverage and OWASP
+    ZAP against the local app. Safe fork-PR execution without exposing secrets.
+  - Image SBOM, provenance and keyless signatures verified before promotion. Pin the expected
+    identity/issuer rather than accepting any valid signature.
+  - A lesson with a quality defect, vulnerability and fictitious secret; redacted reports, fix
+    criteria and expiring exceptions, preserving existing gates.
+- Acceptance:
+  - CI performs real Sonar analysis and reads the gate result; negative fixtures prove that
+    quality, SAST, DAST and missing/wrong artifact identity/signatures block promotion.
+  - A fork without paid services can run the lessons; scanner unavailability cannot become
+    approval. Gates work before first publication without production secrets in PRs.
+- Evidence: [dx01v2#17](https://github.com/maringelix/dx01v2/pull/17), [dx02v2#12](https://github.com/maringelix/dx02v2/pull/12), [dx03v2#14](https://github.com/maringelix/dx03v2/pull/14)
 
-### R7.2 Promover o artefato aprovado, com migração e rollback
+### R7.2 Promote the approved artifact with migration and rollback
 
-- Status: `feito`
+- Status: `done`
 - Repos: dx01v2, dx02v2, dx03v2
-- Origem: auditoria do fluxo de deploy e pedido de CI/CD com zero downtime, DEC-13
-- Dependências: R7.1, R4.4
-- Custo: jobs de build/teste/carga no Actions; retenção de artefatos e registry descrita no runbook.
-- Entregáveis:
-  - Construir uma vez; ECR, ACR e Artifact Registry recebem o digest aprovado para o commit exato.
-    Workflow manual confirma gates e proveniência desse commit, sem recompilar no deploy.
-  - Release com duas versões de conteúdo diferente, migração expand/contract compatível,
-    readiness, PDB, rollout, promoção GitOps e rollback para digest conhecido.
-  - Exercício de imagem reprovada, migração falha e versão sem prontidão; separar rollback do app
-    de recuperação de dados e registrar os limites de uma migração irreversível.
-- Aceite:
-  - Em kind/CI, chamadas contínuas durante a troca real comprovam o objetivo de disponibilidade
-    definido no teste, versão nova atendendo e versão anterior restaurada após falha induzida.
-  - Nenhum caminho de deploy contorna gates, troca o digest ou promove outro SHA. O mesmo fluxo de
-    release é renderizado/validado para as três nuvens; execução real permanece separada.
-- Evidência: [dx01v2#17](https://github.com/maringelix/dx01v2/pull/17), [dx02v2#12](https://github.com/maringelix/dx02v2/pull/12), [dx03v2#14](https://github.com/maringelix/dx03v2/pull/14)
+- Origin: deployment audit and zero-downtime CI/CD request, DEC-13
+- Dependencies: R7.1, R4.4
+- Cost: build/test/load Actions jobs; artifact and registry retention described in runbooks.
+- Deliverables:
+  - Build once; ECR, ACR and Artifact Registry receive the approved digest for the exact commit.
+    Manual workflows verify that commit's gates/provenance without rebuilding at deployment.
+  - Release two versions with different content, compatible expand/contract migrations,
+    readiness, PDB, rollout, GitOps promotion and rollback to a known digest.
+  - Exercises with a rejected image, failed migration and unready version; distinguish app
+    rollback from data recovery and document irreversible migration limits.
+- Acceptance:
+  - Continuous kind/CI requests during a real version change prove the test's availability
+    objective, new content serving and restoration of the previous version after induced failure.
+  - No deployment path bypasses gates, substitutes digests or promotes a different SHA. Validate
+    the release path for all three clouds; real execution remains separate.
+- Evidence: [dx01v2#17](https://github.com/maringelix/dx01v2/pull/17), [dx02v2#12](https://github.com/maringelix/dx02v2/pull/12), [dx03v2#14](https://github.com/maringelix/dx03v2/pull/14)
 
-## R8. Plataforma cloud completa integrada à aplicação
+## R8. Complete cloud platform integrated with the app
 
-Uma rodada de seis PRs, um por TX/DX. Cada par fecha conjuntamente os quatro itens; limitações do
-provedor precisam de implementação suportada e exercício equivalente explícito.
+Six PRs, one per TX/DX. Each pair jointly closes all four items; provider limitations require
+supported implementation and an explicit equivalent exercise.
 
-### R8.1 Entrada segura, identidade e caminho de fork coerente
+### R8.1 Secure edge, identity and consistent fork path
 
-- Status: `feito`
+- Status: `done`
 - Repos: tx01v2, dx01v2, tx02v2, dx02v2, tx03v2, dx03v2
-- Origem: pedido de redes/WAF/SSL/DNS/least privilege e lacunas de fork, DEC-13
-- Dependências: R7.2, R3.16, R4.8
-- Custo: DNS, domínio, certificados gerenciados, LB, WAF, NAT e IPs por nuvem em `docs/CUSTOS.md`;
-  padrão econômico, sem domínio ou conta real embutidos no repositório.
-- Entregáveis:
-  - DNS e HTTPS como IaC/contrato nas três nuvens, com renovação automática, redirect HTTP e teste
-    de configuração inválida. cert-manager/ACME é exercitado com ACME de teste no Docker; quando
-    a integração do LB exigir certificado do provedor, documentar essa fronteira.
-  - Subnets públicas/privadas, egress, Ingress/Gateway/LB e WAF com regras e probes de bloqueio;
-    banco privado, TLS entre app/banco, NetworkPolicies e segredos via identidade de workload.
-  - Revisar IAM/RBAC de bootstrap, plan, apply, runtime e backup; reduzir permissões amplas onde
-    viável, testar negações e justificar privilégio residual no escopo dedicado do lab.
-  - Um caminho de fork para `core` e outro para `full`, sem pedir GitOps quando Argo CD não foi
-    instalado. Entradas, contratos, outputs, scripts e workflows devem concordar.
-- Aceite:
-  - CI valida DNS/certificados/rotas nos três provedores com mocks/renders e prova ACME/renovação,
-    isolamento e bloqueio WAF no gêmeo local, sem afirmar emissão pública ou IAM real homologados.
-  - Ensaio offline a partir de configuração de fork nova cobre core/full e falhas de pré-requisito;
-    checks offline validam políticas e scripts recusam contextos/alvos fora do lab. A negação
-    efetiva pelo IAM aguarda homologação cloud.
-- Evidência: [tx01v2#16](https://github.com/maringelix/tx01v2/pull/16), [dx01v2#18](https://github.com/maringelix/dx01v2/pull/18), [tx02v2#14](https://github.com/maringelix/tx02v2/pull/14), [dx02v2#13](https://github.com/maringelix/dx02v2/pull/13), [tx03v2#15](https://github.com/maringelix/tx03v2/pull/15), [dx03v2#15](https://github.com/maringelix/dx03v2/pull/15)
+- Origin: networking/WAF/SSL/DNS/least-privilege request and fork gaps, DEC-13
+- Dependencies: R7.2, R3.16, R4.8
+- Cost: provider DNS, domain, managed certificates, LB, WAF, NAT and IPs in `docs/COSTS.md`;
+  economical defaults without real domains or accounts embedded in repositories.
+- Deliverables:
+  - DNS and HTTPS as IaC/contracts in all three clouds, automatic renewal, HTTP redirect and
+    invalid-configuration tests. Exercise cert-manager/ACME with test ACME on Docker; document
+    the boundary wherever the load balancer requires a provider certificate.
+  - Public/private subnets, egress, Ingress/Gateway/LB, WAF rules and denial probes; private
+    databases, app/database TLS, NetworkPolicies and secrets through workload identity.
+  - Review bootstrap, plan, apply, runtime and backup IAM/RBAC; narrow broad permissions where
+    viable, test denials and justify residual privilege within the dedicated lab scope.
+  - Separate consistent fork paths for core and full; do not require GitOps without Argo CD.
+    Inputs, contracts, outputs, scripts and workflows agree.
+- Acceptance:
+  - CI validates provider DNS/certificates/routes with mocks/renders and exercises local
+    ACME/renewal, isolation and WAF denial without claiming real public issuance or IAM evidence.
+  - Offline rehearsal from fresh fork configuration covers core/full and missing prerequisites;
+    checks validate policies and scripts reject non-lab contexts/targets. Effective IAM denials
+    await cloud validation.
+- Evidence: [tx01v2#16](https://github.com/maringelix/tx01v2/pull/16), [dx01v2#18](https://github.com/maringelix/dx01v2/pull/18), [tx02v2#14](https://github.com/maringelix/tx02v2/pull/14), [dx02v2#13](https://github.com/maringelix/dx02v2/pull/13), [tx03v2#15](https://github.com/maringelix/tx03v2/pull/15), [dx03v2#15](https://github.com/maringelix/dx03v2/pull/15)
 
-### R8.2 Mesh e gerenciamento avançado de tráfego nos três Kubernetes
+### R8.2 Mesh and advanced traffic management in three Kubernetes platforms
 
-- Status: `feito`
+- Status: `done`
 - Repos: tx01v2, dx01v2, tx02v2, dx02v2, tx03v2, dx03v2
-- Origem: pedido de service mesh e tráfego avançado nas três nuvens, DEC-13
-- Dependências: R8.1, R4.3
-- Custo: dataplane/waypoints, capacidade e eventual serviço gerenciado estimados por perfil;
-  seguir o caminho suportado do GKE Autopilot, sem daemon privilegiado incompatível.
-- Entregáveis:
-  - mTLS STRICT no tráfego interno, autorização por identidade e políticas de egress integradas
-    ao app nas três. LBs/gateways externos à malha usam TLS de origem ou exceção restrita e
-    justificada no edge, com política que preserva o isolamento e testes do caminho de entrada.
-  - Canary com divisão de tráfego, timeouts, retries limitados e circuit breaking/outlier
-    detection com dataplane L7; habilitar waypoint quando o modo ambient exigir.
-  - IaC/instalação de Cloud Service Mesh gerenciada para Autopilot ou caminho oficialmente
-    suportado equivalente, com versões, pré-requisitos e diferenças didáticas registradas.
-- Aceite:
-  - CI mede distribuição entre versões distintas, limita retry amplification, rejeita identidade
-    não autorizada e observa isolamento de falhas; não basta renderizar VirtualService/HTTPRoute.
-  - Manifests e testes de contrato cobrem os três destinos; a prova local declara o que não
-    demonstra sobre o serviço gerenciado e o runbook inclui diagnóstico/teardown da malha.
-- Evidência: [tx01v2#16](https://github.com/maringelix/tx01v2/pull/16), [dx01v2#18](https://github.com/maringelix/dx01v2/pull/18), [tx02v2#14](https://github.com/maringelix/tx02v2/pull/14), [dx02v2#13](https://github.com/maringelix/dx02v2/pull/13), [tx03v2#15](https://github.com/maringelix/tx03v2/pull/15), [dx03v2#15](https://github.com/maringelix/dx03v2/pull/15)
+- Origin: service mesh and advanced traffic request in all three clouds, DEC-13
+- Dependencies: R8.1, R4.3
+- Cost: dataplane/waypoints, capacity and managed service estimates per profile; use a supported
+  GKE Autopilot path without incompatible privileged daemons.
+- Deliverables:
+  - STRICT internal mTLS, identity authorization and egress policies integrated with all three
+    apps. External load balancers/gateways use origin TLS or a narrow justified edge exception,
+    preserving isolation and testing ingress.
+  - Canary splitting, timeouts, bounded retries and circuit breaking/outlier detection with an
+    L7 dataplane; enable a waypoint when ambient requires one.
+  - Managed Cloud Service Mesh IaC/installation for Autopilot or an officially supported
+    equivalent, recording versions, prerequisites and learning differences.
+- Acceptance:
+  - CI measures traffic distribution across different versions, bounds retry amplification,
+    rejects unauthorized identities and observes failure isolation; rendering routes is insufficient.
+  - Manifests/contract tests cover all targets; local evidence states managed-service limits and
+    runbooks cover mesh diagnosis/teardown.
+- Evidence: [tx01v2#16](https://github.com/maringelix/tx01v2/pull/16), [dx01v2#18](https://github.com/maringelix/dx01v2/pull/18), [tx02v2#14](https://github.com/maringelix/tx02v2/pull/14), [dx02v2#13](https://github.com/maringelix/dx02v2/pull/13), [tx03v2#15](https://github.com/maringelix/tx03v2/pull/15), [dx03v2#15](https://github.com/maringelix/dx03v2/pull/15)
 
-### R8.3 Observabilidade do app, retenção e integrações gerenciadas
+### R8.3 App observability, retention and managed integrations
 
-- Status: `feito`
+- Status: `done`
 - Repos: tx01v2, dx01v2, tx02v2, dx02v2, tx03v2, dx03v2
-- Origem: pedido de observabilidade completa, OpenTelemetry, Cloud Monitoring e Slack, DEC-13
-- Dependências: R8.1, R1.6, R4.2
-- Custo: volumes/object storage, retenção, ingestão e egress explicitados; limites e perfis baratos
-  evitam duplicar sinais no cluster e no serviço gerenciado sem necessidade.
-- Entregáveis:
-  - Componentes cloud-full de ServiceMonitor, PrometheusRule, dashboards e sinais do app;
-    métricas/logs/traces correlacionados por OpenTelemetry com exemplars e trace_id.
-  - Prometheus/Grafana/Alertmanager/Loki/Tempo com persistência, retenção e recuperação; exporters,
-    dashboards e políticas de alerta dos serviços nativos, incluindo Cloud Monitoring no GCP.
-  - Alertas Slack parametrizados, segredo externo, agrupamento/silêncio e runbook de incidente;
-    receiver nulo sem webhook deve ser visível como integração não configurada.
-  - SLIs/SLOs, error budget, alertas por consumo do orçamento de erro e monitoração sintética.
-- Aceite:
-  - CI provoca erro/latência no app e prova métrica, trace, log correlacionado e alerta no sink;
-    reiniciar componentes preserva os dados esperados no horizonte de retenção declarado.
-  - Policies/IAM/exportadores nativos são verificados offline; entrega ao Slack externo,
-    ingestão real no provedor e disponibilidade 24/7 só recebem status após execução real.
-- Evidência: [tx01v2#16](https://github.com/maringelix/tx01v2/pull/16), [dx01v2#18](https://github.com/maringelix/dx01v2/pull/18), [tx02v2#14](https://github.com/maringelix/tx02v2/pull/14), [dx02v2#13](https://github.com/maringelix/dx02v2/pull/13), [tx03v2#15](https://github.com/maringelix/tx03v2/pull/15), [dx03v2#15](https://github.com/maringelix/dx03v2/pull/15)
+- Origin: complete observability, OpenTelemetry, Cloud Monitoring and Slack request, DEC-13
+- Dependencies: R8.1, R1.6, R4.2
+- Cost: explicit volume/object-storage, retention, ingestion and egress costs; economical limits
+  avoid unnecessary duplication of in-cluster and managed signals.
+- Deliverables:
+  - Cloud-full ServiceMonitor, PrometheusRule, dashboards and app signals; OpenTelemetry
+    correlates metrics/logs/traces using exemplars and trace_id.
+  - Prometheus/Grafana/Alertmanager/Loki/Tempo persistence, retention and recovery; native
+    exporters, dashboards and alert policies, including Google Cloud Monitoring.
+  - Parameterized Slack alerts, external secret, grouping/silencing and incident runbook;
+    absent webhooks/null receivers visibly mean an unconfigured integration.
+  - SLIs/SLOs, error budgets, burn-rate alerts and synthetic monitoring.
+- Acceptance:
+  - CI induces app error/latency and proves metrics, traces, correlated logs and sink alerts;
+    component restarts preserve expected data within the declared retention window.
+  - Policies/IAM/native exporters are checked offline; external Slack, real provider ingestion
+    and 24/7 availability receive evidence only after real execution.
+- Evidence: [tx01v2#16](https://github.com/maringelix/tx01v2/pull/16), [dx01v2#18](https://github.com/maringelix/dx01v2/pull/18), [tx02v2#14](https://github.com/maringelix/tx02v2/pull/14), [dx02v2#13](https://github.com/maringelix/dx02v2/pull/13), [tx03v2#15](https://github.com/maringelix/tx03v2/pull/15), [dx03v2#15](https://github.com/maringelix/dx03v2/pull/15)
 
-### R8.4 Segurança de runtime e Chaos Engineering integrado
+### R8.4 Integrated runtime security and Chaos Engineering
 
-- Status: `feito`
+- Status: `done`
 - Repos: tx01v2, dx01v2, tx02v2, dx02v2, tx03v2, dx03v2
-- Origem: pedido de OPA, scan contínuo e Chaos nas três nuvens, DEC-13
-- Dependências: R8.1, R8.2, R8.3, R4.6
-- Custo: scanners e experimentos têm requests/limits, concorrência e duração limitados; custos de
-  interrupção, métricas e reposição de capacidade constam dos exercícios.
-- Entregáveis:
-  - Gatekeeper em deny com políticas positivas/negativas, least privilege, hardening e isolamento.
-    Verificar assinatura, emissor e identidade do artefato também na admissão, com mecanismo
-    suportado por provedor (incluindo Binary Authorization no GCP ou equivalente documentado).
-  - Trivy Operator consegue analisar as imagens privadas do ECR, ACR e Artifact Registry com
-    identidade/credenciais de curta duração; relatório ausente não significa imagem limpa.
-  - Experimentos com hipótese, estado estável, abort e recuperação: pod, latência, CPU/memória e
-    perda de nó local. Matriz cloud define os experimentos suportados em cada provedor.
-  - Autopilot usa alternativas suportadas para falhas que não aceitam Chaos Daemon privilegiado;
-    o roteiro não promete desligamento de nó gerenciado pelo usuário onde não houver suporte.
-- Aceite:
-  - CI rejeita workload inseguro e imagem sem assinatura/assinante correto, detecta imagem
-    vulnerável privada simulada, executa hipóteses e recupera o app; scopes/contextos errados e
-    alvo fora do lab são recusados. A política de admissão gerenciada é validada offline.
-  - Testes não silenciam scanner sem acesso. Manifests/IAM dos três destinos e limites dos
-    experimentos passam nos checks offline; a execução cloud continua não homologada.
-- Evidência: [tx01v2#16](https://github.com/maringelix/tx01v2/pull/16), [dx01v2#18](https://github.com/maringelix/dx01v2/pull/18), [tx02v2#14](https://github.com/maringelix/tx02v2/pull/14), [dx02v2#13](https://github.com/maringelix/dx02v2/pull/13), [tx03v2#15](https://github.com/maringelix/tx03v2/pull/15), [dx03v2#15](https://github.com/maringelix/dx03v2/pull/15)
+- Origin: OPA, continuous scanning and Chaos in three clouds, DEC-13
+- Dependencies: R8.1, R8.2, R8.3, R4.6
+- Cost: bounded scanner/experiment requests, limits, concurrency and duration; exercises include
+  interruption, metrics and replacement-capacity costs.
+- Deliverables:
+  - Gatekeeper deny policies with positive/negative cases, least privilege, hardening and
+    isolation. Admission also verifies artifact signature/issuer/identity through a supported
+    provider mechanism, including GCP Binary Authorization or a documented equivalent.
+  - Trivy Operator scans private ECR/ACR/Artifact Registry images using identity or short-lived
+    credentials; a missing report is not a clean image.
+  - Hypotheses, steady state, abort and recovery for pod, latency, CPU/memory and local node loss.
+    The cloud matrix identifies supported experiments per provider.
+  - Supported Autopilot alternatives where privileged Chaos Daemon is unavailable; no promise of
+    user-controlled managed-node shutdown without support.
+- Acceptance:
+  - CI rejects unsafe workloads and wrong/missing artifact signatures, detects a simulated
+    vulnerable private image, executes hypotheses and recovers the app. Wrong contexts/scopes
+    and non-lab targets are rejected; managed admission policies are checked offline.
+  - Scanner access failures remain failures. Manifests/IAM and experiment limits pass offline
+    checks for all three targets; cloud execution remains unvalidated.
+- Evidence: [tx01v2#16](https://github.com/maringelix/tx01v2/pull/16), [dx01v2#18](https://github.com/maringelix/dx01v2/pull/18), [tx02v2#14](https://github.com/maringelix/tx02v2/pull/14), [dx02v2#13](https://github.com/maringelix/dx02v2/pull/13), [tx03v2#15](https://github.com/maringelix/tx03v2/pull/15), [dx03v2#15](https://github.com/maringelix/dx03v2/pull/15)
 
-## R9. Alta disponibilidade, backup e Disaster Recovery
+## R9. High availability, backup and Disaster Recovery
 
-Uma rodada de seis PRs, um por TX/DX. Backups de objetos Kubernetes, volumes e banco são provas
-separadas. A segunda região não é substituída por outro namespace no mesmo cluster.
+Six PRs, one per TX/DX. Kubernetes object, volume and database backups have separate evidence.
+A namespace in the same cluster does not replace a second region.
 
-### R9.1 HA dos bancos e recuperação verificável de dados
+### R9.1 Database HA and verifiable data recovery
 
-- Status: `feito`
+- Status: `done`
 - Repos: tx01v2, dx01v2, tx02v2, dx02v2, tx03v2, dx03v2
-- Origem: pedido de PostgreSQL em HA, backups e continuidade de dados, DEC-13
-- Dependências: R8.3, R4.5, R7.2
-- Custo: perfis HA opt-in para RDS multi-AZ, PostgreSQL Flexible Server com HA e Cloud SQL regional;
-  calcular instâncias, armazenamento, WAL/backups, retenção e restauração em `docs/CUSTOS.md`.
-- Entregáveis:
-  - Opções de HA suportadas pelos três provedores com validação de região/SKU e defaults baratos;
-    backups automáticos, PITR, retenção e proteção contra exclusão parametrizados/testados.
-  - PostgreSQL local com backup real e WAL/PITR: inserir registros, destruir/corromper o alvo e
-    recuperar para ponto conhecido; verificar conteúdo, integridade e reconexão do app.
-  - Velero para objetos e volumes onde aplicável, CSI/data mover e permissões; explicar que o
-    banco gerenciado usa backup nativo, não o restore de ConfigMap do exercício anterior.
-  - Runbooks de restore isolado, troca de endpoint/segredo, failover HA e rollback da troca.
-- Aceite:
-  - CI comprova recuperação de registros e de PVC com checksum, quando há volume no cenário, e
-    falha com backup incompleto/corrompido. Restore de objetos sozinho não fecha este item.
-  - `terraform test` prova HA/PITR/retenção/negações nos três; não atribuir a kind a prova de
-    failover multi-AZ gerenciado. RPO/RTO locais são medidos com relógio e perda observada.
-- Evidência: [tx01v2#17](https://github.com/maringelix/tx01v2/pull/17), [dx01v2#19](https://github.com/maringelix/dx01v2/pull/19), [tx02v2#17](https://github.com/maringelix/tx02v2/pull/17), [dx02v2#14](https://github.com/maringelix/dx02v2/pull/14), [tx03v2#16](https://github.com/maringelix/tx03v2/pull/16), [dx03v2#16](https://github.com/maringelix/dx03v2/pull/16)
+- Origin: PostgreSQL HA, backups and data continuity request, DEC-13
+- Dependencies: R8.3, R4.5, R7.2
+- Cost: opt-in RDS multi-AZ, Flexible Server HA and regional Cloud SQL; include instances,
+  storage, WAL/backups, retention and restore in `docs/COSTS.md`.
+- Deliverables:
+  - Supported HA choices with region/SKU validation and economical defaults; parameterized,
+    tested automatic backup, PITR, retention and deletion protection.
+  - Real local PostgreSQL backup and WAL/PITR: write records, destroy/corrupt the target,
+    restore a known point, verify content/integrity and reconnect the app.
+  - Velero objects/volumes where applicable, CSI/data mover and permissions; managed databases
+    use native backup rather than the earlier ConfigMap restore exercise.
+  - Isolated restore, endpoint/secret switch, HA failover and switch rollback runbooks.
+- Acceptance:
+  - CI proves record recovery and volume checksum recovery where the scenario uses volumes,
+    rejecting incomplete/corrupt backups. Object restore alone is insufficient.
+  - `terraform test` checks provider HA/PITR/retention/denials. Kind is not managed multi-AZ
+    failover evidence. Local RPO/RTO uses timestamps and observed loss.
+- Evidence: [tx01v2#17](https://github.com/maringelix/tx01v2/pull/17), [dx01v2#19](https://github.com/maringelix/dx01v2/pull/19), [tx02v2#17](https://github.com/maringelix/tx02v2/pull/17), [dx02v2#14](https://github.com/maringelix/dx02v2/pull/14), [tx03v2#16](https://github.com/maringelix/tx03v2/pull/16), [dx03v2#16](https://github.com/maringelix/dx03v2/pull/16)
 
-### R9.2 DR entre regiões com failover e failback
+### R9.2 Cross-region DR with failover and failback
 
-- Status: `feito`
+- Status: `done`
 - Repos: tx01v2, dx01v2, tx02v2, dx02v2, tx03v2, dx03v2
-- Origem: pedido explícito de Disaster Recovery multi-region, DEC-13
-- Dependências: R9.1, R8.1, R8.2
-- Custo: segunda região opt-in; computação standby, réplica/cópias de dados, egress, DNS, secrets,
-  registry, backups e retenção orçados. Escolher warm/pilot light com trade-offs descritos.
-- Entregáveis:
-  - IaC dos papéis primário/secundário em regiões distintas por nuvem; replicação/cópia do banco,
-    backups, artefatos, segredos/configuração e state remoto versionado/recuperável.
-  - Dois ambientes locais independentes A/B para simular perda completa do primário; promoção,
-    fencing contra split brain, roteamento, validação de dados e retorno controlado ao primário.
-  - Runbooks de failover/failback, pré-condições, aprovação humana, perda aceitável, reconciliação
-    e teardown; monitorar idade do backup/lag e capacidade efetiva de recuperar.
-- Aceite:
-  - CI executa perda de A, recuperação em B e failback, mede RPO/RTO contra metas do cenário,
-    confere registros e recusa promover quando não pode garantir um único escritor.
-  - Renders/testes IaC comprovam duas regiões e dependências independentes nas três nuvens;
-    failover real, latência/egress e RPO/RTO do serviço gerenciado aguardam homologação cloud.
-- Evidência: [tx01v2#17](https://github.com/maringelix/tx01v2/pull/17), [dx01v2#19](https://github.com/maringelix/dx01v2/pull/19), [tx02v2#17](https://github.com/maringelix/tx02v2/pull/17), [dx02v2#14](https://github.com/maringelix/dx02v2/pull/14), [tx03v2#16](https://github.com/maringelix/tx03v2/pull/16), [dx03v2#16](https://github.com/maringelix/dx03v2/pull/16)
+- Origin: explicit multi-region Disaster Recovery request, DEC-13
+- Dependencies: R9.1, R8.1, R8.2
+- Cost: opt-in second region; budget standby compute, replicas/copies, egress, DNS, secrets,
+  registry, backups and retention. Explain warm/pilot-light trade-offs.
+- Deliverables:
+  - Primary/secondary IaC in different regions per cloud; database replication/copy, backups,
+    artifacts, secrets/configuration and recoverable versioned remote state.
+  - Independent local A/B environments simulating complete primary loss; promotion, split-brain
+    fencing, routing, data verification and controlled return to primary.
+  - Failover/failback runbooks with prerequisites, human approval, acceptable loss,
+    reconciliation/teardown; monitor backup age/lag and actual recovery capability.
+- Acceptance:
+  - CI loses A, recovers in B, fails back, measures RPO/RTO against scenario goals, checks records
+    and refuses promotion without guaranteed single-writer ownership.
+  - IaC renders/tests prove two regions with independent dependencies in each cloud; real
+    failover, latency/egress and managed-service RPO/RTO await cloud validation.
+- Evidence: [tx01v2#17](https://github.com/maringelix/tx01v2/pull/17), [dx01v2#19](https://github.com/maringelix/dx01v2/pull/19), [tx02v2#17](https://github.com/maringelix/tx02v2/pull/17), [dx02v2#14](https://github.com/maringelix/dx02v2/pull/14), [tx03v2#16](https://github.com/maringelix/tx03v2/pull/16), [dx03v2#16](https://github.com/maringelix/dx03v2/pull/16)
 
-## R10. FinOps, capacidade e escala
+## R10. FinOps, capacity and scaling
 
-Uma rodada de seis PRs, um por TX/DX, com os dois itens abaixo.
+Six PRs, one per TX/DX, covering both items below.
 
-### R10.1 Autoscaling por demanda, carga e capacidade Spot
+### R10.1 Demand autoscaling, load and Spot capacity
 
-- Status: `feito`
+- Status: `done`
 - Repos: tx01v2, dx01v2, tx02v2, dx02v2, tx03v2, dx03v2
-- Origem: pedido de EKS autoscaling, Autopilot/Spot e otimização, DEC-13
-- Dependências: R8.3, R8.4
-- Custo: limites de pods/nós, duração e cancelamento da carga, capacidade on-demand mínima e custo
-  máximo estimado por cenário; budget continua alerta, sem promessa de teto de faturamento.
-- Entregáveis:
-  - Controller de escala de nós EKS (Cluster Autoscaler ou Karpenter), não apenas min/max do node
-    group; AKS autoscaler e Autopilot com requests, limites e condições coerentes com HPA.
-  - Spot/tolerations/afinidade e fallback por nuvem, preservando componentes críticos; exercício de
-    interrupção, drenagem, PDB e redistribuição, sem depender de disponibilidade garantida de Spot.
-  - Carga reproduzível com SLO, HPA scale up/down, estabilização, quotas e saturação do banco;
-    aprender a diferença entre escalar pods, nós e capacidade de um serviço gerenciado.
-- Aceite:
-  - CI exercita HPA/carga, rescheduling e perda de capacidade no ambiente local com métricas e
-    critérios de sucesso/falha. Testes IaC/IAM verificam controllers e perfis de cada nuvem.
-  - Aumento/redução real de nós gerenciados e economia de Spot só recebem evidência após cloud;
-    não inferir autoscaling EKS a partir de `scaling_config` estático.
-- Evidência: [tx01v2#18](https://github.com/maringelix/tx01v2/pull/18), [dx01v2#20](https://github.com/maringelix/dx01v2/pull/20), [tx02v2#18](https://github.com/maringelix/tx02v2/pull/18), [dx02v2#15](https://github.com/maringelix/dx02v2/pull/15), [tx03v2#17](https://github.com/maringelix/tx03v2/pull/17), [dx03v2#17](https://github.com/maringelix/dx03v2/pull/17)
+- Origin: EKS autoscaling, Autopilot/Spot and optimization request, DEC-13
+- Dependencies: R8.3, R8.4
+- Cost: pod/node limits, load duration/cancellation, baseline on-demand capacity and maximum
+  estimated scenario cost. Budgets remain alerts rather than billing caps.
+- Deliverables:
+  - EKS node scaling controller (Cluster Autoscaler or Karpenter), beyond node-group min/max;
+    AKS autoscaler and Autopilot requests/limits/conditions consistent with HPA.
+  - Provider-specific Spot/tolerations/affinity and fallback, preserving critical components;
+    interruption, drain, PDB and rescheduling without assuming available Spot capacity.
+  - Reproducible load with SLO, HPA up/down, stabilization, quotas and database saturation;
+    distinguish pod, node and managed-service capacity scaling.
+- Acceptance:
+  - CI exercises local HPA/load, rescheduling and capacity loss with metrics and explicit
+    pass/fail criteria. IaC/IAM tests check provider controllers/profiles.
+  - Real managed-node changes and Spot savings need cloud evidence; static `scaling_config`
+    alone does not prove EKS autoscaling.
+- Evidence: [tx01v2#18](https://github.com/maringelix/tx01v2/pull/18), [dx01v2#20](https://github.com/maringelix/dx01v2/pull/20), [tx02v2#18](https://github.com/maringelix/tx02v2/pull/18), [dx02v2#15](https://github.com/maringelix/dx02v2/pull/15), [tx03v2#17](https://github.com/maringelix/tx03v2/pull/17), [dx03v2#17](https://github.com/maringelix/dx03v2/pull/17)
 
-### R10.2 FinOps com OpenCost, showback e rightsizing
+### R10.2 OpenCost FinOps, showback and rightsizing
 
-- Status: `feito`
+- Status: `done`
 - Repos: tx01v2, dx01v2, tx02v2, dx02v2, tx03v2, dx03v2
-- Origem: pedido de FinOps e otimização avançada, DEC-13
-- Dependências: R10.1
-- Custo: stack de custo opt-in; fontes, moeda, região, data e limites da estimativa por provedor;
-  incluir serviços externos ao cluster, armazenamento, backups/DR, NAT/LB/WAF e egress.
-- Entregáveis:
-  - OpenCost com métricas/dashboards por namespace/app/ambiente e dados de preço de cada provedor;
-    showback e labels/tags, custo ocioso/compartilhado e reconciliação com contas reais futura.
-  - VPA inicialmente em recomendação, requests/limits baseados em carga e comparação antes/depois;
-    não criar conflito automático entre VPA e HPA sobre o mesmo recurso.
-  - Estimativa de custo no PR/plan, budgets e alertas, expiração de ambientes temporários,
-    teardown seguro, inventário de sobras e relatório de custo por rodada.
-- Aceite:
-  - CI gera alocação de custo com dados determinísticos, prova labels obrigatórios e um cenário
-    caro rejeitado pelo limite configurado; ensaio de rightsizing mantém o SLO sob carga.
-  - Dashboards distinguem estimativa de fatura e cobrem custos fora dos pods. Testes de cleanup
-    recusam recursos alheios; não tratar OpenCost ou alerta de budget como limite financeiro real.
-- Evidência: [tx01v2#18](https://github.com/maringelix/tx01v2/pull/18), [dx01v2#20](https://github.com/maringelix/dx01v2/pull/20), [tx02v2#18](https://github.com/maringelix/tx02v2/pull/18), [dx02v2#15](https://github.com/maringelix/dx02v2/pull/15), [tx03v2#17](https://github.com/maringelix/tx03v2/pull/17), [dx03v2#17](https://github.com/maringelix/dx03v2/pull/17)
+- Origin: FinOps and advanced optimization request, DEC-13
+- Dependencies: R10.1
+- Cost: opt-in cost stack; provider source, currency, region, date and estimate limits;
+  include external services, storage, backup/DR, NAT/LB/WAF and egress.
+- Deliverables:
+  - OpenCost metrics/dashboards by namespace/app/environment with provider pricing; showback,
+    labels/tags, idle/shared costs and future reconciliation with actual bills.
+  - VPA initially in recommendation mode, requests/limits based on load and before/after
+    comparisons; avoid automatic VPA/HPA conflict on the same resource.
+  - PR/plan estimates, budgets/alerts, temporary-environment expiration, safe teardown,
+    leftovers inventory and per-run cost reports.
+- Acceptance:
+  - CI generates allocations from deterministic data, enforces mandatory labels and rejects an
+    expensive scenario against the configured limit; rightsizing preserves SLO under load.
+  - Dashboards distinguish estimates from invoices and include non-pod costs. Cleanup tests
+    reject unrelated resources; OpenCost and budget alerts are not real financial caps.
+- Evidence: [tx01v2#18](https://github.com/maringelix/tx01v2/pull/18), [dx01v2#20](https://github.com/maringelix/dx01v2/pull/20), [tx02v2#18](https://github.com/maringelix/tx02v2/pull/18), [dx02v2#15](https://github.com/maringelix/dx02v2/pull/15), [tx03v2#17](https://github.com/maringelix/tx03v2/pull/17), [dx03v2#17](https://github.com/maringelix/dx03v2/pull/17)
 
-## R11. Aceite do lab completo e currículo de fork
+## R11. Complete lab acceptance and fork curriculum
 
-### R11.1 Matriz de escopo, aulas e evidências finais
+### R11.1 Scope matrix, lessons and final evidence
 
-- Status: `feito`
+- Status: `done`
 - Repos: tx00v2
-- Origem: pedido de lab completo para quem fizer fork, DEC-13
-- Dependências: R7.1, R7.2, R8.1, R8.2, R8.3, R8.4, R9.1, R9.2, R10.1, R10.2
-- Custo: sem nuvem no hub; catálogo separa custo local/Actions e perfis cloud core/full/HA/DR.
-- Entregáveis:
-  - Currículo de cada tecnologia com pré-requisito, arquitetura, objetivo, comandos, falha a
-    provocar, critério de sucesso, diagnóstico, recuperação, custo e limpeza; links dos seis labs.
-  - Matriz requisito × nuvem × implementação × teste × limite × PR/evidência; mesma aplicação,
-    versões compatíveis, contratos e documentação de fork conferidos pelo harness da família.
-  - Checklist de segurança/qualidade/operação e roteiro de homologação cloud futura; README e
-    publicação descrevem fielmente o que o CI demonstrou, sem vender produção ou operação 24/7.
-- Aceite:
-  - Todos os requisitos nomeados pelo Bruno têm item implementado e PRs mesclados com CI verde,
-    exercício reproduzível e tratamento explícito das diferenças entre provedores.
-  - Ensaio de fork com configuração limpa e CI completo passa sem secrets do mantenedor;
-    nenhuma lacuna técnica fica escondida como documentação. Homologação real mantém estado
-    separado, com contas/orçamento e domínio próprios, e correções futuras são registradas.
-- Evidência: [dx01v2#17](https://github.com/maringelix/dx01v2/pull/17), [dx02v2#12](https://github.com/maringelix/dx02v2/pull/12), [dx03v2#14](https://github.com/maringelix/dx03v2/pull/14), [tx01v2#16](https://github.com/maringelix/tx01v2/pull/16), [dx01v2#18](https://github.com/maringelix/dx01v2/pull/18), [tx02v2#14](https://github.com/maringelix/tx02v2/pull/14), [dx02v2#13](https://github.com/maringelix/dx02v2/pull/13), [tx03v2#15](https://github.com/maringelix/tx03v2/pull/15), [dx03v2#15](https://github.com/maringelix/dx03v2/pull/15), [tx01v2#17](https://github.com/maringelix/tx01v2/pull/17), [dx01v2#19](https://github.com/maringelix/dx01v2/pull/19), [tx02v2#17](https://github.com/maringelix/tx02v2/pull/17), [dx02v2#14](https://github.com/maringelix/dx02v2/pull/14), [tx03v2#16](https://github.com/maringelix/tx03v2/pull/16), [dx03v2#16](https://github.com/maringelix/dx03v2/pull/16), [tx01v2#18](https://github.com/maringelix/tx01v2/pull/18), [dx01v2#20](https://github.com/maringelix/dx01v2/pull/20), [tx02v2#18](https://github.com/maringelix/tx02v2/pull/18), [dx02v2#15](https://github.com/maringelix/dx02v2/pull/15), [tx03v2#17](https://github.com/maringelix/tx03v2/pull/17), [dx03v2#17](https://github.com/maringelix/dx03v2/pull/17); [currículo](docs/CURRICULO.md), [matriz de aceite](docs/ACEITE_FINAL.md) e registro conferido por delivery/family-evidence. O fechamento do hub é o PR que integra estes materiais.
+- Origin: complete lab for fork owners, DEC-13
+- Dependencies: R7.1, R7.2, R8.1, R8.2, R8.3, R8.4, R9.1, R9.2, R10.1, R10.2
+- Cost: no cloud in the hub; catalog separates local/Actions costs and core/full/HA/DR profiles.
+- Deliverables:
+  - Technology curriculum with prerequisites, architecture, objective, commands, intentional
+    failure, success criteria, diagnosis, recovery, costs and cleanup; links to all six labs.
+  - Requirement × cloud × implementation × test × limit × PR/evidence matrix; family harness
+    checks the same app, compatible versions, contracts and fork documentation.
+  - Security/quality/operations checklist and future cloud validation procedure; README and
+    publishing describe CI evidence without claiming production or 24/7 operations.
+- Acceptance:
+  - Every named requirement has implementation, merged green-CI PRs, a reproducible exercise
+    and explicit handling of provider differences.
+  - Fresh-configuration fork rehearsal and full CI pass without maintainer secrets; technical
+    gaps are not hidden as documentation. Real validation keeps its own state with operator
+    accounts/budget/domain; future fixes are recorded.
+- Evidence: [dx01v2#17](https://github.com/maringelix/dx01v2/pull/17), [dx02v2#12](https://github.com/maringelix/dx02v2/pull/12), [dx03v2#14](https://github.com/maringelix/dx03v2/pull/14), [tx01v2#16](https://github.com/maringelix/tx01v2/pull/16), [dx01v2#18](https://github.com/maringelix/dx01v2/pull/18), [tx02v2#14](https://github.com/maringelix/tx02v2/pull/14), [dx02v2#13](https://github.com/maringelix/dx02v2/pull/13), [tx03v2#15](https://github.com/maringelix/tx03v2/pull/15), [dx03v2#15](https://github.com/maringelix/dx03v2/pull/15), [tx01v2#17](https://github.com/maringelix/tx01v2/pull/17), [dx01v2#19](https://github.com/maringelix/dx01v2/pull/19), [tx02v2#17](https://github.com/maringelix/tx02v2/pull/17), [dx02v2#14](https://github.com/maringelix/dx02v2/pull/14), [tx03v2#16](https://github.com/maringelix/tx03v2/pull/16), [dx03v2#16](https://github.com/maringelix/dx03v2/pull/16), [tx01v2#18](https://github.com/maringelix/tx01v2/pull/18), [dx01v2#20](https://github.com/maringelix/dx01v2/pull/20), [tx02v2#18](https://github.com/maringelix/tx02v2/pull/18), [dx02v2#15](https://github.com/maringelix/dx02v2/pull/15), [tx03v2#17](https://github.com/maringelix/tx03v2/pull/17), [dx03v2#17](https://github.com/maringelix/dx03v2/pull/17); [curriculum](docs/CURRICULUM.md), [acceptance matrix](docs/ACCEPTANCE.md) and ledger checked by delivery/family-evidence. The hub closure is the PR integrating these materials.
 
-## Marcos anteriores (R0 a R4)
+## Earlier milestones (R0 to R4)
 
-Os itens abaixo preservam o aceite histórico e seus PRs. O novo escopo está em R7 a R11; os
-limites identificados pela auditoria não são escondidos por estes status anteriores.
+The following items preserve historical acceptance and PRs. The expanded scope is R7 to R11;
+earlier statuses do not hide limitations identified by the audit.
 
-## R0. Fundação da v2
+## R0. v2 foundation
 
-### R0.1 Os seis repositórios v2 públicos, com harness, CI e guardrails
+### R0.1 Six public v2 repositories with harness, CI and guardrails
 
-- Status: `feito`
+- Status: `done`
 - Repos: tx01v2, dx01v2, tx02v2, dx02v2, tx03v2, dx03v2
-- Origem: dívida v2 (reconstrução do v1 com prova local e rótulos honestos)
-- Dependências: nenhuma
-- Custo: nenhum (GitHub Actions de repositórios públicos)
-- Entregáveis:
-  - `scripts/harness.sh` com estágios `static`, `test` e, nos dx, `build` e `e2e` (kind); ferramentas
-    fixadas por versão e SHA256 (`tools/`), actions por SHA de 40 caracteres, imagens por digest.
-  - CI = harness (`ci.yml` só chama `make`), `HARNESS_STRICT=1`, CI semanal, Dependabot mensal.
-  - Ruleset como código (`.github/rulesets/main.json`) e `scripts/repo-guardrails.sh`, aplicado e
-    lido de volta com `gh api` em 2026-10-14.
-  - Docs em pt-BR (arquitetura, contrato, runbook, custos, guardrails, harness, sustentação,
-    publicação, lições do v1).
-- Aceite:
-  - CI verde nos seis; linhas `verificado no CI` só depois do primeiro CI verde.
-- Evidência: [tx01v2#1](https://github.com/maringelix/tx01v2/pull/1), [dx01v2#3](https://github.com/maringelix/dx01v2/pull/3), [tx02v2#1](https://github.com/maringelix/tx02v2/pull/1), [dx02v2#1](https://github.com/maringelix/dx02v2/pull/1), [tx03v2#1](https://github.com/maringelix/tx03v2/pull/1), [dx03v2#3](https://github.com/maringelix/dx03v2/pull/3), [tx01v2#2](https://github.com/maringelix/tx01v2/pull/2), [tx01v2#3](https://github.com/maringelix/tx01v2/pull/3), [tx02v2#2](https://github.com/maringelix/tx02v2/pull/2), [tx03v2#2](https://github.com/maringelix/tx03v2/pull/2)
+- Origin: v2 debt (rebuilding v1 with local evidence and accurate labels)
+- Dependencies: none
+- Cost: none (public-repository GitHub Actions)
+- Deliverables:
+  - `scripts/harness.sh` with static/test stages and DX build/kind e2e; tools pinned by
+    version/SHA256 in tools/, actions by 40-character SHA, images by digest.
+  - CI = harness (ci.yml calls make), HARNESS_STRICT=1, weekly CI and monthly Dependabot.
+  - Ruleset as code and repo-guardrails.sh, applied/read back with gh api on 2026-10-14.
+  - Originally Brazilian Portuguese docs for architecture, contract, runbook, costs, guardrails,
+    harness, maintenance, publishing and v1 lessons; standardized to English in the later language round.
+- Acceptance:
+  - Green CI across six repositories; verified-in-CI labels only after the first successful run.
+- Evidence: [tx01v2#1](https://github.com/maringelix/tx01v2/pull/1), [dx01v2#3](https://github.com/maringelix/dx01v2/pull/3), [tx02v2#1](https://github.com/maringelix/tx02v2/pull/1), [dx02v2#1](https://github.com/maringelix/dx02v2/pull/1), [tx03v2#1](https://github.com/maringelix/tx03v2/pull/1), [dx03v2#3](https://github.com/maringelix/dx03v2/pull/3), [tx01v2#2](https://github.com/maringelix/tx01v2/pull/2), [tx01v2#3](https://github.com/maringelix/tx01v2/pull/3), [tx02v2#2](https://github.com/maringelix/tx02v2/pull/2), [tx03v2#2](https://github.com/maringelix/tx03v2/pull/2)
 
-### R0.2 O mesmo app nos três pares (regra de paridade)
+### R0.2 Same app in all three pairs (parity rule)
 
-- Status: `feito`
+- Status: `done`
 - Repos: dx01v2, dx02v2, dx03v2
-- Origem: dívida v2 (no v1 cada nuvem tinha um app diferente: Node 20 com PostgreSQL, SQL Server, TypeScript com Tailwind)
-- Dependências: R0.1
-- Custo: nenhum
-- Entregáveis:
-  - O app do `dx01v2` (commit `22e69c4`: Express 5 + TypeScript, React 19 em nginx-unprivileged,
-    PostgreSQL 17) nos três repositórios de app; só o alvo de deploy muda.
-  - Regra de paridade no `AGENTS.md` de cada dx e rotina no `docs/SUSTENTACAO.md`.
-  - Os casos de teste de `X-Forwarded-For` do AGC e do load balancer do Google portados para os três.
-- Aceite:
-  - O check `family-app` deste repositório: mesmas dependências e o mesmo código em `api/src` e
-    `web/src`, a menos de nomes e comentários.
-- Evidência: [dx01v2#4](https://github.com/maringelix/dx01v2/pull/4), [dx01v2#5](https://github.com/maringelix/dx01v2/pull/5), [dx02v2#2](https://github.com/maringelix/dx02v2/pull/2), [dx03v2#4](https://github.com/maringelix/dx03v2/pull/4)
+- Origin: v2 debt (v1 had different apps: Node 20/PostgreSQL, SQL Server, TypeScript/Tailwind)
+- Dependencies: R0.1
+- Cost: none
+- Deliverables:
+  - dx01v2 app (commit 22e69c4: Express 5/TypeScript, React 19 on nginx-unprivileged,
+    PostgreSQL 17) in all app repositories; only the deployment target changes.
+  - Parity rule in DX AGENTS and routine in docs/MAINTENANCE.md.
+  - AGC and Google load-balancer X-Forwarded-For cases ported to all three.
+- Acceptance:
+  - family-app checks equal dependencies and api/src/web/src after normalizing names/comments.
+- Evidence: [dx01v2#4](https://github.com/maringelix/dx01v2/pull/4), [dx01v2#5](https://github.com/maringelix/dx01v2/pull/5), [dx02v2#2](https://github.com/maringelix/dx02v2/pull/2), [dx03v2#4](https://github.com/maringelix/dx03v2/pull/4)
 
-### R0.3 Lab local com a plataforma completa do v1
+### R0.3 Local lab with the complete v1 platform
 
-- Status: `feito`
+- Status: `done`
 - Repos: tx01v2, dx01v2, tx02v2, dx02v2, tx03v2, dx03v2
-- Origem: v1 implementado (a plataforma do v1 só existia na nuvem, instalada por workflows)
-- Dependências: R0.1
-- Custo: local, grátis; 8 GB de memória do Docker para o perfil `full` (3 GB para o `core`)
-- Entregáveis:
-  - `terraform/envs/local` (provider Docker): kind, gêmeos locais do registry, do banco (PostgreSQL 17
-    só com TLS), do object storage, do load balancer e do GitHub (servidor git).
-  - `platform/local` com perfis `core`, `observability`, `operations` e `full`, contrato local
-    (`lab-system/lab-contract`), `check.sh` com as sondas e `uninstall.sh` sem sobras.
-  - Nos dx: overlay `local-platform`, `scripts/deploy-local.sh` (GitOps pelo Argo CD) e
-    `scripts/e2e-platform.sh`.
-- Aceite:
-  - `make e2e` (tx) e `make e2e-platform` (dx) verdes no CI, com destroy e checagem de sobras.
-- Evidência: [tx01v2#5](https://github.com/maringelix/tx01v2/pull/5), [tx01v2#6](https://github.com/maringelix/tx01v2/pull/6), [tx02v2#3](https://github.com/maringelix/tx02v2/pull/3), [tx02v2#4](https://github.com/maringelix/tx02v2/pull/4), [tx03v2#3](https://github.com/maringelix/tx03v2/pull/3), [dx01v2#6](https://github.com/maringelix/dx01v2/pull/6), [dx02v2#3](https://github.com/maringelix/dx02v2/pull/3), [dx03v2#5](https://github.com/maringelix/dx03v2/pull/5)
+- Origin: implemented v1 (the earlier platform existed only in clouds, installed by workflows)
+- Dependencies: R0.1
+- Cost: free local execution; 8 GB Docker memory for full, 3 GB for core
+- Deliverables:
+  - terraform/envs/local with Docker provider: kind and local registry, TLS-only PostgreSQL 17,
+    object storage, load balancer and GitHub substitute (Git server).
+  - platform/local core/observability/operations/full profiles, lab-system/lab-contract,
+    check.sh probes and uninstall.sh without leftovers.
+  - DX local-platform overlay, scripts/deploy-local.sh (Argo CD GitOps) and scripts/e2e-platform.sh.
+- Acceptance:
+  - TX make e2e and DX make e2e-platform pass in CI, including destroy and leftover checks.
+- Evidence: [tx01v2#5](https://github.com/maringelix/tx01v2/pull/5), [tx01v2#6](https://github.com/maringelix/tx01v2/pull/6), [tx02v2#3](https://github.com/maringelix/tx02v2/pull/3), [tx02v2#4](https://github.com/maringelix/tx02v2/pull/4), [tx03v2#3](https://github.com/maringelix/tx03v2/pull/3), [dx01v2#6](https://github.com/maringelix/dx01v2/pull/6), [dx02v2#3](https://github.com/maringelix/dx02v2/pull/3), [dx03v2#5](https://github.com/maringelix/dx03v2/pull/5)
 
-### R0.4 O lab local como gate de merge
+### R0.4 Local lab as a merge gate
 
-- Status: `feito`
+- Status: `done`
 - Repos: tx01v2, dx01v2, tx02v2, dx02v2, tx03v2, dx03v2
-- Origem: dívida v2
-- Dependências: R0.3
-- Custo: cerca de 30 a 50 minutos de runner por PR (gratuito em repositórios públicos)
-- Entregáveis:
-  - Jobs `e2e` (tx) e `e2e-platform` (dx) exigidos pelo ruleset, aplicados com
-    `scripts/repo-guardrails.sh`.
-- Aceite:
-  - O ruleset lido de volta com `gh api` lista os jobs; o check `family-identical` exige o mesmo
-    ruleset dentro de cada papel.
-- Evidência: [tx01v2#7](https://github.com/maringelix/tx01v2/pull/7), [tx02v2#5](https://github.com/maringelix/tx02v2/pull/5), [tx03v2#4](https://github.com/maringelix/tx03v2/pull/4), [dx01v2#7](https://github.com/maringelix/dx01v2/pull/7), [dx02v2#4](https://github.com/maringelix/dx02v2/pull/4), [dx03v2#6](https://github.com/maringelix/dx03v2/pull/6)
+- Origin: v2 debt
+- Dependencies: R0.3
+- Cost: roughly 30–50 runner minutes per PR (public-repository allowance at the recorded delivery)
+- Deliverables:
+  - TX e2e and DX e2e-platform required by rulesets applied through repo-guardrails.sh.
+- Acceptance:
+  - gh api readback lists the jobs; family-identical enforces equal rulesets within each role.
+- Evidence: [tx01v2#7](https://github.com/maringelix/tx01v2/pull/7), [tx02v2#5](https://github.com/maringelix/tx02v2/pull/5), [tx03v2#4](https://github.com/maringelix/tx03v2/pull/4), [dx01v2#7](https://github.com/maringelix/dx01v2/pull/7), [dx02v2#4](https://github.com/maringelix/dx02v2/pull/4), [dx03v2#6](https://github.com/maringelix/dx03v2/pull/6)
 
-### R0.5 Pronto para fork
+### R0.5 Ready for forks
 
-- Status: `feito`
+- Status: `done`
 - Repos: tx01v2, dx01v2, tx02v2, dx02v2, tx03v2, dx03v2
-- Origem: dívida v2 (o time do Bruno aprende fazendo fork dos pares)
-- Dependências: R0.1
-- Custo: nenhum
-- Entregáveis:
-  - `FORK.md` em cada repositório: o que o GitHub não copia, o lab local, a própria conta de nuvem.
-  - `github_owner` sem valor padrão nos bootstraps; `repo-guardrails.sh` liga issues, aprovação de
-    runs de forks e para com uma mensagem clara enquanto as Actions do fork estão desligadas.
-  - O e2e-platform dos dx clona o repositório tx configurado (`TX0NV2_REPO`).
-- Aceite:
-  - Devcontainers verificados com `LOCAL_PROFILE=core make e2e` dentro (2026-10-14); o ensaio com uma
-    segunda conta do GitHub ficou fora do escopo (DEC-11).
-- Evidência: [tx01v2#8](https://github.com/maringelix/tx01v2/pull/8), [tx02v2#6](https://github.com/maringelix/tx02v2/pull/6), [tx03v2#5](https://github.com/maringelix/tx03v2/pull/5), [dx01v2#8](https://github.com/maringelix/dx01v2/pull/8), [dx02v2#5](https://github.com/maringelix/dx02v2/pull/5), [dx03v2#7](https://github.com/maringelix/dx03v2/pull/7)
+- Origin: v2 debt (Bruno's team learns by forking pairs)
+- Dependencies: R0.1
+- Cost: none
+- Deliverables:
+  - FORK.md in every repository: uncopied GitHub settings, local lab and own cloud accounts.
+  - No default github_owner in bootstraps; repo-guardrails.sh enables Issues/fork-run approval
+    and fails clearly until fork Actions are enabled.
+  - DX e2e-platform clones the configured TX0NV2_REPO.
+- Acceptance:
+  - Devcontainers checked with LOCAL_PROFILE=core make e2e on 2026-10-14; rehearsal using a
+    second GitHub account was excluded under DEC-11.
+- Evidence: [tx01v2#8](https://github.com/maringelix/tx01v2/pull/8), [tx02v2#6](https://github.com/maringelix/tx02v2/pull/6), [tx03v2#5](https://github.com/maringelix/tx03v2/pull/5), [dx01v2#8](https://github.com/maringelix/dx01v2/pull/8), [dx02v2#5](https://github.com/maringelix/dx02v2/pull/5), [dx03v2#7](https://github.com/maringelix/dx03v2/pull/7)
 
-### R0.6 Hub da família (este repositório)
+### R0.6 Family hub (this repository)
 
-- Status: `feito`
+- Status: `done`
 - Repos: tx00v2, tx01v2, dx01v2, tx02v2, dx02v2, tx03v2, dx03v2
-- Origem: proposta v2 (no v1, o `tx00` era um rastreador privado de auditorias)
-- Dependências: R0.1
-- Custo: nenhum
-- Entregáveis:
-  - Este repositório: README com as referências, este roadmap, guardrails da família
-    ([docs/GUARDRAILS.md](docs/GUARDRAILS.md)), harness com os estágios `static` (obrigatório) e
-    `family` (os checks entre os repositórios), histórico ([docs/HISTORICO.md](docs/HISTORICO.md)).
-  - A linha do `tx00v2` na tabela da família dos seis READMEs.
-- Aceite:
-  - CI verde (`static` e `family`), ruleset aplicado e lido de volta; o check `family-table` acha o
-    hub nos doze READMEs dos seis repositórios.
-- Evidência: [tx01v2#10](https://github.com/maringelix/tx01v2/pull/10), [dx01v2#10](https://github.com/maringelix/dx01v2/pull/10), [tx02v2#8](https://github.com/maringelix/tx02v2/pull/8), [tx03v2#6](https://github.com/maringelix/tx03v2/pull/6), [dx02v2#6](https://github.com/maringelix/dx02v2/pull/6), [dx03v2#8](https://github.com/maringelix/dx03v2/pull/8)
+- Origin: v2 proposal (v1 tx00 was a private audit tracker)
+- Dependencies: R0.1
+- Cost: none
+- Deliverables:
+  - This repository: reference README, roadmap, [guardrails](docs/GUARDRAILS.md),
+    required static and cross-repository family stages, [history](docs/HISTORY.md).
+  - tx00v2 entry in all six repositories' family tables.
+- Acceptance:
+  - Green static/family CI, applied/read-back ruleset; family-table originally found the hub
+    in all 12 bilingual READMEs (now seven canonical English READMEs across the family).
+- Evidence: [tx01v2#10](https://github.com/maringelix/tx01v2/pull/10), [dx01v2#10](https://github.com/maringelix/dx01v2/pull/10), [tx02v2#8](https://github.com/maringelix/tx02v2/pull/8), [tx03v2#6](https://github.com/maringelix/tx03v2/pull/6), [dx02v2#6](https://github.com/maringelix/dx02v2/pull/6), [dx03v2#8](https://github.com/maringelix/dx03v2/pull/8)
 
-### R0.7 Scripts que só agem no lab (segurança para quem faz fork)
+### R0.7 Scripts restricted to lab resources (fork safety)
 
-- Status: `feito`
+- Status: `done`
 - Repos: tx01v2, dx01v2, tx02v2, dx02v2, tx03v2, dx03v2
-- Origem: auditoria de segurança para forks (2026-10-14): o que poderia quebrar a máquina ou a nuvem
-  de quem faz fork
-- Dependências: R0.5
-- Custo: nenhum
-- Entregáveis:
-  - Os scripts de nuvem não escolhem o alvo por variável de ambiente genérica (`CLUSTER_NAME`,
-    `RESOURCE_GROUP`, `LAB_*`): o alvo vem do contrato e é conferido pela tag `Project` (AWS, Azure)
-    ou pelo label `project` (Google Cloud) do cluster antes de qualquer mudança (`require_lab_cluster`).
-  - Kubeconfig de nuvem em arquivo temporário nos scripts e num arquivo próprio nos outputs e nos
-    runbooks: o `~/.kube/config` e o contexto atual de quem roda não mudam, e o kubelogin da Azure só
-    converte esse arquivo.
-  - Os scripts de `platform/local` e o `scripts/deploy-local.sh` só falam com o contexto
-    `kind-tx0Nv2-local` (`require_lab_context`).
-  - Os testes de integração dos apps, que apagam e recriam tabelas, só aceitam um banco cujo nome
-    termina em `_test` (no helper e no harness); os runbooks mostram um banco `*_test` separado.
-  - O `leftovers.sh` da AWS só conta como sobra o Elastic IP com a tag do lab; o PostgreSQL da Azure
-    leva o sufixo da assinatura no nome (nome DNS global, que bloqueava o apply do lab de outro fork).
-  - Check estático `policy-scripts` nos três tx (SEC-10, SEC-14 e SEC-16 nos guardrails de cada um),
-    SEC-07, SEC-08 e SEC-09 nos dx e a regra SEC-05 da família.
-- Aceite:
-  - `HARNESS_STRICT=1 make verify` local e CI verde nos seis (`static`, `test`, `e2e`; nos dx também
-    `images` e `e2e-platform`); a trava do banco provada nos dois sentidos (aceita `dx01v2_test`,
-    recusa `dx01v2` antes de conectar, no harness e no vitest direto).
-- Evidência: [tx01v2#11](https://github.com/maringelix/tx01v2/pull/11), [tx02v2#9](https://github.com/maringelix/tx02v2/pull/9), [tx03v2#8](https://github.com/maringelix/tx03v2/pull/8), [dx01v2#11](https://github.com/maringelix/dx01v2/pull/11), [dx02v2#7](https://github.com/maringelix/dx02v2/pull/7), [dx03v2#9](https://github.com/maringelix/dx03v2/pull/9)
+- Origin: fork safety audit of 2026-10-14: risks to fork owners' machines/accounts
+- Dependencies: R0.5
+- Cost: none
+- Deliverables:
+  - Cloud targets do not come from generic overrides (CLUSTER_NAME, RESOURCE_GROUP, LAB_*).
+    They come from contracts and require the Project tag (AWS/Azure) or project label (GCP)
+    before mutations through require_lab_cluster.
+  - Temporary cloud kubeconfigs in scripts, dedicated files in outputs/runbooks; preserve
+    ~/.kube/config and the operator's context. Azure kubelogin converts only that file.
+  - platform/local and deploy-local.sh require kind-tx0Nv2-local via require_lab_context.
+  - Destructive integration tests accept only database names ending _test, in helpers/harness;
+    runbooks show a separate test database.
+  - AWS leftovers counts only lab-tagged Elastic IPs; Azure PostgreSQL names include subscription
+    suffixes to avoid global DNS collisions between forks.
+  - TX policy-scripts (SEC-10/14/16), DX SEC-07/08/09 and family SEC-05.
+- Acceptance:
+  - Strict local verify and green six-repository CI (static/test/e2e, DX images/e2e-platform).
+    Database guards accept dx01v2_test and reject dx01v2 before connecting, in harness and Vitest.
+- Evidence: [tx01v2#11](https://github.com/maringelix/tx01v2/pull/11), [tx02v2#9](https://github.com/maringelix/tx02v2/pull/9), [tx03v2#8](https://github.com/maringelix/tx03v2/pull/8), [dx01v2#11](https://github.com/maringelix/dx01v2/pull/11), [dx02v2#7](https://github.com/maringelix/dx02v2/pull/7), [dx03v2#9](https://github.com/maringelix/dx03v2/pull/9)
 
-## R1. Observabilidade 2.0, alertas, chaos e rollout sem downtime
+## R1. Observability 2.0, alerts, Chaos and rollout without downtime
 
-A rodada que trouxe o que faltava do v1 na observabilidade e a última etapa do roadmap do v1 que
-nunca começou ("Observability 2.0", com OpenTelemetry). Contrato local e de nuvem na versão 2 (a
-chave nova é o endpoint OTLP do Collector).
+This round added missing v1 observability and its unstarted final OpenTelemetry milestone.
+Local/cloud contracts became version 2 with the Collector OTLP endpoint.
 
-### R1.1 Traces na plataforma local
+### R1.1 Traces in the local platform
 
-- Status: `feito`
+- Status: `done`
 - Repos: tx01v2, tx02v2, tx03v2
-- Origem: v1 planejado ("Observability 2.0" com OpenTelemetry; o v1 tinha só Application Insights e o Jaeger do Istio)
-- Dependências: R0.3
-- Custo: local, cerca de 0,5 GB a mais no perfil `observability`
-- Entregáveis:
-  - OpenTelemetry Collector (chart 0.176.0, imagem contrib por digest) e Tempo (chart
-    `grafana-community/tempo` 3.1.0) no perfil `observability`.
-  - Spans do Istio Gateway pela Telemetry API, com W3C trace context; `extensionProviders` no istiod.
-  - Conector spanmetrics com exemplars e ServiceMonitor de 10 s (o exemplar vive um flush de 15 s).
-  - Datasources do Grafana ligando Tempo, Loki e Prometheus.
-- Aceite:
-  - Sonda `check_tracing`: trace OTLP no Tempo, span do Gateway, métrica do spanmetrics com
-    exemplar, links do Grafana; 22 sondas no perfil `observability` e 34 no `full`.
-- Evidência: [tx01v2#9](https://github.com/maringelix/tx01v2/pull/9), [tx02v2#7](https://github.com/maringelix/tx02v2/pull/7), [tx03v2#6](https://github.com/maringelix/tx03v2/pull/6)
+- Origin: planned v1 Observability 2.0 (v1 had Application Insights and Istio Jaeger only)
+- Dependencies: R0.3
+- Cost: about 0.5 GB more local memory in observability
+- Deliverables:
+  - OpenTelemetry Collector chart 0.176.0, digest-pinned contrib image and
+    grafana-community/tempo chart 3.1.0 in observability.
+  - Istio Gateway spans through Telemetry API/W3C context and istiod extensionProviders.
+  - spanmetrics connector with exemplars and 10-second ServiceMonitor (15-second exemplar flush).
+  - Grafana datasources linking Tempo, Loki and Prometheus.
+- Acceptance:
+  - check_tracing proves OTLP traces in Tempo, Gateway span, spanmetrics exemplar and Grafana
+    links; historical probe counts: 22 observability, 34 full.
+- Evidence: [tx01v2#9](https://github.com/maringelix/tx01v2/pull/9), [tx02v2#7](https://github.com/maringelix/tx02v2/pull/7), [tx03v2#6](https://github.com/maringelix/tx03v2/pull/6)
 
-### R1.2 Alertas no Slack
+### R1.2 Slack alerts
 
-- Status: `feito`
+- Status: `done`
 - Repos: tx01v2, tx02v2, tx03v2
-- Origem: v1 implementado (Alertmanager com receivers do Slack nas três nuvens)
-- Dependências: R0.3
-- Custo: nenhum
-- Entregáveis:
-  - Receiver do Slack no Alertmanager com o webhook lido de um Secret opcional; sem o Secret, nada
-    sai do cluster.
-  - No CI, o webhook aponta para o alert sink do lab, que guarda o payload.
-- Aceite:
-  - Sonda `check_slack`: o alerta sintético chega no formato de mensagem do Slack.
-- Evidência: [tx01v2#9](https://github.com/maringelix/tx01v2/pull/9), [tx02v2#7](https://github.com/maringelix/tx02v2/pull/7), [tx03v2#6](https://github.com/maringelix/tx03v2/pull/6)
+- Origin: implemented v1 (Alertmanager Slack receivers in three clouds)
+- Dependencies: R0.3
+- Cost: none
+- Deliverables:
+  - Alertmanager Slack receiver reads an optional Secret; without it nothing leaves the cluster.
+  - CI points the webhook at the local alert sink, which stores the payload.
+- Acceptance:
+  - check_slack receives the synthetic alert in Slack message format.
+- Evidence: [tx01v2#9](https://github.com/maringelix/tx01v2/pull/9), [tx02v2#7](https://github.com/maringelix/tx02v2/pull/7), [tx03v2#6](https://github.com/maringelix/tx03v2/pull/6)
 
-### R1.3 Chaos com hipóteses: latência de rede e stress
+### R1.3 Chaos hypotheses: network latency and stress
 
-- Status: `feito`
+- Status: `done`
 - Repos: tx01v2, tx02v2, tx03v2
-- Origem: v1 implementado (Chaos Mesh manual no tx02 do v1: pod, latência, CPU e memória)
-- Dependências: R0.3
-- Custo: nenhum
-- Entregáveis:
-  - NetworkChaos de 100 ms e StressChaos de CPU e memória, cada um com hipótese escrita e medida.
-- Aceite:
-  - Sondas do perfil `operations` (24): a mediana da latência sobe como previsto, o pico de CPU e
-    memória aparece nas métricas e nenhum container reinicia.
-- Evidência: [tx01v2#9](https://github.com/maringelix/tx01v2/pull/9), [tx02v2#7](https://github.com/maringelix/tx02v2/pull/7), [tx03v2#6](https://github.com/maringelix/tx03v2/pull/6)
+- Origin: implemented v1 (manual Azure Chaos Mesh: pods, latency, CPU/memory)
+- Dependencies: R0.3
+- Cost: none
+- Deliverables:
+  - 100 ms NetworkChaos and CPU/memory StressChaos, each with a written, measured hypothesis.
+- Acceptance:
+  - operations probes (historically 24) observe higher median latency and CPU/memory peaks
+    without container restarts.
+- Evidence: [tx01v2#9](https://github.com/maringelix/tx01v2/pull/9), [tx02v2#7](https://github.com/maringelix/tx02v2/pull/7), [tx03v2#6](https://github.com/maringelix/tx03v2/pull/6)
 
-### R1.4 Traces no app e contrato v2
+### R1.4 App traces and contract v2
 
-- Status: `feito`
+- Status: `done`
 - Repos: dx01v2, dx02v2, dx03v2
-- Origem: v1 planejado ("Observability 2.0")
-- Dependências: R1.1
-- Custo: nenhum
-- Entregáveis:
-  - Spans manuais na API (SERVER por requisição com o nome da rota, CLIENT por query do PostgreSQL,
-    só SQL parametrizado), `traceparent` continuado, OTLP/HTTP para `OTEL_EXPORTER_OTLP_ENDPOINT`
-    (desligado sem ele), `trace_id`/`span_id` nos logs, OpenMetrics com o trace id como exemplar,
-    flush de no máximo 5 s no desligamento.
-  - Dependências fixadas: `@opentelemetry/api` 1.9.1, `sdk-trace-node` 2.12.0,
-    `exporter-trace-otlp-http` 0.223.0, `resources` 2.12.0, `semantic-conventions` 1.43.0.
-  - Contrato v2: `deploy-local.sh` exige a versão 2 do contrato local e espera o sync do commit que
-    enviou; NetworkPolicies API → Collector (4318) e Gateway → Collector (4317), as duas por HBONE
-    (15008); o componente de nuvem manda os traces para `observability:4318`.
-- Aceite:
-  - Sonda de traces do `e2e-platform`: um trace no Tempo do Gateway até a query, o `trace_id` no Loki
-    e num exemplar; testes de unidade e integração com o processador em memória.
-- Evidência: [dx01v2#9](https://github.com/maringelix/dx01v2/pull/9), [dx02v2#6](https://github.com/maringelix/dx02v2/pull/6), [dx03v2#8](https://github.com/maringelix/dx03v2/pull/8)
+- Origin: planned v1 Observability 2.0
+- Dependencies: R1.1
+- Cost: none
+- Deliverables:
+  - Manual API SERVER spans named by route and CLIENT spans for parameterized PostgreSQL;
+    propagate traceparent, export OTLP/HTTP when OTEL_EXPORTER_OTLP_ENDPOINT is configured,
+    trace_id/span_id logs, OpenMetrics trace exemplars and shutdown flush within five seconds.
+  - Pinned @opentelemetry/api 1.9.1, sdk-trace-node 2.12.0, exporter-trace-otlp-http 0.223.0,
+    resources 2.12.0 and semantic-conventions 1.43.0 at that milestone.
+  - Contract v2: deploy-local.sh checks version 2 and waits for its exact pushed commit;
+    API→Collector 4318 and Gateway→Collector 4317 NetworkPolicies with HBONE 15008;
+    cloud component exports to observability:4318.
+- Acceptance:
+  - e2e-platform traces span Gateway through SQL; Loki and an exemplar contain trace_id.
+    Unit/integration tests use an in-memory processor.
+- Evidence: [dx01v2#9](https://github.com/maringelix/dx01v2/pull/9), [dx02v2#6](https://github.com/maringelix/dx02v2/pull/6), [dx03v2#8](https://github.com/maringelix/dx03v2/pull/8)
 
-### R1.5 Rollout sem downtime e latência entre a API e o banco
+### R1.5 Rollout without downtime and API/database latency
 
-- Status: `feito`
+- Status: `done`
 - Repos: dx01v2, dx02v2, dx03v2
-- Origem: v1 implementado (rolling update e PDB no v1, sem prova de zero erro)
-- Dependências: R1.4
-- Custo: nenhum
-- Entregáveis:
-  - `check_zero_downtime`: um redeploy por GitOps com uma tag nova enquanto um leitor faz requisições.
-  - `check_chaos_db_latency`: NetworkChaos de 200 ms entre a API e o PostgreSQL.
-- Aceite:
-  - O leitor termina sem nenhuma requisição com erro; o span do `SELECT` mostra pelo menos 190 ms
-    sob o chaos e as leituras continuam; 18 sondas no `e2e-platform`.
-- Evidência: [dx01v2#9](https://github.com/maringelix/dx01v2/pull/9), [dx02v2#6](https://github.com/maringelix/dx02v2/pull/6), [dx03v2#8](https://github.com/maringelix/dx03v2/pull/8)
+- Origin: implemented v1 (rolling update/PDB without zero-error evidence)
+- Dependencies: R1.4
+- Cost: none
+- Deliverables:
+  - check_zero_downtime redeploys a new GitOps tag during continuous reads.
+  - check_chaos_db_latency injects 200 ms NetworkChaos between API and PostgreSQL.
+- Acceptance:
+  - No reader request fails; SELECT spans show at least 190 ms under Chaos while reads continue.
+    Historical e2e-platform count: 18 probes.
+- Evidence: [dx01v2#9](https://github.com/maringelix/dx01v2/pull/9), [dx02v2#6](https://github.com/maringelix/dx02v2/pull/6), [dx03v2#8](https://github.com/maringelix/dx03v2/pull/8)
 
-### R1.6 Exportadores de traces das nuvens, como código
+### R1.6 Cloud trace exporters as code
 
-- Status: `feito`
+- Status: `done`
 - Repos: tx01v2, tx02v2, tx03v2
-- Origem: v1 planejado ("Observability 2.0" nas nuvens)
-- Dependências: R1.1
-- Custo: AWS X-Ray com 100 mil traces por mês sem custo; Cloud Trace com 2,5 milhões de spans por
-  mês sem custo; Application Insights com teto de 0,5 GB por dia (detalhes nos `docs/CUSTOS.md`)
-- Entregáveis:
-  - AWS: exportador `awsxray` e papel do Pod Identity do Collector com `AWSXRayDaemonWriteAccess`.
-  - Azure: Application Insights sempre ligado (DEC-6), autenticação local desligada, identidade
-    federada do Collector com o papel Monitoring Metrics Publisher, extensão `azure_auth` e exportador
-    `azure_monitor`.
-  - Google Cloud: exportador `googlecloud`, `roles/cloudtrace.agent` para o principal do service
-    account do Kubernetes do Collector e a API do Cloud Trace no bootstrap.
-- Aceite:
-  - `terraform test` e `helm template` no CI (`verificado no CI`); a nuvem continua
-    `não executado em nuvem (v2)`. Antes da primeira rodada, reaplicar os bootstraps do tx02v2 (lista
-    do ABAC) e do tx03v2 (API do Cloud Trace).
-- Evidência: [tx01v2#9](https://github.com/maringelix/tx01v2/pull/9), [tx02v2#7](https://github.com/maringelix/tx02v2/pull/7), [tx03v2#6](https://github.com/maringelix/tx03v2/pull/6)
+- Origin: planned v1 cloud Observability 2.0
+- Dependencies: R1.1
+- Cost: recorded allowances: AWS X-Ray 100,000 traces/month, Cloud Trace 2.5 million spans/month;
+  Application Insights 0.5 GB/day cap. Consult current docs/COSTS.md before spending.
+- Deliverables:
+  - AWS awsxray exporter and Collector Pod Identity with AWSXRayDaemonWriteAccess.
+  - Azure Application Insights always enabled (DEC-6), local auth disabled, federated Collector
+    identity with Monitoring Metrics Publisher, azure_auth extension and azure_monitor exporter.
+  - Google googlecloud exporter, roles/cloudtrace.agent on the Collector KSA principal,
+    Cloud Trace API in bootstrap.
+- Acceptance:
+  - terraform test and helm template in CI; cloud remains not run in the cloud (v2).
+    Reapply Azure bootstrap ABAC and GCP bootstrap APIs before the first cloud round.
+- Evidence: [tx01v2#9](https://github.com/maringelix/tx01v2/pull/9), [tx02v2#7](https://github.com/maringelix/tx02v2/pull/7), [tx03v2#6](https://github.com/maringelix/tx03v2/pull/6)
 
-### R1.7 Dívida: SHA256 do chart do Collector na nuvem do tx01v2
+### R1.7 Debt: cloud Collector chart SHA256 in tx01v2
 
-- Status: `feito`
+- Status: `done`
 - Repos: tx01v2
-- Origem: dívida v2 (achada no porte da R1)
-- Dependências: nenhuma
-- Custo: nenhum
-- Entregáveis:
-  - O SHA256 do arquivo do chart do Collector sai de `platform/local/versions.env`
-    (`OTEL_COLLECTOR_SHA256`) e vai para `platform/versions.env` como `OTEL_COLLECTOR_CHART_SHA256`,
-    usado pela nuvem e pelo lab local, como no tx02v2 e no tx03v2.
-  - `platform/install.sh` baixa o arquivo, confere o SHA256 e instala a partir dele.
-- Aceite:
-  - `helm-template` e `local-versions` verdes; o `family-versions` mostra a mesma chave nos três tx.
-- Evidência: [tx01v2#12](https://github.com/maringelix/tx01v2/pull/12) (o `dx01v2` seguiu o commit em [dx01v2#12](https://github.com/maringelix/dx01v2/pull/12))
+- Origin: v2 debt discovered while porting R1
+- Dependencies: none
+- Cost: none
+- Deliverables:
+  - Move Collector archive SHA256 from platform/local/versions.env OTEL_COLLECTOR_SHA256 to
+    platform/versions.env OTEL_COLLECTOR_CHART_SHA256, used locally/in cloud as in Azure/GCP.
+  - platform/install.sh downloads/verifies the archive and installs from it.
+- Acceptance:
+  - Green helm-template/local-versions; family-versions sees the same key across TX.
+- Evidence: [tx01v2#12](https://github.com/maringelix/tx01v2/pull/12) (dx01v2 followed the commit in [dx01v2#12](https://github.com/maringelix/dx01v2/pull/12))
 
-### R1.8 Dívida: perfil enxuto do e2e-platform para máquinas com menos de 8 GB
+### R1.8 Debt: smaller e2e-platform profile below 8 GB
 
-- Status: `feito`
+- Status: `done`
 - Repos: tx01v2, tx02v2, tx03v2, dx01v2, dx02v2, dx03v2
-- Origem: dívida v2 (o perfil `full` com o app passa dos 7,65 GiB do Docker Desktop usado no desenvolvimento; as sondas novas da R1 só rodaram no CI)
-- Dependências: R1.5
-- Custo: local, grátis; o objetivo é caber em 6 GB
-- Entregáveis:
-  - Um perfil de recursos `small` no `platform/local/install.sh` (requests e limits menores, uma
-    réplica por componente, retenção curta no Prometheus, no Loki e no Tempo), escolhido por variável;
-    os componentes continuam os mesmos, porque as sondas do app usam quase todos.
-  - O `scripts/e2e-platform.sh` dos dx aceita o perfil e o `docs/LAB_LOCAL.md` diz quanto cada perfil
-    precisa, medido.
-- Aceite:
-  - As 18 sondas passam com o Docker limitado a 6 GB (rodada local registrada nos `docs/LAB_LOCAL.md`);
-    o CI continua com o perfil padrão.
-  - Mudado em 2026-10-15, depois da medição: 7 GB em vez de 6 GB (decisão do Bruno) e a prova no CI,
-    não numa rodada local (o lab pesado não roda mais na máquina de desenvolvimento). O job
-    `e2e-platform-small` dos dx roda o `e2e-platform` com `LOCAL_SIZE=small` num Docker-in-Docker
-    limitado a 7 GB, sem swap; não é check exigido, e o `e2e-platform` no tamanho padrão continua o
-    portão.
-- Evidência: [tx01v2#13](https://github.com/maringelix/tx01v2/pull/13), [dx01v2#13](https://github.com/maringelix/dx01v2/pull/13), [tx02v2#11](https://github.com/maringelix/tx02v2/pull/11), [dx02v2#9](https://github.com/maringelix/dx02v2/pull/9), [tx03v2#10](https://github.com/maringelix/tx03v2/pull/10), [dx03v2#11](https://github.com/maringelix/dx03v2/pull/11). Medido no CI do dx01v2: em 6 GB, 14 das 18 sondas passam e a de rollout perde 7
-  de 376 requisições; em 7 GB e em 8 GB, as 18 passam em cerca de 14 minutos, com 4,4 GiB de memória
-  anônima. Em 7 GB, as 18 sondas passaram nas nove rodadas dos três pares; em duas delas o kernel matou
-  duas vezes a cópia do plugin do Velero na instalação (init container sem requests, que o kubelet
-  roda de novo). O maior consumidor é o apiserver, com cerca de 1,2 GiB, mesmo com `GOMEMLIMIT`. A retenção
-  do Loki ficou como estava: o lab vive menos de uma hora e ela não muda a memória. O padrão já tinha
-  uma réplica de cada componente.
+- Origin: full with app exceeded development Docker Desktop's 7.65 GiB; new R1 probes ran in CI only
+- Dependencies: R1.5
+- Cost: free local exercise; original goal was 6 GB
+- Deliverables:
+  - Variable-selected small resource profile in platform/local/install.sh: lower requests/limits,
+    one replica, short Prometheus/Loki/Tempo retention; retain components needed by app probes.
+  - DX e2e-platform accepts the size; docs/LOCAL_LAB.md publishes measured memory requirements.
+- Acceptance:
+  - Original target: 18 probes pass with 6 GB Docker and a recorded local run; default CI unchanged.
+  - Revised on 2026-10-15 after measurement, by Bruno: 7 GB and CI evidence instead of a heavy
+    development-host run. Optional e2e-platform-small runs LOCAL_SIZE=small in 7 GB DinD without
+    swap; the default e2e-platform remains the required gate.
+- Evidence: [tx01v2#13](https://github.com/maringelix/tx01v2/pull/13), [dx01v2#13](https://github.com/maringelix/dx01v2/pull/13), [tx02v2#11](https://github.com/maringelix/tx02v2/pull/11), [dx02v2#9](https://github.com/maringelix/dx02v2/pull/9), [tx03v2#10](https://github.com/maringelix/tx03v2/pull/10), [dx03v2#11](https://github.com/maringelix/dx03v2/pull/11).
+  Measured in dx01v2 CI: at 6 GB, 14/18 probes passed and rollout lost 7/376 requests. At 7/8 GB,
+  all 18 passed in about 14 minutes using 4.4 GiB anonymous memory. All nine 7 GB runs across
+  the pairs passed; in two runs the kernel twice killed the Velero plugin copy init container
+  (no requests, retried by kubelet). The apiserver used about 1.2 GiB even with GOMEMLIMIT.
+  Loki retention was unchanged because the lab lasts under an hour and retention does not
+  change memory. Default components already had one replica.
 
-### R1.9 Dívida: instalação instável do servidor do Trivy Operator
+### R1.9 Debt: unstable Trivy Operator server installation
 
-- Status: `feito`
+- Status: `done`
 - Repos: tx01v2, tx02v2, tx03v2
-- Origem: dívida v2 (uma rodada do `e2e` do tx01v2#9, em 2026-10-14, falhou na instalação: o pod `trivy-server-0` terminou em `Failed` e o Helm reverteu o release; a seguinte passou. O diagnóstico de instalação ainda não existia, então não há dados do pod)
-- Dependências: nenhuma
-- Custo: nenhum
-- Entregáveis:
-  - Com o diagnóstico de instalação já adicionado, achar a causa se a falha voltar (recursos, probes
-    ou o cache do servidor no modo ClientServer) e corrigir nos values dos três tx.
-- Aceite:
-  - Dez rodadas seguidas do job `e2e` verdes nos três tx (PRs e CI semanal), ou a causa documentada
-    no `docs/LICOES_APRENDIDAS.md` com a correção.
-  - Contagem em 2026-10-15: 8 seguidas no tx01v2, 18 no tx02v2 e 15 no tx03v2; a falha não voltou.
-- Evidência: [tx01v2#13](https://github.com/maringelix/tx01v2/pull/13), [tx02v2#11](https://github.com/maringelix/tx02v2/pull/11), [tx03v2#10](https://github.com/maringelix/tx03v2/pull/10). No fim da R1.8 (2026-10-15), o job
-  `e2e` estava com 11 rodadas verdes seguidas no tx01v2, 20 no tx02v2 e 18 no tx03v2, contando PRs e
-  pushes para a `main` (uma rodada cancelada por um push novo não conta). A falha não voltou, então não
-  houve causa a corrigir; se voltar, o diagnóstico de instalação guarda os dados do pod.
+- Origin: tx01v2#9 e2e installation failed on 2026-10-14: trivy-server-0 ended Failed and Helm
+  rolled back; the next run passed. Pod diagnostics were not available for the failed run.
+- Dependencies: none
+- Cost: none
+- Deliverables:
+  - With installation diagnostics added, investigate resources/probes/ClientServer cache if
+    failure recurs and fix all three TX values.
+- Acceptance:
+  - Ten consecutive green e2e jobs per TX (PRs/weekly CI), or documented root cause/fix in
+    docs/LESSONS_LEARNED.md.
+  - Count on 2026-10-15: eight AWS, 18 Azure, 15 GCP consecutive successes; no recurrence.
+- Evidence: [tx01v2#13](https://github.com/maringelix/tx01v2/pull/13), [tx02v2#11](https://github.com/maringelix/tx02v2/pull/11), [tx03v2#10](https://github.com/maringelix/tx03v2/pull/10).
+  At R1.8 completion (2026-10-15), e2e had 11 AWS, 20 Azure and 18 GCP consecutive green runs,
+  counting PRs/main pushes; runs canceled by newer pushes are excluded. No recurrence meant
+  no root cause to fix; installation diagnostics will retain pod data if it returns.
 
-### R1.10 Dívida: timeout do webhook do ESO no lab local do tx03v2
+### R1.10 Debt: ESO webhook timeout in tx03v2 local lab
 
-- Status: `feito`
+- Status: `done`
 - Repos: tx03v2
-- Origem: dívida v2 (duas rodadas locais do perfil `observability` falharam na sonda do External Secrets com `context deadline exceeded` no webhook; o CI passou)
-- Dependências: nenhuma
-- Custo: nenhum
-- Entregáveis:
-  - Os values locais do ESO sem os limites de CPU do Autopilot (50m no webhook e no cert controller,
-    100m no controller), que hoje vêm de `platform/values/external-secrets.yaml`; requests menores.
-- Aceite:
-  - Três rodadas locais seguidas do perfil `observability` verdes num Docker de 8 GB, sem mudar a
-    sonda.
-- Evidência: [tx03v2#9](https://github.com/maringelix/tx03v2/pull/9) (as três rodadas locais, 22 de 22 sondas cada, estão num comentário do PR), [dx03v2#10](https://github.com/maringelix/dx03v2/pull/10)
+- Origin: two local observability runs timed out at the External Secrets webhook; CI passed
+- Dependencies: none
+- Cost: none
+- Deliverables:
+  - Remove inherited Autopilot CPU ceilings from local ESO: webhook/cert controller 50m and
+    controller 100m from platform/values/external-secrets.yaml; use lower requests.
+- Acceptance:
+  - Three consecutive local observability runs on 8 GB Docker pass without changing the probe.
+- Evidence: [tx03v2#9](https://github.com/maringelix/tx03v2/pull/9) (the three local runs, each 22/22 probes, are in a PR comment), [dx03v2#10](https://github.com/maringelix/dx03v2/pull/10)
 
-## R3. Segurança para quem faz fork
+## R3. Fork safety
 
-O resto da auditoria de segurança para forks de 2026-10-14 (a parte local entrou em R0.7). Feita em
-2026-10-15 e 2026-10-16.
+Remaining findings from the 2026-10-14 fork-safety audit (local safeguards entered R0.7).
+Delivered on 2026-10-15 and 2026-10-16.
 
-### R3.10 Permission boundary no papel de apply da AWS
+### R3.10 Permission boundary on the AWS apply role
 
-- Status: `feito`
+- Status: `done`
 - Repos: tx01v2
-- Origem: dívida v2 (`planejado` no `docs/GUARDRAILS.md` do tx01v2; o papel de apply pode criar papéis `tx01v2-*`)
-- Dependências: nenhuma
-- Custo: nenhum
-- Entregáveis:
-  - Uma política de permission boundary obrigatória em todo papel que o apply cria (condição
-    `iam:PermissionsBoundary` no papel do apply), aplicada no bootstrap.
-- Aceite:
-  - `terraform test` prova a condição e o boundary em todos os papéis do lab; reaplicar o bootstrap
-    antes da próxima rodada.
-- Evidência: [tx01v2#14](https://github.com/maringelix/tx01v2/pull/14). A permission boundary `tx01v2-lab-boundary` do bootstrap vai em todo papel que o apply cria; o papel do apply cria ou troca o boundary de um papel só com ele e não consegue editá-lo nem tirá-lo (`boundary.tftest.hcl`, `terraform test` com provider mockado, `verificado no CI`). Reaplicar o bootstrap antes da próxima rodada em nuvem.
+- Origin: v2 debt (previously planned in TX guardrails; apply can create tx01v2-* roles)
+- Dependencies: none
+- Cost: none
+- Deliverables:
+  - Bootstrap permission boundary mandatory for every apply-created role, enforced by the
+    apply role's iam:PermissionsBoundary condition.
+- Acceptance:
+  - terraform test checks the condition and every lab role's boundary; reapply bootstrap before
+    the next round.
+- Evidence: [tx01v2#14](https://github.com/maringelix/tx01v2/pull/14)
+  Bootstrap tx01v2-lab-boundary is attached to every apply-created role. Apply can create/change
+  a role's boundary only to that policy and cannot edit/remove the boundary itself.
+  boundary.tftest.hcl uses mocked providers, verified in CI. Reapply bootstrap before cloud use.
 
-### R3.13 `leftovers.sh` da Azure e do Google Cloud só culpam o que é do lab
+### R3.13 Azure/GCP leftovers.sh counts only lab resources
 
-- Status: `feito`
+- Status: `done`
 - Repos: tx02v2, tx03v2
-- Origem: auditoria de segurança para forks (2026-10-14); a parte da AWS entrou em R0.7
-- Dependências: R0.7
-- Custo: nenhum
-- Entregáveis:
-  - Só conta como sobra o que tem a tag `Project=tx02v2` ou está nos grupos `tx02v2-*`, e o que tem o
-    label `project=tx03v2` ou está na rede `tx03v2-lab` (forwarding rules, NEGs, firewalls); o resto
-    aparece como `INFO` ("not the lab's"), nunca como algo a apagar.
-  - `--subscription` explícita na Azure, sem depender do `az account set` da máquina.
-  - A seção 9 dos RUNBOOKs só dá comandos de remoção para itens do lab.
-- Aceite:
-  - Um teste offline com `az` e `gcloud` simulados (como o do `deploy-gcp.sh` do dx03v2) prova a
-    classificação numa assinatura e num projeto que também têm recursos de outro trabalho.
-- Evidência: [tx02v2#12](https://github.com/maringelix/tx02v2/pull/12), [tx03v2#11](https://github.com/maringelix/tx03v2/pull/11). O check `leftovers-flow` de cada um roda o `leftovers.sh` contra um `az` e um `gcloud` simulados numa assinatura e num projeto que também têm recursos de outro trabalho: só o que é do lab (tag, grupo, label, nome, rede, peças do load balancer do namespace do app) é sobra, o resto sai como `INFO` ("not the lab's"), e toda chamada nomeia a assinatura ou o projeto (`--subscription`, `--project`), sem depender do `az account set` nem de variável do shell. A seção das sobras dos RUNBOOKs só dá comandos de remoção para itens do lab.
+- Origin: fork-safety audit of 2026-10-14; AWS changes entered R0.7
+- Dependencies: R0.7
+- Cost: none
+- Deliverables:
+  - Count Azure resources tagged Project=tx02v2 or in tx02v2-* groups, and GCP resources labeled
+    project=tx03v2 or attached to tx03v2-lab (forwarding rules, NEGs, firewalls).
+    Report unrelated resources as INFO (“not the lab's”), never as deletion targets.
+  - Explicit Azure --subscription, independent of the host's az account set.
+  - RUNBOOK section 9 removal commands target lab items only.
+- Acceptance:
+  - Offline stub az/gcloud tests, as used by DX deploy-gcp tests, prove classification in
+    subscriptions/projects containing unrelated workloads.
+- Evidence: [tx02v2#12](https://github.com/maringelix/tx02v2/pull/12), [tx03v2#11](https://github.com/maringelix/tx03v2/pull/11)
+  leftovers-flow runs scripts against stub CLIs with mixed lab/unrelated resources. Tags,
+  groups, labels, names, network and app-namespace load-balancer components identify leftovers;
+  others are INFO. Every call names --subscription/--project independently of shell defaults.
+  Runbooks restrict removal examples to lab resources.
 
-### R3.14 Destroy que sempre chega ao fim
+### R3.14 Destroy always reaches completion
 
-- Status: `feito`
+- Status: `done`
 - Repos: tx01v2, tx02v2, tx03v2
-- Origem: auditoria de segurança para forks (2026-10-14)
-- Dependências: nenhuma
-- Custo: nenhum (evita um lab esquecido cobrando)
-- Entregáveis:
-  - Se o `platform/uninstall.sh` falha (API do cluster inalcançável, controlador parado, timeout), o
-    workflow de destroy remove pela API da nuvem os load balancers que o cluster criou (pela tag ou
-    pelo nome do lab) e segue para o `terraform destroy`; a checagem de sobras roda com `if: always()`.
-  - Input de `force-unlock` no workflow de destroy e a recuperação de um apply interrompido documentada
-    (lock do S3, lease do blob, lock do GCS, import do que ficou fora do state).
-  - Na Azure, o comando exato de purge do Key Vault no fim do destroy (o soft delete de 7 dias prende o
-    nome para a rodada seguinte).
-- Aceite:
-  - Um teste offline com as CLIs simuladas mostra que um uninstall que falha ainda leva ao destroy e
-    à checagem de sobras.
-- Evidência: [tx01v2#14](https://github.com/maringelix/tx01v2/pull/14), [tx02v2#12](https://github.com/maringelix/tx02v2/pull/12), [tx03v2#11](https://github.com/maringelix/tx03v2/pull/11). O `scripts/destroy.sh` de cada tx roda o uninstall, segue para o `terraform destroy` mesmo quando o uninstall falha e termina sempre com o `leftovers.sh`. Na AWS e no Google Cloud ele apaga pela API as peças do load balancer que o controlador deixou (só as do lab); na Azure o controlador não é dono de nada (o AGC é do Terraform) e o Key Vault em soft delete sai com o comando exato de purge. O workflow de destroy tem o input `force_unlock_id` (só ele solta um lock) e os RUNBOOKs documentam a recuperação de um apply interrompido. Check `destroy-flow` com as CLIs simuladas.
+- Origin: fork-safety audit of 2026-10-14
+- Dependencies: none
+- Cost: none (avoids forgotten billable labs)
+- Deliverables:
+  - If platform/uninstall.sh fails through cluster API loss, controller failure or timeout,
+    remove controller-created lab load balancers through cloud APIs by tag/name, continue
+    terraform destroy and run leftovers with if: always().
+  - Explicit force-unlock input and interrupted-apply recovery for S3 locks, Blob leases,
+    GCS locks and imports for resources missing from state.
+  - Exact Azure Key Vault purge command after destroy; seven-day soft deletion reserves names.
+- Acceptance:
+  - Stub-CLI tests prove failed uninstall still reaches destroy and leftover inspection.
+- Evidence: [tx01v2#14](https://github.com/maringelix/tx01v2/pull/14), [tx02v2#12](https://github.com/maringelix/tx02v2/pull/12), [tx03v2#11](https://github.com/maringelix/tx03v2/pull/11)
+  Each scripts/destroy.sh continues from failed uninstall to Terraform and always finishes
+  with leftovers.sh. AWS/GCP clean lab-only controller load-balancer components through APIs.
+  Azure AGC is Terraform-owned, and soft-deleted Key Vault uses the documented exact purge.
+  Only force_unlock_id unlocks state. RUNBOOK covers interrupted apply; destroy-flow uses stubs.
 
-### R3.15 OIDC e Workload Identity Federation presos a IDs imutáveis e à `main`
+### R3.15 OIDC/WIF pinned to immutable IDs and main
 
-- Status: `feito`
+- Status: `done`
 - Repos: tx01v2, dx01v2, tx02v2, dx02v2, tx03v2, dx03v2
-- Origem: auditoria de segurança para forks (2026-10-14)
-- Dependências: nenhuma
-- Custo: nenhum (reaplicar os três bootstraps)
-- Entregáveis:
-  - A confiança dos papéis e das identidades de CI inclui `repository_owner_id` e `repository_id` (um
-    nome de conta apagado e registrado de novo não herda o lab) e só a `main` com o environment `lab`
-    (customização do `sub` do OIDC, ou `attribute_condition` no Google Cloud).
-  - O `repo-guardrails.sh` falha, em vez de pular, quando não consegue proteger o environment `lab`
-    (hoje só um repositório público recebe a proteção).
-- Aceite:
-  - `terraform test` prova os sujeitos e as condições; o `FORK.md` explica de onde vêm os IDs.
-- Evidência: [tx01v2#14](https://github.com/maringelix/tx01v2/pull/14), [dx01v2#14](https://github.com/maringelix/dx01v2/pull/14), [tx02v2#12](https://github.com/maringelix/tx02v2/pull/12), [dx02v2#10](https://github.com/maringelix/dx02v2/pull/10), [tx03v2#11](https://github.com/maringelix/tx03v2/pull/11), [dx03v2#12](https://github.com/maringelix/dx03v2/pull/12). Os papéis, as identidades federadas e o provider do Workload Identity Federation aceitam o `sub` imutável (`repo:<dono>@<id>/<repo>@<id>:<contexto>`; no Google Cloud também a condição por `repository_owner_id` e `repository_id`), com os IDs numéricos como variáveis do bootstrap, provado com `terraform test`. O `repo-guardrails.sh` (o mesmo arquivo nos seis) falha, em vez de pular, quando não protege o environment `lab`, deixa só a `main` nele, confere o `sub` do repositório e recusa um argumento que não seja o repositório do clone. Um repositório criado antes de 2026-07-15 precisa aderir às claims imutáveis; o script avisa.
+- Origin: fork-safety audit of 2026-10-14
+- Dependencies: none
+- Cost: none (reapply all three bootstraps)
+- Deliverables:
+  - CI trust includes repository_owner_id and repository_id so re-registering a deleted name
+    cannot inherit access; main and protected lab context use customized OIDC subjects or
+    Google attribute_condition.
+  - repo-guardrails.sh fails rather than skips if it cannot protect lab (protection requires
+    a supported repository/plan; the recorded labs are public).
+- Acceptance:
+  - terraform test proves subjects/conditions; FORK explains how to obtain immutable IDs.
+- Evidence: [tx01v2#14](https://github.com/maringelix/tx01v2/pull/14), [dx01v2#14](https://github.com/maringelix/dx01v2/pull/14), [tx02v2#12](https://github.com/maringelix/tx02v2/pull/12), [dx02v2#10](https://github.com/maringelix/dx02v2/pull/10), [tx03v2#11](https://github.com/maringelix/tx03v2/pull/11), [dx03v2#12](https://github.com/maringelix/dx03v2/pull/12)
+  Roles, federated identities and the WIF provider accept immutable
+  repo:<owner>@<id>/<repo>@<id>:<context> subjects, plus Google owner/repository-ID conditions.
+  Numeric IDs are bootstrap inputs tested offline. The shared guardrails script protects lab,
+  permits main only, checks the subject and rejects an argument differing from the clone.
+  Repositories created before 2026-07-15 must opt into immutable claims; the script warns.
 
-### R3.16 Papéis de CI mais estreitos fora de uma conta dedicada
+### R3.16 Narrower CI roles outside dedicated accounts
 
-- Status: `feito`
+- Status: `done`
 - Repos: tx01v2, tx02v2, tx03v2
-- Origem: auditoria de segurança para forks (2026-10-14)
-- Dependências: R3.10
-- Custo: nenhum
-- Entregáveis:
-  - Google Cloud: o apply sem `roles/editor`, `secretmanager.admin` e `iam.serviceAccountUser` no
-    projeto inteiro (papéis presos aos recursos `tx03v2-lab-*` e à conta de serviço dos nós) e um
-    pre-flight que recusa um projeto com clusters, instâncias SQL ou segredos de outro trabalho.
-  - AWS: o plan com uma política de leitura presa aos serviços do lab, no lugar do `ReadOnlyAccess` da
-    conta inteira; o provider OIDC do GitHub lido por data source quando já existe e nunca apagado no
-    teardown (o permission boundary do apply é o R3.10).
-  - Azure: a identidade do plan sem leitura dos valores dos segredos.
-- Aceite:
-  - `terraform test` prova as permissões; os docs dizem o que ainda exige conta, assinatura ou projeto
-    dedicados ao lab.
-- Evidência: [tx01v2#14](https://github.com/maringelix/tx01v2/pull/14), [tx02v2#12](https://github.com/maringelix/tx02v2/pull/12), [tx03v2#11](https://github.com/maringelix/tx03v2/pull/11), [tx03v2#12](https://github.com/maringelix/tx03v2/pull/12). AWS: o plan lê os serviços do lab no lugar do `ReadOnlyAccess` da conta, e o provider OIDC que já existe é lido por data source e nunca mudado. Azure: a identidade do plan só tem `Reader` e a leitura do state, e o plan roda com `-refresh=false`. Google Cloud: o pre-flight que recusa um projeto com cluster, instância SQL ou segredo de outro trabalho (tx03v2#11) e o apply sem `roles/editor`, `secretmanager.admin` e `iam.serviceAccountUser` no projeto (tx03v2#12): o admin de cada serviço do lab, um papel de segredos sem `secretmanager.versions.access` e o `serviceAccountUser` só na conta dos nós, que o bootstrap passou a criar. `terraform test` prova as permissões.
-  - Mudado em 2026-10-16, no Google Cloud: os papéis do apply ficam do projeto inteiro, não presos aos recursos `tx03v2-lab-*`, porque um papel não pode ser preso ao nome de um recurso que ainda não existe (a condição por nome vale para um recurso que já existe, não para a chamada que o cria). A restrição ficou na conta dos nós e no pre-flight, e o projeto dedicado continua obrigatório (`docs/GUARDRAILS.md` do tx03v2, SEC-20). Os papéis foram escolhidos pela documentação dos serviços, não por um apply real: a variável `apply_extra_project_roles` do bootstrap acrescenta o papel que faltar quando um apply real falhar com `PERMISSION_DENIED`.
+- Origin: fork-safety audit of 2026-10-14
+- Dependencies: R3.10
+- Cost: none
+- Deliverables:
+  - Original GCP target: remove project-wide roles/editor, secretmanager.admin and
+    iam.serviceAccountUser, scope roles to lab resources/node identity, and reject projects
+    containing unrelated clusters, SQL instances or secrets in preflight.
+  - AWS service-specific plan reads replace account-wide ReadOnlyAccess. Read an existing GitHub
+    OIDC provider via data source without deleting it during teardown; R3.10 covers apply boundary.
+  - Azure plan identity cannot read secret values.
+- Acceptance:
+  - terraform test proves permissions; docs identify remaining dedicated-account/subscription/
+    project requirements.
+- Evidence: [tx01v2#14](https://github.com/maringelix/tx01v2/pull/14), [tx02v2#12](https://github.com/maringelix/tx02v2/pull/12), [tx03v2#11](https://github.com/maringelix/tx03v2/pull/11), [tx03v2#12](https://github.com/maringelix/tx03v2/pull/12)
+  AWS uses lab-service reads and leaves existing OIDC untouched. Azure plan has Reader and state
+  reads, with -refresh=false. GCP preflight rejects unrelated workloads; apply uses per-service
+  administrative roles, a secrets role without secretmanager.versions.access, and
+  serviceAccountUser only on the bootstrap-created node identity.
+  - Revised on 2026-10-16 for GCP: apply service roles remain project-wide because name conditions
+    cannot scope creation of a resource that does not yet exist. Node-identity restrictions,
+    preflight and mandatory dedicated project remain (TX03 SEC-20). Role selection follows
+    service documentation, without a real apply; apply_extra_project_roles allows a justified
+    missing role after PERMISSION_DENIED during real validation.
 
-### R3.17 Logs públicos sem identificadores e smoke sem token em texto puro
+### R3.17 Public logs without identifiers; smoke without plaintext tokens
 
-- Status: `feito`
+- Status: `done`
 - Repos: tx01v2, dx01v2, tx02v2, dx02v2, tx03v2, dx03v2
-- Origem: auditoria de segurança para forks (2026-10-14)
-- Dependências: nenhuma
-- Custo: nenhum
-- Entregáveis:
-  - Mascarar nos logs e nos artefatos públicos dos workflows de nuvem os CIDRs (o IP de casa de quem
-    faz fork), os object IDs e os e-mails, além dos IDs que já são trocados.
-  - O smoke em nuvem não manda o token de admin por HTTP puro: pula as chamadas de admin (o HTTPS nas
-    nuvens ficou fora do escopo, DEC-11).
-- Aceite:
-  - O `policy-workflows` prova as máscaras; o plan de exemplo do CI sai sem esses valores.
-- Evidência: [tx01v2#14](https://github.com/maringelix/tx01v2/pull/14), [dx01v2#14](https://github.com/maringelix/dx01v2/pull/14), [tx02v2#12](https://github.com/maringelix/tx02v2/pull/12), [dx02v2#10](https://github.com/maringelix/dx02v2/pull/10), [tx03v2#11](https://github.com/maringelix/tx03v2/pull/11), [dx03v2#12](https://github.com/maringelix/dx03v2/pull/12). Os CIDRs (AWS e Azure), os object IDs (Azure) e os membros (Google Cloud) que nomeiam quem opera o lab são secrets mascarados elemento a elemento; o resumo do job e o artefato do plan trocam o que foi mascarado, e o `policy-workflows` exige as duas coisas. O smoke não manda o token de admin por HTTP puro para outra máquina (só por HTTPS ou para `127.0.0.1`), e os `deploy-*.sh` dos dx nem leem o token quando o ponto de entrada é HTTP.
+- Origin: fork-safety audit of 2026-10-14
+- Dependencies: none
+- Cost: none
+- Deliverables:
+  - Mask operator CIDRs, object IDs and emails in public cloud logs/artifacts, beyond account IDs.
+  - Never send admin smoke tokens over plain HTTP; omit admin calls on HTTP (cloud HTTPS was
+    outside the historical DEC-11 scope and later entered R8).
+- Acceptance:
+  - policy-workflows checks masks; sample CI plans redact these values.
+- Evidence: [tx01v2#14](https://github.com/maringelix/tx01v2/pull/14), [dx01v2#14](https://github.com/maringelix/dx01v2/pull/14), [tx02v2#12](https://github.com/maringelix/tx02v2/pull/12), [dx02v2#10](https://github.com/maringelix/dx02v2/pull/10), [tx03v2#11](https://github.com/maringelix/tx03v2/pull/11), [dx03v2#12](https://github.com/maringelix/dx03v2/pull/12)
+  AWS/Azure CIDRs, Azure object IDs and GCP members are element-wise masked secrets. Job summaries
+  and plan artifacts redact them; workflow checks require both. Smoke sends admin tokens only
+  over HTTPS or to 127.0.0.1. DX deploy scripts do not even read tokens for HTTP entry points.
 
-### R3.18 Efeitos colaterais na máquina de quem faz fork
+### R3.18 Side effects on fork owners' machines
 
-- Status: `feito`
+- Status: `done`
 - Repos: tx01v2, dx01v2, tx02v2, dx02v2, tx03v2, dx03v2
-- Origem: auditoria de segurança para forks (2026-10-14)
-- Dependências: nenhuma
-- Custo: nenhum
-- Entregáveis:
-  - Pre-flight do lab local: CIDR da rede Docker que colide com uma rota da máquina (VPN, LAN), porta
-    do registry ocupada, `DOCKER_HOST` ou contexto do Docker diferente do daemon do provider.
-  - `LOCAL_STATE_DIR` separado entre o `make e2e` do tx e o `e2e-platform` do dx (hoje um destrói o
-    lab mantido pelo outro).
-  - `make clean` sempre relativo ao diretório do Makefile; diagnósticos do `e2e-platform` só pelo
-    kubeconfig do lab; guarda de variável vazia no `rm -rf` do `scripts/lib/k8s.sh` do dx02v2; o
-    `repo-guardrails.sh` confere que o argumento é o fork certo.
-  - Google Cloud: budget com `credit_types_treatment = "EXCLUDE_ALL_CREDITS"` (créditos de trial
-    escondem o gasto) e destinatários explícitos; `DOCKER_CONFIG` temporário no deploy; o RUNBOOK
-    recomenda uma configuração do gcloud só para o lab, porque o `application-default login`
-    sobrescreve o ADC da máquina.
-- Aceite:
-  - Cada entregável com um teste ou um check do harness; os docs dizem o que continua exigindo uma
-    máquina sem outro trabalho.
-- Evidência: [tx01v2#14](https://github.com/maringelix/tx01v2/pull/14), [dx01v2#14](https://github.com/maringelix/dx01v2/pull/14), [tx02v2#12](https://github.com/maringelix/tx02v2/pull/12), [dx02v2#10](https://github.com/maringelix/dx02v2/pull/10), [tx03v2#11](https://github.com/maringelix/tx03v2/pull/11), [dx03v2#12](https://github.com/maringelix/dx03v2/pull/12). Pre-flight do lab local (`scripts/local-lab.sh preflight`, que o `up` também faz) com o check `local-preflight` (`docker`, `kind` e `ip` simulados): daemons diferentes, rede ou rota sobreposta, porta do registry ocupada, rede de um lab anterior e lab de outro `LOCAL_STATE_DIR`. O `e2e-platform` dos dx tem o diretório de estado e o kubeconfig do próprio lab, o `make clean` é relativo ao Makefile, a guarda do `rm -rf` do `k8s.sh` está no dx02v2 e no dx03v2 (`policy-app`) e o `repo-guardrails.sh` confere o argumento. Google Cloud: o budget sem descontar créditos (`EXCLUDE_ALL_CREDITS`) e com e-mail obrigatório, o `DOCKER_CONFIG` temporário no deploy do dx03v2 e a configuração do gcloud só para o lab no RUNBOOK. Os docs dizem o que continua exigindo uma máquina sem outro trabalho.
+- Origin: fork-safety audit of 2026-10-14
+- Dependencies: none
+- Cost: none
+- Deliverables:
+  - Local preflight detects Docker network collisions with VPN/LAN routes, occupied registry
+    ports, and DOCKER_HOST/context differing from the provider's daemon.
+  - Separate LOCAL_STATE_DIR for TX make e2e and DX e2e-platform to avoid destroying each other's lab.
+  - make clean relative to its Makefile; diagnostics use the lab kubeconfig; empty-variable
+    guard around Azure DX k8s.sh deletion; guardrails verifies the clone's repository.
+  - GCP budget excludes trial credits (EXCLUDE_ALL_CREDITS) and requires recipients; temporary
+    DOCKER_CONFIG during deployment; runbook recommends isolated gcloud configuration because
+    application-default login overwrites host ADC.
+- Acceptance:
+  - Each deliverable has a test/harness check; docs identify remaining dedicated-machine needs.
+- Evidence: [tx01v2#14](https://github.com/maringelix/tx01v2/pull/14), [dx01v2#14](https://github.com/maringelix/dx01v2/pull/14), [tx02v2#12](https://github.com/maringelix/tx02v2/pull/12), [dx02v2#10](https://github.com/maringelix/dx02v2/pull/10), [tx03v2#11](https://github.com/maringelix/tx03v2/pull/11), [dx03v2#12](https://github.com/maringelix/dx03v2/pull/12)
+  local-preflight stubs docker/kind/ip for different daemons, overlapping networks/routes,
+  occupied registry ports, previous lab networks and another LOCAL_STATE_DIR.
+  DX isolates state/kubeconfig; clean is Makefile-relative; Azure/GCP k8s.sh guards are checked
+  by policy-app; guardrails validates its argument. GCP excludes credits, requires budget email,
+  isolates Docker auth and documents dedicated gcloud configuration and host limitations.
 
-## R4. Base da plataforma nas nuvens (marco anterior, como código)
+## R4. Cloud platform foundation (historical milestone, as code)
 
-Concluída em 2026-10-16. Os três tx oferecem perfis `core` e `full`, e os três dx fazem o deploy do
-app por GitOps. Charts, imagens, overlays, custos, limites do GKE Autopilot e o caminho para quem faz
-fork foram documentados e verificados no CI no aceite anterior. A integração completa dos apps,
-os limites do Autopilot e a coerência core/full estão reabertos em R8.1 a R8.4. Tudo continua opcional; nada foi aplicado numa nuvem
-(`não executado em nuvem (v2)`, DEC-11).
+Completed on 2026-10-16. TX provides core/full and DX GitOps. Charts/images/overlays, costs,
+Autopilot limits and the fork path were documented and validated in the original CI acceptance.
+Full app integration, Autopilot choices and core/full consistency reopened in R8.1 to R8.4.
+Everything remains opt-in and not run in the cloud (v2), under the historical DEC-11 boundary.
 
-### R4.1 Perfis `core` e `full` da camada de plataforma na nuvem
+### R4.1 Cloud platform core/full profiles
 
-- Status: `feito`
+- Status: `done`
 - Repos: tx01v2, tx02v2, tx03v2
-- Origem: v1 implementado (os add-ons do v1 eram instalados por workflows nas três nuvens)
-- Dependências: nenhuma
-- Custo: o perfil `full` precisa de mais nós ou nós maiores (R4.7); o `core` continua o padrão
-- Entregáveis:
-  - `platform/install.sh --profile core|full`: o `full` acrescenta Istio, cert-manager,
-    kube-prometheus-stack, Loki + Alloy, Tempo, Argo CD, Gatekeeper, Trivy Operator, Velero e Chaos
-    Mesh, com as versões e digests do lab local e values por nuvem em `platform/values/`.
-  - Identidades por componente (Pod Identity, Workload ID, Workload Identity Federation) só onde o
-    componente fala com a nuvem.
-- Aceite:
-  - `helm-template`, `kubeconform` e `contract-platform` renderizam e validam o perfil `full` das três
-    nuvens no CI; `não executado em nuvem (v2)`.
-- Evidência: [tx01v2#15](https://github.com/maringelix/tx01v2/pull/15), [tx02v2#13](https://github.com/maringelix/tx02v2/pull/13) e [tx03v2#13](https://github.com/maringelix/tx03v2/pull/13). Os três mantêm `core` como padrão e fixam charts, imagens e overlays por nuvem.
+- Origin: implemented v1 (workflow-installed add-ons in three clouds)
+- Dependencies: none
+- Cost: full needs more/larger nodes (R4.7); core remains default
+- Deliverables:
+  - platform/install.sh --profile core|full. Full adds Istio, cert-manager, kube-prometheus-stack,
+    Loki/Alloy, Tempo, Argo CD, Gatekeeper, Trivy Operator, Velero and Chaos Mesh using local-lab
+    pins and provider values in platform/values/.
+  - Component Pod Identity/Workload ID/WIF only where cloud access is needed.
+- Acceptance:
+  - helm-template, kubeconform and contract-platform render/validate all cloud full profiles;
+    no claim of a cloud run.
+- Evidence: [tx01v2#15](https://github.com/maringelix/tx01v2/pull/15), [tx02v2#13](https://github.com/maringelix/tx02v2/pull/13), [tx03v2#13](https://github.com/maringelix/tx03v2/pull/13)
+  All three retain default core and pin charts/images/provider overlays.
 
-### R4.2 ADR: observabilidade no cluster ou gerenciada, por nuvem
+### R4.2 ADR: in-cluster or managed observability per cloud
 
-- Status: `feito`
+- Status: `done`
 - Repos: tx01v2, tx02v2, tx03v2
-- Origem: dívida v2
-- Dependências: nenhuma
-- Custo: o ADR compara o custo por rodada das duas opções
-- Entregáveis:
-  - ADR no `docs/ARQUITETURA.md` de cada tx: kube-prometheus-stack, Loki e Tempo no cluster contra
-    Amazon Managed Service for Prometheus + Managed Grafana + CloudWatch, Azure Monitor (Prometheus
-    gerenciado) + Managed Grafana + Log Analytics, e Google Cloud Managed Service for Prometheus +
-    Cloud Logging + Cloud Trace; o que cada opção deixa as sondas provarem.
-- Aceite:
-  - ADR mesclado nos três, com a decisão e o custo; o perfil `full` da R4.1 segue a decisão.
-- Evidência: [tx01v2#15](https://github.com/maringelix/tx01v2/pull/15), [tx02v2#13](https://github.com/maringelix/tx02v2/pull/13) e [tx03v2#13](https://github.com/maringelix/tx03v2/pull/13). Cada ADR compara observabilidade no cluster com os serviços gerenciados e registra custos e limites.
+- Origin: v2 debt
+- Dependencies: none
+- Cost: ADR compares per-run costs of both options
+- Deliverables:
+  - Each TX docs/ARCHITECTURE.md compares in-cluster kube-prometheus-stack/Loki/Tempo against
+    AWS Managed Prometheus/Managed Grafana/CloudWatch; Azure managed Prometheus/Managed Grafana/
+    Log Analytics; and Google Managed Prometheus/Cloud Logging/Cloud Trace.
+    Explain which behavior each option lets probes demonstrate.
+- Acceptance:
+  - Merged ADRs with decisions/costs; R4.1 full follows the decision.
+- Evidence: [tx01v2#15](https://github.com/maringelix/tx01v2/pull/15), [tx02v2#13](https://github.com/maringelix/tx02v2/pull/13), [tx03v2#13](https://github.com/maringelix/tx03v2/pull/13)
+  Each ADR records the in-cluster/managed comparison, costs and limits.
 
-### R4.3 Istio ambient nas três nuvens
+### R4.3 Istio ambient in the three clouds
 
-- Status: `feito`
+- Status: `done`
 - Repos: tx01v2, tx02v2, tx03v2
-- Origem: v1 implementado (Istio no AKS e no GKE do v1, com mTLS `PERMISSIVE`)
-- Dependências: R4.1
-- Custo: ztunnel por nó e istiod; entra na conta da R4.7
-- Entregáveis:
-  - EKS e AKS com os charts upstream do ambient (o add-on gerenciado do AKS usa sidecars); conferir a
-    compatibilidade do istio-cni com o VPC CNI e o Azure CNI Overlay.
-  - GKE Autopilot: verificar se o ambient (istio-cni e ztunnel, que pedem privilégios) é aceito; se
-    não for, documentar e manter a malha desligada no Autopilot.
-- Aceite:
-  - Render e kubeconform do perfil `full`; a resposta sobre o Autopilot registrada no
-    `docs/ARQUITETURA.md` do tx03v2.
-- Evidência: [tx01v2#15](https://github.com/maringelix/tx01v2/pull/15), [tx02v2#13](https://github.com/maringelix/tx02v2/pull/13) e [tx03v2#13](https://github.com/maringelix/tx03v2/pull/13). Istio ambient entra no EKS e AKS; no GKE Autopilot ficam documentados os componentes privilegiados que não são instalados.
+- Origin: implemented v1 (AKS/GKE Istio with PERMISSIVE mTLS)
+- Dependencies: R4.1
+- Cost: per-node ztunnel and istiod, included in R4.7
+- Deliverables:
+  - EKS/AKS upstream ambient charts; AKS managed add-on uses sidecars.
+    Check istio-cni compatibility with VPC CNI and Azure CNI Overlay.
+  - Check whether Autopilot permits privileged istio-cni/ztunnel; otherwise document the
+    limitation and leave ambient disabled in that historical profile.
+- Acceptance:
+  - Full render/kubeconform; Autopilot conclusion recorded in TX03 architecture.
+- Evidence: [tx01v2#15](https://github.com/maringelix/tx01v2/pull/15), [tx02v2#13](https://github.com/maringelix/tx02v2/pull/13), [tx03v2#13](https://github.com/maringelix/tx03v2/pull/13)
+  EKS/AKS install ambient. GKE documents excluded privileged components; the later supported
+  managed-mesh implementation is tracked in R8.2.
 
-### R4.4 Argo CD na nuvem e deploy do app por GitOps
+### R4.4 Cloud Argo CD and GitOps app deployment
 
-- Status: `feito`
+- Status: `done`
 - Repos: tx01v2, tx02v2, tx03v2, dx01v2, dx02v2, dx03v2
-- Origem: v1 implementado em parte (Argo CD instalado por workflow; a Application do GCP apontava para um caminho que não existia)
-- Dependências: R4.1
-- Custo: nenhum além dos recursos do Argo CD
-- Entregáveis:
-  - Argo CD sem usuário admin, com ClusterIP, app-of-apps da plataforma a partir do repositório tx e
-    uma Application do app a partir do repositório dx (público, por https, sem credencial).
-  - O workflow de deploy dos dx passa de push (`deploy-<nuvem>.sh` aplicando manifests) para commit e
-    sync; o push fica como fallback do script local, sem uma opção no workflow para trocar o modo.
-- Aceite:
-  - Render e validação das Applications; o mesmo fluxo que o lab local prova (commit, sync,
-    self-heal); `não executado em nuvem (v2)`.
-- Evidência: [tx01v2#15](https://github.com/maringelix/tx01v2/pull/15), [dx01v2#16](https://github.com/maringelix/dx01v2/pull/16), [tx02v2#13](https://github.com/maringelix/tx02v2/pull/13), [dx02v2#11](https://github.com/maringelix/dx02v2/pull/11), [tx03v2#13](https://github.com/maringelix/tx03v2/pull/13), [tx03v2#14](https://github.com/maringelix/tx03v2/pull/14) e [dx03v2#13](https://github.com/maringelix/dx03v2/pull/13). Os workflows dos dx são GitOps; o `contents: write` fica restrito ao job de deploy e o contrato GCP está na v3.
+- Origin: partly implemented v1 (workflow Argo CD; GCP Application referenced a nonexistent path)
+- Dependencies: R4.1
+- Cost: Argo CD resources only
+- Deliverables:
+  - Argo CD without admin user, ClusterIP, platform app-of-apps from TX and application from
+    public DX HTTPS without credentials.
+  - Historical DX workflow moved from direct push to commit/sync, retaining push only as a local
+    script fallback without a workflow mode input at that milestone (R8 later adds profile-aware modes).
+- Acceptance:
+  - Render/validate Applications and the local commit/sync/self-heal flow; cloud remains unexecuted.
+- Evidence: [tx01v2#15](https://github.com/maringelix/tx01v2/pull/15), [dx01v2#16](https://github.com/maringelix/dx01v2/pull/16), [tx02v2#13](https://github.com/maringelix/tx02v2/pull/13), [dx02v2#11](https://github.com/maringelix/dx02v2/pull/11), [tx03v2#13](https://github.com/maringelix/tx03v2/pull/13), [tx03v2#14](https://github.com/maringelix/tx03v2/pull/14), [dx03v2#13](https://github.com/maringelix/dx03v2/pull/13)
+  Historical DX workflows used GitOps with contents: write limited to the deploy job;
+  the GCP contract was v3 in this round.
 
-### R4.5 Velero com o object storage de cada nuvem
+### R4.5 Velero with each cloud's object storage
 
-- Status: `feito`
+- Status: `done`
 - Repos: tx01v2, tx02v2, tx03v2
-- Origem: v1 implementado de outro jeito (backups por workflows: AWS Backup, backups do Azure SQL e do Cloud SQL; sem Velero)
-- Dependências: R4.1
-- Custo: armazenamento dos backups (centavos por rodada) e as requisições
-- Entregáveis:
-  - Bucket ou container com criptografia e ciclo de vida no `terraform/envs/lab`; plugin da AWS (S3 +
-    Pod Identity), da Azure (Blob + Workload ID) e do Google Cloud (Cloud Storage + Workload Identity
-    Federation).
-  - O drill de restore do lab local descrito no RUNBOOK para a rodada de quem fizer fork.
-- Aceite:
-  - `terraform test` do bucket e das permissões; `não executado em nuvem (v2)`.
-- Evidência: [tx01v2#15](https://github.com/maringelix/tx01v2/pull/15), [tx02v2#13](https://github.com/maringelix/tx02v2/pull/13) e [tx03v2#13](https://github.com/maringelix/tx03v2/pull/13). Cada provedor usa armazenamento privado, ciclo de vida de 35 dias e permissões de objeto limitadas ao Velero.
+- Origin: differently implemented v1 (AWS Backup and Azure SQL/Cloud SQL workflow backups; no Velero)
+- Dependencies: R4.1
+- Cost: backup storage (cents per short run in the recorded estimate) plus requests
+- Deliverables:
+  - Encrypted lifecycle-managed terraform/envs/lab bucket/container; AWS S3/Pod Identity plugin,
+    Azure Blob/Workload ID plugin, GCS/WIF plugin.
+  - RUNBOOK describes the local restore drill for fork operators.
+- Acceptance:
+  - terraform test checks storage/permissions; cloud remains unexecuted.
+- Evidence: [tx01v2#15](https://github.com/maringelix/tx01v2/pull/15), [tx02v2#13](https://github.com/maringelix/tx02v2/pull/13), [tx03v2#13](https://github.com/maringelix/tx03v2/pull/13)
+  Private storage, 35-day lifecycle and Velero-scoped object permissions per provider.
 
-### R4.6 Gatekeeper, Trivy Operator e Chaos Mesh na nuvem
+### R4.6 Cloud Gatekeeper, Trivy Operator and Chaos Mesh
 
-- Status: `feito`
+- Status: `done`
 - Repos: tx01v2, tx02v2, tx03v2
-- Origem: v1 implementado (Gatekeeper e Trivy Operator instalados por workflow; Chaos Mesh no AKS)
-- Dependências: R4.1
-- Custo: recursos dos componentes (R4.7)
-- Entregáveis:
-  - Namespaces isentos por nuvem (os do sistema de cada provedor), as mesmas constraints do lab local
-    e a suíte do gator.
-  - Restrições do GKE Autopilot (sem pods privilegiados): o que do Chaos Mesh roda lá e o que fica só
-    no lab local, documentado.
-- Aceite:
-  - Render, kubeconform e gator verdes para as três nuvens.
-- Evidência: [tx01v2#15](https://github.com/maringelix/tx01v2/pull/15), [tx02v2#13](https://github.com/maringelix/tx02v2/pull/13) e [tx03v2#13](https://github.com/maringelix/tx03v2/pull/13). As constraints seguem o lab local; o perfil GKE documenta os limites do Autopilot e só mantém os experimentos compatíveis.
+- Origin: implemented v1 (workflow-installed Gatekeeper/Trivy; Chaos Mesh on AKS)
+- Dependencies: R4.1
+- Cost: component resources (R4.7)
+- Deliverables:
+  - Provider system-namespace exemptions, local-equivalent constraints and gator suite.
+  - Document Autopilot privileged-pod restrictions and which Chaos exercises remain local only.
+- Acceptance:
+  - Green render, kubeconform and gator for all providers.
+- Evidence: [tx01v2#15](https://github.com/maringelix/tx01v2/pull/15), [tx02v2#13](https://github.com/maringelix/tx02v2/pull/13), [tx03v2#13](https://github.com/maringelix/tx03v2/pull/13)
+  Constraints follow the local lab; GKE keeps compatible experiments and documents limits.
 
-### R4.7 Dimensionamento e custo do perfil `full`
+### R4.7 Full profile sizing and costs
 
-- Status: `feito`
+- Status: `done`
 - Repos: tx01v2, tx02v2, tx03v2
-- Origem: dívida v2
-- Dependências: R4.1, R4.2
-- Custo: é o que o item mede
-- Entregáveis:
-  - A soma dos requests do perfil `full` por nuvem e o tamanho ou número de nós que cabe;
-    `docs/CUSTOS.md` com o custo por hora do perfil `full` e o budget ajustado.
-- Aceite:
-  - Uma tabela por nuvem com os requests somados e o custo; o padrão continua o perfil `core`.
-- Evidência: [tx01v2#15](https://github.com/maringelix/tx01v2/pull/15), [tx02v2#13](https://github.com/maringelix/tx02v2/pull/13) e [tx03v2#13](https://github.com/maringelix/tx03v2/pull/13). Requests, tamanhos de nós, custo por hora e budgets estão registrados nos `docs/CUSTOS.md` dos três tx.
+- Origin: v2 debt
+- Dependencies: R4.1, R4.2
+- Cost: measured by this item
+- Deliverables:
+  - Sum full requests per cloud, identify node sizes/counts that fit, and document hourly costs
+    and adjusted budget in docs/COSTS.md.
+- Acceptance:
+  - Per-cloud requests/cost table; default remains core.
+- Evidence: [tx01v2#15](https://github.com/maringelix/tx01v2/pull/15), [tx02v2#13](https://github.com/maringelix/tx02v2/pull/13), [tx03v2#13](https://github.com/maringelix/tx03v2/pull/13)
+  All TX cost documents record requests, node sizes, hourly estimates and budgets.
 
-### R4.8 Do fork à própria nuvem, de ponta a ponta
+### R4.8 Fork to own cloud, end to end
 
-- Status: `feito`
+- Status: `done`
 - Repos: tx01v2, dx01v2, tx02v2, dx02v2, tx03v2, dx03v2
-- Origem: dívida v2 (a definição de pronto da DEC-11)
-- Dependências: R4.1, R4.4, R4.5, R4.6, R4.7
-- Custo: nenhum aqui; quem faz fork paga a própria rodada (`docs/CUSTOS.md`)
-- Entregáveis:
-  - O `FORK.md` e o `docs/RUNBOOK.md` de cada par com o caminho inteiro na conta de quem faz fork:
-    bootstrap, apply, plataforma (`core` ou `full`), deploy do app por GitOps, smoke, destroy e
-    checagem de sobras, com o custo por hora de cada perfil e o que fazer quando um passo falha.
-- Aceite:
-  - O check de links e o harness de cada repositório confirmam que todo script, alvo do `make`,
-    workflow e variável citados nesse caminho existem; `não executado em nuvem (v2)`.
-- Evidência: [tx01v2#15](https://github.com/maringelix/tx01v2/pull/15), [dx01v2#16](https://github.com/maringelix/dx01v2/pull/16), [tx02v2#13](https://github.com/maringelix/tx02v2/pull/13), [dx02v2#11](https://github.com/maringelix/dx02v2/pull/11), [tx03v2#13](https://github.com/maringelix/tx03v2/pull/13), [tx03v2#14](https://github.com/maringelix/tx03v2/pull/14) e [dx03v2#13](https://github.com/maringelix/dx03v2/pull/13). Os seis `FORK.md` e RUNBOOKs documentam bootstrap, apply, perfil, GitOps, smoke, destroy e checagem de sobras.
+- Origin: v2 debt (DEC-11 definition of ready)
+- Dependencies: R4.1, R4.4, R4.5, R4.6, R4.7
+- Cost: none here; fork owners fund their runs (docs/COSTS.md)
+- Deliverables:
+  - Each pair's FORK/RUNBOOK documents bootstrap, apply, core/full platform, GitOps app deploy,
+    smoke, destroy and leftovers in the fork owner's account, hourly profile costs and recovery
+    when a step fails.
+- Acceptance:
+  - Link checks and repository harnesses validate referenced scripts, make targets, workflows
+    and variables; cloud remains not run in the cloud (v2).
+- Evidence: [tx01v2#15](https://github.com/maringelix/tx01v2/pull/15), [dx01v2#16](https://github.com/maringelix/dx01v2/pull/16), [tx02v2#13](https://github.com/maringelix/tx02v2/pull/13), [dx02v2#11](https://github.com/maringelix/dx02v2/pull/11), [tx03v2#13](https://github.com/maringelix/tx03v2/pull/13), [tx03v2#14](https://github.com/maringelix/tx03v2/pull/14), [dx03v2#13](https://github.com/maringelix/dx03v2/pull/13)
+  All six fork guides/runbooks record bootstrap, apply, profiles, GitOps, smoke and cleanup.
 
-## S. Sustentação e calendário
+## S. Maintenance calendar
 
-Itens com data. As rotinas (CI semanal, Dependabot mensal, revisão trimestral) estão no
-[docs/SUSTENTACAO.md](docs/SUSTENTACAO.md) deste repositório e no de cada repositório da família.
+Dated maintenance work. Weekly CI, monthly Dependabot and quarterly routines are in this hub's
+[docs/MAINTENANCE.md](docs/MAINTENANCE.md) and each lab's equivalent. Dates/versions below preserve
+the planning baseline; recheck upstream support calendars before each upgrade.
 
-### S.1 Node.js 26 LTS nos apps
+### S.1 Node.js 26 LTS in apps
 
-- Status: `pendente`
+- Status: `pending`
 - Repos: dx01v2, dx02v2, dx03v2
-- Origem: dívida v2 (calendário)
-- Dependências: nenhuma
-- Custo: nenhum
-- Entregáveis:
-  - O Node.js 26 vira LTS em 2026-10-28; o 24 vai até 2028-04-30. Na primeira revisão trimestral
-    depois de 2026-10-28: `.nvmrc`, `engines`, imagens `node` de build e distroless `nodejs26`
-    (quando existirem), devcontainer e `@types/node`, nos três dx na mesma rodada.
-- Aceite:
-  - CI verde nos três e o `family-app` igual (mesmos `engines`).
+- Origin: v2 calendar debt
+- Dependencies: none
+- Cost: none
+- Deliverables:
+  - Recorded schedule: Node.js 26 LTS on 2026-10-28; Node 24 support through 2028-04-30.
+    At the first quarterly review after 2026-10-28 update .nvmrc, engines, build node images,
+    distroless nodejs26 when available, devcontainer and @types/node across all DX.
+- Acceptance:
+  - Green CI in three DX; family-app matches engines.
 
-### S.2 Kubernetes 1.37 na família e kubectl alinhado
+### S.2 Kubernetes 1.37 and aligned kubectl
 
-- Status: `pendente`
+- Status: `pending`
 - Repos: tx01v2, dx01v2, tx02v2, dx02v2, tx03v2, dx03v2
-- Origem: dívida v2 (calendário)
-- Dependências: nenhuma
-- Custo: nenhum
-- Entregáveis:
-  - Prazos da 1.36: AKS até 2027-06-30, GKE por volta de 2027-06-30, EKS com suporte padrão até
-    2027-08-02. A 1.37 já existe no EKS (2026-10-01) e no AKS (outubro de 2026).
-  - Nó do kind, schemas do kubeconform e padrões do EKS, do AKS e da GKE na 1.37, depois de conferir os
-    controladores (AWS Load Balancer Controller, ALB Controller da Azure, ESO).
-  - O kubectl igual nos seis (hoje 1.37.1 nos tx e 1.36.5 nos dx); a exceção do `family-versions` sai
-    na mesma rodada.
-- Aceite:
-  - CI verde nos seis e o `family-versions` sem exceção.
+- Origin: v2 calendar debt
+- Dependencies: none
+- Cost: none
+- Deliverables:
+  - Recorded 1.36 deadlines: AKS 2027-06-30, GKE around 2027-06-30, EKS standard support
+    2027-08-02. The baseline records EKS 1.37 availability on 2026-10-01 and AKS in October 2026.
+  - Move kind node, kubeconform schemas and provider cluster defaults to 1.37 after checking
+    AWS Load Balancer Controller, Azure ALB Controller and ESO compatibility.
+  - Align kubectl across six (baseline TX 1.37.1/DX 1.36.5) and remove family-versions exception.
+- Acceptance:
+  - Six green CI suites and family-versions without the exception.
 
-### S.3 Istio 1.31 para 1.33
+### S.3 Istio 1.31 to 1.33
 
-- Status: `pendente`
+- Status: `pending`
 - Repos: tx01v2, tx02v2, tx03v2, dx01v2, dx02v2, dx03v2
-- Origem: dívida v2 (calendário)
-- Dependências: nenhuma
-- Custo: nenhum
-- Entregáveis:
-  - O Istio 1.31 sai de suporte por volta de 2027-02 (seis semanas depois da 1.33). Charts (base,
-    istiod, cni, ztunnel) com SHA256, digests das imagens e as NetworkPolicies dos dx se alguma porta
-    mudar.
-- Aceite:
-  - `e2e` e `e2e-platform` verdes nos seis; `family-versions` e `family-digests` verdes.
+- Origin: v2 calendar debt
+- Dependencies: none
+- Cost: none
+- Deliverables:
+  - Recorded Istio 1.31 support estimate: around February 2027, six weeks after 1.33.
+    Update base/istiod/cni/ztunnel charts with SHA256, image digests and DX NetworkPolicies
+    if ports change.
+- Acceptance:
+  - Green e2e/e2e-platform, family-versions and family-digests.
 
-### S.4 Exceções do trivy que vencem em 2027-04-30
+### S.4 Trivy exceptions expiring 2027-04-30
 
-- Status: `pendente`
+- Status: `pending`
 - Repos: tx01v2, tx02v2
-- Origem: dívida v2 (calendário)
-- Dependências: nenhuma
-- Custo: nenhum
-- Entregáveis:
-  - tx01v2: `AWS-0040`, `AWS-0041`, `AWS-0132` e `KSV-0056`; tx02v2: `AZU-0012` e `AZU-0013`. Cada uma é
-    corrigida ou renovada com `statement` novo e no máximo uns 7 meses de validade, antes de abril de
-    2027.
-- Aceite:
-  - O check `trivyignore-policy` verde depois de 2027-04-30.
+- Origin: v2 calendar debt
+- Dependencies: none
+- Cost: none
+- Deliverables:
+  - AWS-0040, AWS-0041, AWS-0132, KSV-0056 in TX01; AZU-0012, AZU-0013 in TX02.
+    Fix or renew each before April 2027 with a new statement and at most about seven months.
+- Acceptance:
+  - trivyignore-policy passes after 2027-04-30.
 
-### S.5 nginx 1.32 nos apps
+### S.5 nginx 1.32 in apps
 
-- Status: `pendente`
+- Status: `pending`
 - Repos: dx01v2, dx02v2, dx03v2
-- Origem: dívida v2 (calendário)
-- Dependências: nenhuma
-- Custo: nenhum
-- Entregáveis:
-  - A linha estável do nginx muda para a 1.32 por volta de abril de 2027: `nginx-unprivileged` de
-    `1.30-alpine-slim` para `1.32-alpine-slim`, por digest, nos três dx.
-- Aceite:
-  - O gate do trivy nas imagens verde e o `family-digests` igual nos três.
+- Origin: v2 calendar debt
+- Dependencies: none
+- Cost: none
+- Deliverables:
+  - Recorded stable-line change estimate: April 2027. Move nginx-unprivileged from
+    1.30-alpine-slim to 1.32-alpine-slim by digest across all three DX when available.
+- Acceptance:
+  - Green Trivy image gates and equal family-digests.
 
-### S.6 Amazon Linux 2023 nos nós do EKS
+### S.6 Amazon Linux 2023 on EKS nodes
 
-- Status: `pendente`
+- Status: `pending`
 - Repos: tx01v2
-- Origem: dívida v2 (calendário)
-- Dependências: nenhuma
-- Custo: nenhum
-- Entregáveis:
-  - O AL2023 tem suporte padrão até 2027-06-30 e manutenção até 2029-06-30; antes de meados de 2027,
-    conferir o tipo de AMI do node group e o sucessor recomendado para o EKS.
-- Aceite:
-  - Decisão registrada no `docs/SUSTENTACAO.md` do tx01v2 e `terraform test` do node group verde.
+- Origin: v2 calendar debt
+- Dependencies: none
+- Cost: none
+- Deliverables:
+  - Recorded AL2023 standard support through 2027-06-30 and maintenance through 2029-06-30.
+    Before mid-2027 review the node group's AMI type and recommended EKS successor.
+- Acceptance:
+  - Decision in TX01 docs/MAINTENANCE.md and green node-group terraform test.
 
-### S.7 Schemas de CRD do kubeconform
+### S.7 kubeconform CRD schemas
 
-- Status: `pendente`
+- Status: `pending`
 - Repos: tx01v2, dx01v2, tx02v2, dx02v2, tx03v2, dx03v2
-- Origem: dívida v2
-- Dependências: nenhuma
-- Custo: nenhum
-- Entregáveis:
-  - Os tx fixam o datreeio/CRDs-catalog em `f3e4382` (2026-06-02), porque a revisão `b7e2015` quebrou
-    o schema `external-secrets.io/clustersecretstore_v1`; os dx fixam `63669a5` (2026-10-08). A cada
-    revisão trimestral, conferir se o catálogo foi corrigido e alinhar os seis no mesmo commit.
-- Aceite:
-  - `kubeconform` verde nos seis com o mesmo commit do catálogo.
+- Origin: v2 debt
+- Dependencies: none
+- Cost: none
+- Deliverables:
+  - TX pins datreeio/CRDs-catalog f3e4382 (2026-06-02), because b7e2015 broke
+    external-secrets.io/clustersecretstore_v1; DX pins 63669a5 (2026-10-08).
+    Check repairs quarterly and align all six to one working commit.
+- Acceptance:
+  - Green kubeconform across six using the same catalog commit.
 
-### S.8 Menções a "contract v1" que descrevem a versão 2
+### S.8 “contract v1” references describing version 2
 
-- Status: `feito`
+- Status: `done`
 - Repos: tx01v2, dx01v2, tx02v2, dx02v2, tx03v2, dx03v2
-- Origem: dívida v2 (o contrato passou para a versão 2 na R1; cerca de cem comentários, mensagens dos scripts de deploy e linhas de docs ainda dizem "contract v1")
-- Dependências: nenhuma
-- Custo: nenhum
-- Entregáveis:
-  - Trocar por "contrato" sem versão onde o texto vale para qualquer versão, ou por "v2" onde a versão
-    importa, sem mudar comportamento; um PR por repositório.
-- Aceite:
-  - `git grep -i "contract v1"` só acha o histórico (CHANGELOG e notas datadas).
-- Evidência: [tx01v2#12](https://github.com/maringelix/tx01v2/pull/12), [tx02v2#10](https://github.com/maringelix/tx02v2/pull/10), [tx03v2#9](https://github.com/maringelix/tx03v2/pull/9), [dx01v2#12](https://github.com/maringelix/dx01v2/pull/12), [dx02v2#8](https://github.com/maringelix/dx02v2/pull/8), [dx03v2#10](https://github.com/maringelix/dx03v2/pull/10)
+- Origin: v2 debt (R1 changed the contract to v2; about 100 comments/messages/doc lines still said v1)
+- Dependencies: none
+- Cost: none
+- Deliverables:
+  - Use version-neutral “contract” where appropriate, or v2 where the version matters, without
+    changing behavior; one PR per repository.
+- Acceptance:
+  - git grep -i "contract v1" finds only history (changelogs and dated notes).
+- Evidence: [tx01v2#12](https://github.com/maringelix/tx01v2/pull/12), [tx02v2#10](https://github.com/maringelix/tx02v2/pull/10), [tx03v2#9](https://github.com/maringelix/tx03v2/pull/9), [dx01v2#12](https://github.com/maringelix/dx01v2/pull/12), [dx02v2#8](https://github.com/maringelix/dx02v2/pull/8), [dx03v2#10](https://github.com/maringelix/dx03v2/pull/10)
 
-### S.9 Primeira revisão trimestral conjunta da família
+### S.9 First joint quarterly family review
 
-- Status: `pendente`
+- Status: `pending`
 - Repos: tx00v2, tx01v2, dx01v2, tx02v2, dx02v2, tx03v2, dx03v2
-- Origem: dívida v2 (rotina de cada `docs/SUSTENTACAO.md`)
-- Dependências: nenhuma
-- Custo: nenhum
-- Entregáveis:
-  - Em janeiro de 2027, nos sete: ferramentas do harness (terraform, tflint e rulesets, trivy,
-    actionlint, shellcheck, kubeconform, gitleaks, kubectl, helm, kind, gator, hadolint, promtool,
-    kubelogin, gcloud, jq), charts e digests, schemas, preços dos `docs/CUSTOS.md` e o calendário.
-- Aceite:
-  - Um PR por repositório com o CI verde e o `make family` verde no fim.
+- Origin: v2 maintenance routine in each docs/MAINTENANCE.md
+- Dependencies: none
+- Cost: none
+- Deliverables:
+  - January 2027 review in all seven: Terraform, tflint/rulesets, Trivy, actionlint, shellcheck,
+    kubeconform, gitleaks, kubectl, Helm, kind, gator, hadolint, promtool, kubelogin, gcloud, jq;
+    charts/digests, schemas, cost sources and calendar.
+- Acceptance:
+  - One green-CI PR per repository, followed by green make family.
 
-## Mapa v1 → v2
+## Historical v1 → v2 comparison at scope reopening (2026-10-16)
 
-Fontes do lado v1: os READMEs, os workflows, o `IMPLEMENTATION_STATUS` do tx01 e as auditorias dos
-repositórios v1 (privados e arquivados; por isso não há links). "Feito" na coluna da v2 quer dizer
-`verificado no CI` no lab local, salvo quando a linha diz que é só código.
+The v1 sources were READMEs, workflows, tx01 IMPLEMENTATION_STATUS and private archived audits,
+so they are not linked. This table preserves the pre-R7 snapshot: “pending” means pending at
+that audit, with the completing item in the last column. Current construction is recorded in
+R7–R11 and [docs/ACCEPTANCE.md](docs/ACCEPTANCE.md). Local “done” means verified in CI unless
+a row explicitly says code only.
 
-| Capacidade | v1 | v2 hoje | Item |
+| Capability | v1 | v2 at scope reopening | Item |
 |---|---|---|---|
-| Terraform com módulos e state remoto | implementado nas três nuvens | bootstrap e `terraform/envs/lab` nos três tx, com `terraform test` e provider mockado (código) | código; homologação real separada da construção (DEC-13) |
-| Testes e lint de IaC | só no tx01 | fmt, validate, lock files, tflint com ruleset, trivy e `terraform test` nos três tx | feito (R0.1) |
-| Kubernetes gerenciado | EKS 1.32, AKS, GKE Autopilot | EKS, AKS e GKE Autopilot 1.36 (código); kind 1.36 no lab local | S.2 |
-| Modo EC2/VM | implementado (EC2 com deploy por SSM; VM na Azure) | descartado (DEC-2) | nenhum |
-| Banco | RDS PostgreSQL, Azure SQL, Cloud SQL PostgreSQL | PostgreSQL 17 nas três (Azure SQL não portado, DEC-3); local com TLS; HA/restore completos pendentes | R9.1 |
-| Registry | ECR, ACR, Artifact Registry | os três (código) e o gêmeo local | código |
-| Entrada e load balancer | ALB só HTTP, ingress-nginx no AKS, Ingress do GCE | ALB com o Load Balancer Controller, AGC com Gateway API, Gateway da GKE (código); Istio Gateway local | código |
-| WAF da AWS | rate limit, Common, SQLi, KnownBadInputs | Common, KnownBadInputs, SQLi, IpReputation e rate limit por IP (código) | R8.1 |
-| WAF da Azure | opção de workflow (parcial) | AGC com DRS 2.1 e Bot Manager 1.1 em Prevention (código) | R8.1 |
-| Cloud Armor | sete regras pré-configuradas, rate limit, Adaptive Protection | sqli e xss (código) | R8.1 |
-| TLS | Let's Encrypt no AKS, certificado gerenciado no GKE, AWS só HTTP | cert-manager com a CA do lab local; overlay `aws-https` com ACM | R8.1 |
-| Service mesh | Istio no AKS e no GKE, mTLS `PERMISSIVE`, retries, timeouts, outlier, canário | Istio ambient local com mTLS `STRICT`; integração cloud e tráfego avançado pendentes | R8.2 |
-| GitOps | Argo CD instalado por workflow, Application quebrada no GCP | Argo CD local com commit, sync e self-heal; deploy do app por GitOps | R4.4 |
-| Prometheus e Grafana | instalados por workflow nas três nuvens | local, com ServiceMonitor, regras testadas com promtool e dashboard como código | R4.1, R4.2 |
-| Logs | Loki na AWS, Log Analytics na Azure | Loki + Alloy local | R4.1, R4.2 |
-| Alertas no Slack | implementado | local, com o payload validado no CI | feito (R1.2) |
-| Tracing e APM | Application Insights e o Jaeger do Istio (parcial) | OpenTelemetry e Tempo locais; exportadores para X-Ray, Application Insights e Cloud Trace (código) | feito (R1.1, R1.4, R1.6) |
-| Trivy | imagens no CI | trivy config, gate de imagem no CI e Trivy Operator local | feito (R0.1, R0.3) |
-| tfsec, Checkov e gitleaks | no tx02 | trivy config (no lugar do tfsec) e gitleaks nos sete | feito (R0.1) |
-| OWASP ZAP | baseline no tx02 | ainda não | R7.1 |
-| SonarCloud ou SonarQube | só citado no dx03 | ainda não (SonarQube Community Build, DEC-1) | R7.1 |
-| CodeQL | ausente (só upload de SARIF) | ainda não | R7.1 |
-| Dependabot | planejado | mensal e agrupado nos sete | feito (R0.1) |
-| Gatekeeper | implementado | local em `deny`, com a suíte do gator | feito (R0.3), R4.6 |
-| NetworkPolicy e PDB | parcial | aplicados no kind e conferidos no harness | feito (R0.1) |
-| Backup | workflows manuais (AWS Backup, Azure SQL, Cloud SQL), sem Velero | Velero local restaura objetos/ConfigMap; DX prova pg_dump/restore local; restore gerenciado, PVC e recuperação integrada pendentes | R9.1, R9.2 |
-| Chaos | Chaos Mesh manual no tx02: pod, rede, CPU, memória, desligamento de nó | local com hipóteses: pod kill, latência, stress, latência no banco | base feita (R0.3, R1.3); completar em R8.4 |
-| DR multirregião | planejado (tudo numa região) | ainda não | R9.2 |
-| FinOps | budget no GCP, escala por workflow, sem OpenCost | budgets nos bootstraps, `docs/CUSTOS.md` por par, Spot no EKS | R10.2 |
-| Autoscaling | HPA; nós no AKS e no Autopilot; sem Cluster Autoscaler nem Karpenter | HPA 2–4 local; AKS 1–3 e Autopilot (código) | R10.1 |
-| CI com OIDC | implementado | OIDC e Workload Identity Federation com `sub` exatos e testados | feito (R0.1) |
-| Segredos | parcial (Secrets do Kubernetes) | ESO com Secrets Manager, Key Vault e Secret Manager (código) e local | feito (R0.3) |
-| Várias nuvens | pilhas paralelas, sem failover | três pares e o hub com os checks de coerência | feito (R0.6) |
-| Teste de carga | planejado (auditoria) | ainda não | R10.1 |
-| Assinatura de imagem e Binary Authorization | planejado (auditorias) | ainda não | R7.1 (assinatura/verificação; controle de admissão em R8.4) |
+| Modular Terraform and remote state | implemented in three clouds | bootstrap/lab roots and mocked terraform test in three TX | code; separate cloud validation (DEC-13) |
+| IaC tests/lint | TX01 only | fmt, validate, lockfiles, tflint/ruleset, Trivy, mocked tests in all TX | done (R0.1) |
+| Managed Kubernetes | EKS 1.32, AKS, GKE Autopilot | EKS/AKS/GKE 1.36 as code; kind 1.36 locally | S.2 |
+| EC2/VM mode | EC2 through SSM; Azure VM | excluded (DEC-2) | none |
+| Database | RDS PostgreSQL, Azure SQL, Cloud SQL PostgreSQL | PostgreSQL 17 everywhere (DEC-3), local TLS; full HA/restore pending | R9.1 |
+| Registry | ECR, ACR, Artifact Registry | all three as code and local equivalent | code |
+| Edge/load balancer | HTTP ALB, AKS ingress-nginx, GCE Ingress | ALB Controller, Azure AGC/Gateway API, GKE Gateway as code; local Istio Gateway | code |
+| AWS WAF | rate limit, Common, SQLi, KnownBadInputs | Common, KnownBadInputs, SQLi, IpReputation, per-IP rate limit as code | R8.1 |
+| Azure WAF | partial workflow option | AGC DRS 2.1/Bot Manager 1.1 Prevention as code | R8.1 |
+| Cloud Armor | seven preconfigured rules, rate limit, Adaptive Protection | sqli/xss as code | R8.1 |
+| TLS | AKS Let's Encrypt, GKE managed certificate, AWS HTTP | local cert-manager/CA, aws-https ACM overlay | R8.1 |
+| Mesh | AKS/GKE Istio, PERMISSIVE, retry/timeout/outlier/canary | local ambient STRICT; cloud integration/advanced traffic pending | R8.2 |
+| GitOps | workflow Argo CD, broken GCP Application | local commit/sync/self-heal; GitOps app deployment | R4.4 |
+| Prometheus/Grafana | workflow-installed in three clouds | local ServiceMonitor, promtool-tested rules, dashboard as code | R4.1, R4.2 |
+| Logs | AWS Loki, Azure Log Analytics | local Loki/Alloy | R4.1, R4.2 |
+| Slack | implemented | local payload checked in CI | done (R1.2) |
+| Tracing/APM | Application Insights, partial Istio Jaeger | local OTel/Tempo and native exporter code | done (R1.1, R1.4, R1.6) |
+| Trivy | CI images | config, image gate and local Operator | done (R0.1, R0.3) |
+| tfsec/Checkov/gitleaks | TX02 | Trivy config replaces tfsec; gitleaks in seven | done (R0.1) |
+| OWASP ZAP | TX02 baseline | pending | R7.1 |
+| SonarCloud/SonarQube | DX03 mention only | pending Community Build (DEC-1) | R7.1 |
+| CodeQL | absent; SARIF upload only | pending | R7.1 |
+| Dependabot | planned | grouped monthly in seven | done (R0.1) |
+| Gatekeeper | implemented | local deny/gator | done (R0.3), R4.6 |
+| NetworkPolicy/PDB | partial | kind enforcement and harness checks | done (R0.1) |
+| Backup | manual native workflows; no Velero | local ConfigMap and pg_dump restore; managed/PVC/integrated recovery pending | R9.1, R9.2 |
+| Chaos | manual Azure pods/network/CPU/memory/node shutdown | local pod/latency/stress/database hypotheses | base R0.3/R1.3; R8.4 |
+| Multi-region DR | planned; single region | pending | R9.2 |
+| FinOps | GCP budget/workflow scaling; no OpenCost | bootstrap budgets, cost docs, EKS Spot | R10.2 |
+| Autoscaling | HPA, AKS/Autopilot nodes; no CA/Karpenter | local HPA 2–4, AKS 1–3 and Autopilot as code | R10.1 |
+| OIDC CI | implemented | exact tested OIDC/WIF subjects | done (R0.1) |
+| Secrets | partial Kubernetes Secrets | ESO/native secrets as code and locally | done (R0.3) |
+| Multiple clouds | parallel stacks; no failover | three pairs and consistency hub | done (R0.6) |
+| Load testing | planned in audit | pending | R10.1 |
+| Image signing/Binary Authorization | planned in audit | pending | R7.1 signatures; R8.4 admission |
 
-## Decisões registradas
+## Recorded decisions
 
-| ID | Data | Quem | Decisão |
+| ID | Date | By | Decision |
 |---|---|---|---|
-| DEC-1 | 2026-10-14 | Bruno | SonarQube Community Build num container do harness, sem SonarCloud (sem conta, funciona em forks) |
-| DEC-2 | 2026-10-14 | Bruno | Sem modo EC2/VM na v2 |
-| DEC-3 | 2026-10-14 | Bruno | PostgreSQL em todos os pares; o Azure SQL do v1 não é portado (o mesmo app nas três nuvens) |
-| DEC-4 | 2026-10-14 | Bruno | A ordem das rodadas é livre; tudo local primeiro, a nuvem como código |
-| DEC-5 | 2026-10-11 | lab | O mesmo app (dx01v2, commit `22e69c4`) nos três dx; só o alvo de deploy muda |
-| DEC-6 | 2026-10-14 | R1 | Application Insights sempre ligado no tx02v2, para manter "papéis atribuídos = lista do ABAC" |
-| DEC-7 | 2026-10-14 | R1 | Spans manuais no app, sem auto-instrumentação (que pediria um loader de ESM) |
-| DEC-8 | 2026-10-14 | R1 | Tempo pelo chart `grafana-community/tempo` 3.1.0; o `grafana/tempo` 1.24.4 está depreciado |
-| DEC-9 | 2026-10-14 | hub | No tx00v2 só o `static` é obrigatório; o `family` é informativo porque depende de seis outros repositórios |
-| DEC-10 | 2026-10-13 | lab | O lab local reconstrói a plataforma do v1 no Docker: ninguém precisa de conta de nuvem para aprender |
-| DEC-11 | 2026-10-15 | Bruno | Histórico, escopo reaberto pela DEC-13: o lab fica pronto para fork, validado no Docker e no CI; nada é homologado numa nuvem real. Saem as rodadas reais, o ensaio de fork com outra conta, DR, FinOps, HTTPS nas nuvens, os extras de segurança e qualidade e as propostas |
-| DEC-12 | 2026-10-15 | Bruno | O tamanho `small` do lab local fica em 7 GB de Docker; a meta da R1.8 era 6 GB, onde a sonda de rollout perde requisições |
+| DEC-1 | 2026-10-14 | Bruno | SonarQube Community Build in a harness container; no SonarCloud account, usable in forks |
+| DEC-2 | 2026-10-14 | Bruno | No EC2/VM mode in v2 |
+| DEC-3 | 2026-10-14 | Bruno | PostgreSQL in all pairs; do not port v1 Azure SQL; same app in three clouds |
+| DEC-4 | 2026-10-14 | Bruno | Flexible round order; local first, clouds as code |
+| DEC-5 | 2026-10-11 | lab | Same dx01v2 app (22e69c4) in three DX; only deployment target changes |
+| DEC-6 | 2026-10-14 | R1 | Application Insights always enabled in TX02 to keep assigned roles equal to ABAC allowlist |
+| DEC-7 | 2026-10-14 | R1 | Manual spans, avoiding an ESM auto-instrumentation loader |
+| DEC-8 | 2026-10-14 | R1 | grafana-community/tempo 3.1.0; grafana/tempo 1.24.4 deprecated |
+| DEC-9 | 2026-10-14 | hub | Only static required in TX00; family informative because it depends on six repositories |
+| DEC-10 | 2026-10-13 | lab | Recreate v1 platform on Docker so learning requires no cloud account |
+| DEC-11 | 2026-10-15 | Bruno | Historical scope, reopened by DEC-13: fork-ready with Docker/CI, no cloud validation; excluded real runs, second-account rehearsal, DR, FinOps, cloud HTTPS, extra security/quality and proposals |
+| DEC-12 | 2026-10-15 | Bruno | Small uses 7 GB Docker; original R1.8 6 GB target lost rollout requests |
+| DEC-13 | 2026-10-16 | Bruno | Reopen the complete named DevSecOps/SonarQube, artifact promotion, TLS/DNS/WAF/IAM, advanced mesh, durable observability, HA/backup/PITR/multi-region DR, Chaos and FinOps/scaling scope in all pairs. Build/prove in Docker/Actions; cloud runs separately authorized. Plan R7–R11 in 22 cohesive PRs, revising estimates if needed |
+| DEC-14 | 2026-10-18 | Bruno | Standardize all seven public repositories in English, organize documentation and add a complete central getting-started guide in TX00 |
 
-| DEC-13 | 2026-10-16 | Bruno | Reabrir o escopo completo explicitamente pedido: DevSecOps/SonarQube, promoção de artefatos, TLS/DNS/WAF/IAM, mesh avançada, observabilidade integrada e durável, HA/backup/PITR/DR multi-region, Chaos e FinOps/escala nos três pares. Construir e provar no Docker/Actions; homologação cloud permanece uma execução separada e autorizada. Planejar R7 a R11 em 22 PRs de construção, revisando a estimativa se necessário |
+Pending decisions DP-1 through DP-5 (domain, budget, second GitHub account, proposals and cloud DR)
+closed under DEC-11. DEC-13 authorizes named construction; real-run domains, accounts, budgets
+and execution permissions remain fork-owner inputs.
 
-As decisões pendentes DP-1 a DP-5 (domínio, orçamento, segunda conta do GitHub, propostas e DR na
-nuvem) foram encerradas na DEC-11. A DEC-13 autoriza a construção do escopo nomeado; domínio,
-contas, orçamento e permissões para executar uma rodada real continuam sendo entradas do dono do fork.
+## Known risks and limits
 
-## Riscos e limites conhecidos
+- Memory: basic full needs 8 GB Docker; small fits app/platform in 7 GB (R1.8). The apiserver
+  alone exceeds 1 GiB with all CRDs. HA/FinOps recommends 12 GiB. Heavy runs remain in Actions
+  for this development workspace.
+- CI time: historical e2e jobs took 12–15 minutes; expanded HA/full jobs can take longer.
+  Concurrent-job limits and current GitHub plan allowances apply.
+- Cloud: nothing of v2 has run in a cloud. Construction does not authorize execution; each
+  validation run needs a reviewed budget. Recorded cost tables are October 2026 list-price
+  estimates, with the stated tax/transfer exclusions. First runs may find issues mocks cannot.
+- The hub reports drift; informative family runs on hub PRs, main pushes and Mondays.
+- Upstream broken schemas, removed charts or unfixed base-image CVEs can block checks.
+  Stop, pin with a dated explanation and report; never weaken the gate.
+- Fork guides have not been rehearsed with a second real GitHub account. R8.1/R11.1 require
+  clean configuration and reproducible CI. Scripts target only lab resources (R0.7), but CI roles
+  still require dedicated accounts/subscriptions/projects (R3.16) and protected lab (R3.15).
 
-- Memória: o perfil `full` pede 8 GB de Docker; com `LOCAL_SIZE=small`, a plataforma com o app cabe em
-  7 GB (R1.8). O apiserver, com os CRDs da plataforma inteira, passa de 1 GiB sozinho. Rodadas pesadas
-  ficam no CI, nunca na máquina de desenvolvimento.
-- Tempo de CI: os jobs `e2e` levam de 12 a 15 minutos; o GitHub Actions não cobra repositórios
-  públicos, mas limita os jobs simultâneos.
-- Nuvem: nada da v2 rodou numa nuvem. A construção não autoriza sua execução; homologação cloud
-  exige rodada própria com orçamento revisado. Os números de custo atuais são
-  preços de lista de outubro de 2026, sem impostos e sem transferência de dados; a primeira rodada de
-  quem fizer fork pode achar erros que os testes com provider mockado não pegam.
-- O hub aponta drift, não impede: o `family` é informativo e roda nos PRs do hub, em todo push na
-  `main` e toda segunda-feira.
-- Upstream: um catálogo de schemas quebrado, um chart removido ou uma CVE sem correção numa imagem
-  base pode travar um check. A regra é parar, fixar com data e relatar, nunca enfraquecer o check.
-- Fork: o `FORK.md` não foi ensaiado com outra conta; R8.1 e R11.1 exigem configuração limpa e CI
-  reproduzível. Os scripts só agem no que o
-  lab criou (R0.7), mas os papéis de CI ainda pressupõem uma conta, assinatura ou projeto dedicados
-  ao lab (R3.16) e o environment `lab` protegido (R3.15).
+## Updating this roadmap
 
-## Como atualizar este roadmap
-
-1. Ao abrir os PRs de um item, mude o status para `em andamento`, aqui e na visão geral.
-2. Quando todos os repositórios do item mesclarem, mude para `feito`, preencha `Evidência` com os
-   links dos PRs e registre a rodada no [docs/HISTORICO.md](docs/HISTORICO.md) e no `CHANGELOG.md`.
-3. Item novo: use o formulário "Roadmap item" das issues; um ID nunca é reaproveitado.
-4. Antes do push: `make static` (o check `roadmap`) e `make family` (o `family-evidence` confere os
-   PRs dos itens `feito`).
+1. Opening implementation PRs: set in progress in the item and overview.
+2. After every participating repository merges, set done, add Evidence PR links, record the
+   round in [docs/HISTORY.md](docs/HISTORY.md) and CHANGELOG.md.
+3. Use the “Roadmap item” issue form for new work; never reuse an ID.
+4. Before push: make static (roadmap format) and make family (merged evidence).

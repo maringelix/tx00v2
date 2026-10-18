@@ -8,6 +8,10 @@ All notable changes to this project are documented here. The format follows
 
 ### Changed
 
+- Standardized public documentation and filenames in English (DEC-14), consolidated each repo's
+  README, translated the roadmap/curriculum/acceptance/history and coordinated all six lab ports.
+  Roadmap statuses/fields and family checks now use the English format without changing IDs,
+  delivery evidence, contract semantics or cloud validation labels.
 - Closed DEC-13 construction in 22 PRs (21 merged implementation PRs plus this hub
   closure): DevSecOps/releases, integrated cloud platform, data/volume recovery and
   independent A/B failover/failback, capacity and FinOps. All implementation PRs have
@@ -21,13 +25,16 @@ All notable changes to this project are documented here. The format follows
 
 ### Added
 
+- [Central getting started guide](docs/GETTING_STARTED.md): choosing profiles, forks, cloud signup,
+  bootstrap, exact per-repository variables/secrets, reviewed cost inputs, plan/apply/platform,
+  signed publication/promotion, validation, recovery and both-region cleanup.
 - A 17-lesson curriculum, requirement-by-cloud acceptance matrix and machine-readable
   delivery ledger. New harness fixtures reject incomplete/wrong-pair ledgers;
   family checks retain secret-free standalone CI, capacity proofs, current FinOps
   files and byte-identical app load clients.
 - The family hub of the v2 lab (2026-10-14): README in English and Brazilian Portuguese with the
   family table and the references of the lab.
-- `ROADMAP.md` (pt-BR): what a complete lab in the three clouds means, where the family stands, the
+- Original `ROADMAP.md` (initially Brazilian Portuguese, now English): complete lab scope, the
   execution rules, every pending item (rounds R2 to R6 and the sustainment calendar) with status,
   repositories, origin, dependencies, cost, deliverables and acceptance, the v1 → v2 map and the
   decisions, registered and pending.
@@ -44,7 +51,7 @@ All notable changes to this project are documented here. The format follows
     done item.
 - Pinned tools: actionlint 1.7.12, shellcheck 0.11.0, gitleaks 8.30.1 (the versions of the lab
   repositories) and jq 1.8.2, SHA256-verified.
-- `docs/GUARDRAILS.md`, `docs/HARNESS.md`, `docs/HISTORICO.md` and `docs/SUSTENTACAO.md` (pt-BR);
+- `docs/GUARDRAILS.md`, `docs/HARNESS.md`, `docs/HISTORY.md` and `docs/MAINTENANCE.md` (now English);
   `FORK.md`, `AGENTS.md`, `CONTRIBUTING.md`, `SECURITY.md`.
 - Repository settings as code: `.github/rulesets/main.json` (required check `static`) and
   `scripts/repo-guardrails.sh` (the settings of the family without the environment `lab`).
@@ -52,13 +59,13 @@ All notable changes to this project are documented here. The format follows
 ### Changed
 
 - Round R4 (the cloud platform as code and the fork-to-cloud path) is complete across the six lab
-  repositories: R4.1 to R4.8 are `feito` with merged pull requests as evidence. No implementation
+  repositories: R4.1 to R4.8 are `done` with merged pull requests as evidence. No implementation
   round remains; the sustainment calendar continues. The code and CI do not claim a real cloud run.
 - `family-digests` checks the effective Velero server image after merging base and cloud values,
   and requires the correct digest-pinned plugin for each provider. Provider plugins have different
   image identities; their SHA sets are no longer treated as interchangeable images.
-- Round R3 (safety for whoever forks) is done in the six lab repositories: R3.10 and R3.13 to R3.18 are `feito`
-  with their pull requests as evidence. At the R3 close, the overview, plan and `docs/HISTORICO.md`
+- Round R3 (safety for whoever forks) is done in the six lab repositories: R3.10 and R3.13 to R3.18 are `done`
+  with their pull requests as evidence. At the R3 close, the overview, plan and `docs/HISTORY.md`
   pointed to R4 as the remaining round; R4 is now complete. R3.16 records a change of acceptance for
   Google Cloud: the roles of the apply identity are not tied to `tx03v2-lab-*` names (a role cannot
   be tied to a resource that does not exist yet), the dedicated project and the pre-flight hold the
@@ -72,11 +79,11 @@ All notable changes to this project are documented here. The format follows
   history of the file, and the pending decisions DP-1 to DP-5 fell with them.
 - Roadmap item R1.8 is done: `LOCAL_SIZE=small` runs the full platform with the app in 7 GB of
   Docker memory, proved in the CI of the three dx (Docker-in-Docker). The goal was 6 GB; the acceptance
-  records the change and the decision. The round is in `docs/HISTORICO.md`.
+  records the change and the decision. The round is in `docs/HISTORY.md`.
 - Roadmap item R1.9 is done: ten green `e2e` runs in a row in each tx (11, 20 and 18), and the
   failure of the Trivy server install did not come back.
 - Roadmap items R1.7, R1.10 and S.8 are done (the debts round); R1.9 records the count of green `e2e`
-  runs so far and what the failed run really showed. The round is in `docs/HISTORICO.md`.
+  runs so far and what the failed run really showed. The round is in `docs/HISTORY.md`.
 - The first CI run passed (`static` 9/9, `family` 11/11 against the main branch of the six
   repositories): the status rows of the hub say `verified in CI`. `scripts/repo-guardrails.sh` was
   applied and read back with `gh api` (ruleset, secret scanning with push protection, private
@@ -84,4 +91,4 @@ All notable changes to this project are documented here. The format follows
 - Roadmap item R0.7: after a read-only audit of what could break the machine or the cloud of whoever
   forks the lab, the scripts of the six repositories act only on what the lab created. The rest of
   the audit became the pending items R3.13 to R3.18. New family rule SEC-05 in `docs/GUARDRAILS.md`;
-  the round is in `docs/HISTORICO.md`.
+  the round is in `docs/HISTORY.md`.
