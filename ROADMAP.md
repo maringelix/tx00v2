@@ -1,14 +1,19 @@
 # DevOps lab v2 roadmap: complete learning and operations scope
 
-Status as of 2026-10-18, following Bruno's explicit request to complete the technology list
-(DEC-13). **Construction delivered in 22 PRs (R7–R11).** The 21 implementation PRs merged with
-green CI; R11 records acceptance in this hub. R0, R1, R3 and R4 preserve the earlier foundation.
-v2 remains `not run in the cloud (v2)`.
+Status as of 2026-10-25. **DEC-13 cloud construction was delivered in 22 PRs (R7–R11).**
+The 21 implementation PRs merged with green CI; R11 records that acceptance in this hub.
+DEC-15 expands the learning journey to beginner foundations, architecture, the three clouds,
+local AI and GPU infrastructure. R12 records the new work; the earlier closure does not deliver
+these additions. R0, R1, R3 and R4 preserve their evidence. Cloud execution remains
+`not run in the cloud (v2)`.
 
 This is the single source of scope, sequence, acceptance and evidence. The
 [scope audit](docs/SCOPE_AUDIT_2026-10-16.md) preserves the snapshot before construction.
 The [acceptance matrix](docs/ACCEPTANCE.md), [curriculum](docs/CURRICULUM.md) and PRs below describe
 the current implementation. Adding a capability to a plan does not deliver it.
+The [learning path](docs/LEARNING_PATH.md) is the student sequence; this file is the construction
+plan. The [AI/GPU guide](docs/AI_GPU_TRACK.md) separates current simulation from real inference
+and physical-hardware work still to implement.
 
 ## 1. What complete means
 
@@ -147,6 +152,11 @@ Rules:
 | R10.1 | Demand autoscaling, load and Spot capacity | `done` |
 | R10.2 | OpenCost FinOps, showback and rightsizing | `done` |
 | R11.1 | Scope matrix, lessons and final evidence | `done` |
+| R12.1 | Guided foundations and cloud architecture lesson packs | `pending` |
+| R12.2 | Reproducible real local inference on CPU | `pending` |
+| R12.3 | Guided simulated GPU infrastructure and module evidence | `pending` |
+| R12.4 | Physical GPU infrastructure and advanced hardware exercises | `pending` |
+| R12.5 | Inference infrastructure capstone and operations evidence | `pending` |
 | S.1 | Node.js 26 LTS in apps | `pending` |
 | S.2 | Kubernetes 1.37 and aligned kubectl | `pending` |
 | S.3 | Istio 1.31 to 1.33 | `pending` |
@@ -162,6 +172,9 @@ Rules:
 **Delivered: 22 construction PRs, `3 + 6 + 6 + 6 + 1`.** The 21 pair PRs merged, and this
 hub's R11 PR closes the count. **Zero DEC-13 construction PRs remain.** The scope revision and
 additional corrections recorded in history are not counted again among those 22.
+R12 is the separately accepted learning expansion. Its five items are cohesive outcomes, not
+five promised PRs or a claim of completed instruction. Lessons, executable fixtures and
+documentation should be reviewed together when each outcome is implemented.
 
 | Round | Cohesive delivery | Repositories | Delivered PRs |
 |---|---|---|---:|
@@ -469,6 +482,115 @@ Six PRs, one per TX/DX, covering both items below.
     gaps are not hidden as documentation. Real validation keeps its own state with operator
     accounts/budget/domain; future fixes are recorded.
 - Evidence: [dx01v2#17](https://github.com/maringelix/dx01v2/pull/17), [dx02v2#12](https://github.com/maringelix/dx02v2/pull/12), [dx03v2#14](https://github.com/maringelix/dx03v2/pull/14), [tx01v2#16](https://github.com/maringelix/tx01v2/pull/16), [dx01v2#18](https://github.com/maringelix/dx01v2/pull/18), [tx02v2#14](https://github.com/maringelix/tx02v2/pull/14), [dx02v2#13](https://github.com/maringelix/dx02v2/pull/13), [tx03v2#15](https://github.com/maringelix/tx03v2/pull/15), [dx03v2#15](https://github.com/maringelix/dx03v2/pull/15), [tx01v2#17](https://github.com/maringelix/tx01v2/pull/17), [dx01v2#19](https://github.com/maringelix/dx01v2/pull/19), [tx02v2#17](https://github.com/maringelix/tx02v2/pull/17), [dx02v2#14](https://github.com/maringelix/dx02v2/pull/14), [tx03v2#16](https://github.com/maringelix/tx03v2/pull/16), [dx03v2#16](https://github.com/maringelix/dx03v2/pull/16), [tx01v2#18](https://github.com/maringelix/tx01v2/pull/18), [dx01v2#20](https://github.com/maringelix/dx01v2/pull/20), [tx02v2#18](https://github.com/maringelix/tx02v2/pull/18), [dx02v2#15](https://github.com/maringelix/dx02v2/pull/15), [tx03v2#17](https://github.com/maringelix/tx03v2/pull/17), [dx03v2#17](https://github.com/maringelix/dx03v2/pull/17); [curriculum](docs/CURRICULUM.md), [acceptance matrix](docs/ACCEPTANCE.md) and ledger checked by delivery/family-evidence. The hub closure is the PR integrating these materials.
+
+## R12. Foundations, local AI and GPU infrastructure
+
+DEC-15 makes the hub the learning entry point across eight repositories. Keep the six cloud
+repositories under their existing parity/contracts and the independent tx04v2 track under its
+own harness. Preserve A01–A17 and the R7–R11 ledger. The learner route is foundations and
+architecture, AWS as reference, Azure comparison, Google Cloud comparison, then local AI/GPU.
+No cloud deployment, hardware purchase or driver change is authorized by this plan.
+
+### R12.1 Guided foundations and cloud architecture lesson packs
+
+- Status: `pending`
+- Repos: tx00v2, tx01v2, dx01v2
+- Origin: complete learning journey from DevOps and architecture, DEC-15
+- Dependencies: R11.1
+- Cost: no cloud account; bounded disposable local resources or hosted CI; document measured prerequisites
+- Deliverables:
+  - Beginner exercises for Linux/processes/permissions, Git/PR/conflicts, Bash, DNS/HTTP/TLS,
+    containers/ports/volumes, tests and CI; explicit prerequisites before existing A01–A17.
+  - Architecture exercises with workload requirements, a diagram, state/identity/network
+    boundaries, resilience and cost tradeoffs, an ADR, deployment and rollback sequence.
+  - A guided AWS reference exercise and Azure/Google Cloud comparison worksheets using the
+    same application; map each objective to the existing lessons instead of copying them.
+- Acceptance:
+  - A learner starting at the published prerequisites can follow each exercise, diagnose its
+    deliberate failure, recover and clean up using the stated commands and expected observations.
+  - Negative fixtures demonstrate the failure; acceptance checks prove the result and isolation.
+    Diagrams/ADRs explain a rejected alternative and name which managed behavior remains untested.
+
+### R12.2 Reproducible real local inference on CPU
+
+- Status: `pending`
+- Repos: tx04v2, tx00v2
+- Origin: local AI after the three-cloud learning path, DEC-15
+- Dependencies: R12.1
+- Cost: model download/storage plus bounded CPU/RAM; declare supported architectures and measured budget before use
+- Deliverables:
+  - Replace the incomplete CPU-runtime reference with a supported, pinned and checksum-verified
+    runtime/model combination; record model revision, license, source, formats and architecture.
+  - Explain tokens/context, weights/precision/quantization, memory and API boundaries through
+    real generation using synthetic input, without a paid inference service or embedded credentials.
+  - Reproducible health/generation tests and measurements: startup, time to first token,
+    throughput, concurrency and memory with the exact model/settings/hardware recorded.
+- Acceptance:
+  - Fresh setup generates a real model response and exposes bounded local health/metrics;
+    the test cannot pass by returning the mock response.
+  - Missing model, unsupported runtime/architecture and memory-budget failures are actionable;
+    repeated measurements include workload and limits, and teardown accounts for model storage.
+
+### R12.3 Guided simulated GPU infrastructure and module evidence
+
+- Status: `pending`
+- Repos: tx04v2, tx00v2
+- Origin: GPU infrastructure learning without mandatory hardware, DEC-15
+- Dependencies: R12.1
+- Cost: disposable Docker/kind or hosted CI; per-module CPU/RAM/disk and load deadlines
+- Deliverables:
+  - Guided device-resource, scheduling/queue/gang, KWOK scale, mock serving/HPA,
+    networking, DCGM-style telemetry and break/fix lessons with entry and exit criteria.
+  - Replace moving optional download references with reviewed versions/checksums; add
+    module-level runtime evidence beyond the existing kind/mock smoke.
+  - Show how to distinguish scheduler capacity, an actual running worker and synthetic telemetry.
+- Acceptance:
+  - Reproduce pending jobs, resource/queue contention, serving/load behavior and the documented
+    incidents; collect observations, explain the cause and verify recovery/cleanup.
+  - Static/synthetic checks and live module tests are labeled separately. No fake GPU or KWOK
+    result is described as a physical GPU benchmark, CUDA execution or real model inference.
+
+### R12.4 Physical GPU infrastructure and advanced hardware exercises
+
+- Status: `pending`
+- Repos: tx04v2, tx00v2
+- Origin: advanced GPU infrastructure learning, DEC-15
+- Dependencies: R12.2, R12.3
+- Cost: optional compatible hardware or explicitly approved rental; publish resource/cost/cleanup requirements before execution
+- Deliverables:
+  - Hardware/runtime compatibility matrix and an isolated setup/rollback guide for drivers,
+    container runtime integration, device plugins and monitoring; feature availability must be explicit.
+  - Real accelerator memory and compute exercises: host RAM versus VRAM, allocation/OOM,
+    sharing/isolation, supported partitioning, request batching, context/KV cache and concurrency.
+  - Storage/input pipeline, PCIe/interconnect/network bottlenecks and multi-device/distributed
+    workload exercises, with compatible-hardware variants and a clear unavailable path.
+- Acceptance:
+  - Record the hardware, driver/toolkit/runtime/model revisions, workload and raw observations;
+    show an actual accelerator workload, a bounded failure and recovery.
+  - Sharing/partitioning and distributed claims require their own compatible-hardware evidence;
+    an unsupported feature is labeled unavailable, not simulated into a passing hardware result.
+  - Driver changes and rental runs need explicit operator authorization; the no-GPU student
+    route remains usable without completing this optional hardware extension.
+
+### R12.5 Inference infrastructure capstone and operations evidence
+
+- Status: `pending`
+- Repos: tx00v2, tx04v2
+- Origin: complete learning outcomes connecting DevOps, cloud design and AI infrastructure, DEC-15
+- Dependencies: R12.2, R12.3
+- Cost: default bounded CPU/local route; optional hardware extension follows R12.4; cloud spending requires a separate run
+- Deliverables:
+  - An inference API delivery with model/runtime provenance, CI gates, immutable artifact,
+    readiness, telemetry, load limits, access boundaries and rollback/recovery procedure.
+  - A learner portfolio: architecture and ADRs, three-cloud comparison, measured benchmark,
+    capacity/cost assumptions, a bounded incident/recovery report and cleanup inventory.
+  - Separate CPU, simulated-platform and physical-GPU evidence; extend the capstone with
+    real hardware only after the relevant hardware exercise is validated.
+- Acceptance:
+  - Reproduce the artifact/model revision and request workload; demonstrate success under the
+    stated budget, overload rejection or bounded degradation, and verified recovery.
+  - The final report distinguishes measured results from estimates/design alternatives and
+    simulated signals; excludes private data and reconciles retained resources and costs.
 
 ## Earlier milestones (R0 to R4)
 
@@ -1273,6 +1395,7 @@ a row explicitly says code only.
 | DEC-12 | 2026-10-15 | Bruno | Small uses 7 GB Docker; original R1.8 6 GB target lost rollout requests |
 | DEC-13 | 2026-10-16 | Bruno | Reopen the complete named DevSecOps/SonarQube, artifact promotion, TLS/DNS/WAF/IAM, advanced mesh, durable observability, HA/backup/PITR/multi-region DR, Chaos and FinOps/scaling scope in all pairs. Build/prove in Docker/Actions; cloud runs separately authorized. Plan R7–R11 in 22 cohesive PRs, revising estimates if needed |
 | DEC-14 | 2026-10-18 | Bruno | Standardize all seven public repositories in English, organize documentation and add a complete central getting-started guide in TX00 |
+| DEC-15 | 2026-10-25 | Bruno | Make TX00 the full learning hub: DevOps foundations and cloud architecture, AWS, Azure, Google Cloud, then local AI and GPU infrastructure through the independent public tx04v2 track. Preserve A01–A17 and cloud parity; record missing beginner lessons, real inference and hardware work separately in R12. Planning does not authorize cloud spending, hardware purchase or changes to a shared runtime |
 
 Pending decisions DP-1 through DP-5 (domain, budget, second GitHub account, proposals and cloud DR)
 closed under DEC-11. DEC-13 authorizes named construction; real-run domains, accounts, budgets

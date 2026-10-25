@@ -1,10 +1,12 @@
-# Getting started: fork to a complete DevOps lab
+# Getting started: cloud pairs and the local AI/GPU track
 
-This is the central operating sequence for all seven repositories. Start with one cloud pair.
-The [curriculum](CURRICULUM.md) teaches each technology; the [acceptance matrix](ACCEPTANCE.md)
-maps implementation, CI evidence and provider limits.
+Choose your stage in the [learning path](LEARNING_PATH.md) first. Sections 1–12 are the operating
+sequence for the cloud core: this hub and six paired repositories. Start with AWS, then compare
+Azure and Google Cloud. The [cloud lesson catalog](CURRICULUM.md) and
+[acceptance matrix](ACCEPTANCE.md) map exercises, evidence and limits. Section 13 introduces the
+independent [local AI/GPU track](AI_GPU_TRACK.md), the eighth repository in the learning map.
 
-**Status:** construction is delivered and exercised with mocks, Docker/kind and GitHub Actions.
+**Cloud-core status:** DEC-13 construction is delivered and exercised with mocks, Docker/kind and GitHub Actions.
 Cloud paths remain **`not run in the cloud (v2)`**. Your first account run is a validation
 exercise and may reveal fixes. A trial account does not make the complete lab free.
 
@@ -22,6 +24,7 @@ exercise and may reveal fixes. A trial account does not make the complete lab fr
 10. [Validate the complete scope](#10-validate-the-complete-scope)
 11. [Destroy and check leftovers](#11-destroy-and-check-leftovers)
 12. [Troubleshooting and next sessions](#12-troubleshooting-and-next-sessions)
+13. [Continue to local AI and GPU infrastructure](#13-continue-to-local-ai-and-gpu-infrastructure)
 
 ## 1. Choose a path and profiles
 
@@ -93,6 +96,7 @@ service-account key files.
 Optionally fork TX00. Its family job expects all six repositories under the selected owner.
 All six forks work with the default owner. With a partial fork, FAMILY_OWNER=maringelix checks
 upstream, **not your partial family**. The hub needs no cloud secrets.
+The optional tx04v2 track does not add a seventh cloud checkout or a new TX/DX contract.
 Upstream documentation links intentionally remain under maringelix; dispatch workflows in your forks.
 
 ## 3. Complete CI and local learning
@@ -522,3 +526,29 @@ Next session: synchronize forks, check weekly CI/CVEs/support calendars, review 
 quotas, refresh budget/expiry, recover the same bootstrap/backend state and plan again.
 Follow [MAINTENANCE.md](MAINTENANCE.md) and each lab's calendar.
 Public documentation stays in English; update this guide with workflow changes.
+
+## 13. Continue to local AI and GPU infrastructure
+
+After the AWS/Azure/Google Cloud comparison, use the [AI/GPU track](AI_GPU_TRACK.md).
+You can complete the local learning route without paying for managed cloud runs in sections 4–11.
+Local CPU inference is planned work, so its position in the route is a learning objective, not
+an available one-command model deployment. The GPU simulation lab can be studied independently
+while that lesson is being built.
+
+The current standalone lab is [tx04v2](https://github.com/maringelix/tx04v2). On a disposable
+machine with Docker Desktop, follow its [bring-up guide](https://github.com/maringelix/tx04v2/blob/main/docs/bring-up.md):
+
+```bash
+git clone https://github.com/maringelix/tx04v2.git
+cd tx04v2
+./lab.sh up
+./lab.sh serving
+./lab.sh kubectl -n serving get pods
+TX04V2_ACK_DELETE_CLUSTER=tx04v2 ./lab.sh down
+```
+
+Use `lab.ps1` for the equivalent PowerShell commands. `up` can build the toolbox implicitly;
+use hosted CI if the machine has other critical workloads. This deploys a mock service, not a
+real language model. Inspect the [validation scope](https://github.com/maringelix/tx04v2/blob/main/docs/HARNESS.md)
+before adding the optional GPU simulation, scheduling, networking or observability modules.
+No cloud credentials, shared app contract or physical GPU are needed for the baseline smoke.

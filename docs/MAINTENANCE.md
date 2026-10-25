@@ -6,6 +6,10 @@ Keep the hub accurate: the roadmap reflects completed work, family checks pass, 
 the lab repositories. Each lab repository's `docs/MAINTENANCE.md` covers its images, charts,
 providers, Kubernetes and database support. The dated family calendar is in section S of
 [ROADMAP.md](../ROADMAP.md).
+Keep [LEARNING_PATH.md](LEARNING_PATH.md) synchronized with the current implementation and
+missing lesson packs. The AI/GPU track in tx04v2 has its own maintenance and toolchain contract;
+it is not part of the six-cloud-repository parity/version checks. Registered track documentation
+links and any future merged-PR evidence are still validated by the hub.
 
 ## 2. Routines
 
@@ -18,7 +22,9 @@ providers, Kubernetes and database support. The dated family calendar is in sect
 
 ## 3. When family fails
 
-`family` checks the six repositories' `main` branches. A failure usually reports drift there:
+`family` compares the six cloud repositories' `main` branches. Its link/evidence checks also
+resolve registered independent tracks when referenced. A failure usually reports cloud drift;
+a track link failure must be fixed as navigation/evidence, not by adding the track to cloud parity:
 
 | Check | Typical cause | Fix |
 |---|---|---|
@@ -28,7 +34,7 @@ providers, Kubernetes and database support. The dated family calendar is in sect
 | `family-identical` | a common file changed in one repository | port it to the other repositories of that role |
 | `family-app` | one DX changed the app without the other ports | port to the other two DX repositories |
 | `family-table`, `family-structure` | a README or standard file changed | fix the lab repository |
-| `family-links` | a family file was renamed | update the hub link |
+| `family-links` | a cloud or registered-track file was renamed or is unavailable | update the hub link or restore access to the public source |
 | `family-evidence` | an item became `done` before merge | correct the status or finish the merge |
 
 An exception must have a reason and a roadmap item that removes it
@@ -70,8 +76,10 @@ the ruleset's `--input` argument.
 
 ## 6. Ownership and language
 
-Bruno Maringeli (`@maringelix`) owns the seven repositories. AI agents follow
+Bruno Maringeli (`@maringelix`) owns the cloud core and the independent AI/GPU learning track. AI agents follow
 [AGENTS.md](../AGENTS.md) and require explicit authorization before cloud actions.
 Public documentation, templates, agent instructions and new document filenames use English.
 Keep the central [getting started guide](GETTING_STARTED.md) aligned with actual workflows
 whenever inputs, variables, secrets, profiles or deployment order change.
+Do not mark real inference or GPU hardware lessons complete based on simulated metrics or the
+baseline mock smoke. Keep the [AI/GPU inventory](AI_GPU_TRACK.md) tied to its own runtime evidence.

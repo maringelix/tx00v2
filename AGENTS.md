@@ -7,15 +7,22 @@ is the source of truth. The full rule list of the family is
 ## 1. Mission and context
 
 - `tx00v2` is the hub of the v2 family of a public, educational DevOps lab: `tx01v2` + `dx01v2` on
-  AWS, `tx02v2` + `dx02v2` on Azure, `tx03v2` + `dx03v2` on Google Cloud. It has no infrastructure,
-  no app and no cloud credentials.
+  AWS, `tx02v2` + `dx02v2` on Azure, `tx03v2` + `dx03v2` on Google Cloud, followed by the independent
+  `tx04v2` local AI/GPU track. It has no infrastructure, no app and no cloud credentials.
+- [docs/LEARNING_PATH.md](docs/LEARNING_PATH.md) is the canonical student sequence: foundations,
+  architecture, AWS, Azure, Google Cloud, local AI and GPU infrastructure. The existing A01–A17
+  lessons remain in CURRICULUM; ROADMAP tracks construction, not the student's progress.
 - It keeps the operating guide, the roadmap of the complete lab scope in the three
   clouds ([ROADMAP.md](ROADMAP.md)), the family guardrails and the family checks that compare
   the six lab repositories (`make family`).
 - Every claim follows the labels of the family (`verified in CI`, `verified locally`,
   `not run in the cloud (v2)`, `planned`). **Nothing of v2 has run in a cloud.**
 - The six lab repositories have their own `AGENTS.md`; work on them follows those files. This hub
-  only links, plans and checks.
+  only links, plans and checks. `tx04v2` has separate instructions and validation. Keep it outside
+  cloud-pair parity, shared-version and standard-file requirements; a learning-track link does not
+  make it a fourth cloud pair. Eight repositories are in the learning map; seven form the cloud core.
+- The AI/GPU baseline uses simulation and mock serving. Real CPU inference and physical GPU
+  exercises remain planned until their own implementations and runtime evidence exist.
 - [docs/GETTING_STARTED.md](docs/GETTING_STARTED.md) is the central fork-to-cloud operating guide.
 
 ## 2. Non-negotiable rules
@@ -41,6 +48,8 @@ is the source of truth. The full rule list of the family is
 ```text
 ROADMAP.md              scope, status, repos, origin, deliverables, acceptance, cost and evidence
 docs/                   English onboarding, curriculum, acceptance, guardrails, harness, history, maintenance
+docs/LEARNING_PATH.md    student sequence, prerequisites and exit criteria
+docs/AI_GPU_TRACK.md     independent local AI/GPU inventory and planned lessons
 FORK.md                 forking the family
 .github/workflows/      ci.yml: jobs static (required) and family (informative, weekly)
 .github/rulesets/       main.json: branch ruleset applied by scripts/repo-guardrails.sh

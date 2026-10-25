@@ -12,7 +12,10 @@ script. It prints PASS|FAIL|SKIP <check> (<seconds>s) and a summary; any failure
 | all | — | — | static + family |
 | list | — | — | lists checks |
 
-Family depends on six other repositories: a merge there can fail it without changes here.
+Cloud parity depends on six other repositories: a merge there can fail it without changes here.
+The hub also registers independent learning tracks, currently `tx04v2`. Track links and merged
+evidence are checked when cited, but cloud contracts, standard files, reciprocal README tables,
+versions, actions, digests and application parity still cover only the six cloud repositories.
 It runs on PRs, main pushes and Mondays at 06:00 UTC. Failures indicate drift
 ([MAINTENANCE.md](MAINTENANCE.md), section 3).
 
@@ -24,10 +27,11 @@ It runs on PRs, main pushes and Mondays at 06:00 UTC. Failures indicate drift
 | repo-structure | required files; CLAUDE has @AGENTS.md plus one sentence; canonical English README <=250 lines, factual status labels/no self-ratings; no doc emojis; LF; indexed executable bits | prose quality or automatic language detection |
 | policy-identifiers | no non-placeholder 12-digit accounts, GUIDs, emails or public IPs | differently encoded identifiers |
 | policy-workflows | SHA/comment action pins, read-only global contents, concurrency/timeouts/ubuntu-24.04, no persisted checkout credentials/swallowed errors/id-token write; static required and family informative | intended workflow behavior |
-| docs-links | relative Markdown paths exist; GitHub family links name only known v2 repositories; no private archived v1 links | changed external destinations; family-links covers family paths |
+| docs-links | relative Markdown paths exist; GitHub links name only the hub, six cloud labs or registered learning tracks; no private archived v1 links | changed external destinations; family-links covers repository paths |
 | roadmap | required fields, valid statuses/repos/dependencies, done items with Evidence PRs depending only on done items, matching overview, all mentioned IDs exist | whether PRs merged; family-evidence checks that |
 | delivery | DEC-13 ledger has 21 unique implementation PRs plus one hub closure, correct per-round/provider coverage and acceptance material | actual merges |
 | delivery-fixtures | incomplete/wrong-pair/non-app-R7 ledger mutations are rejected | implementation semantics |
+| learning-track-fixtures | a track is accepted without becoming a cloud pair; local/upstream resolution works for cloud-only forks; unknown/v1 repositories and missing or escaping paths fail | upstream availability or track runtime behavior |
 | actionlint | workflow syntax/expressions and shellcheck for run blocks | — |
 | shellcheck | scripts pass severity=style | — |
 | gitleaks | no recognized secrets in all history, or directory before first commit | unknown secret formats |
@@ -50,8 +54,8 @@ Use none for no dependencies.
 | family-identical | SUP-03 files are byte-identical and DX migrations match | — |
 | family-app | matching dependencies/engines/workspaces and api/src/web/src after removing repo names/full-line comments/blank lines | provider-specific tests/smoke |
 | family-actions | one action SHA/tag per action across seven | — |
-| family-links | hub blob/tree/main family links resolve to existing paths | heading anchors |
-| family-evidence | ledger, done-item Evidence and HISTORY PRs have squash subjects (#n) in repository main | that a PR satisfies its claimed scope; review covers that |
+| family-links | hub blob/tree/main links resolve to existing paths in cloud repos and independent tracks | heading anchors or track runtime behavior |
+| family-evidence | ledger, done-item Evidence and HISTORY PRs have squash subjects (#n) in the referenced cloud, hub or track repository main | that a PR satisfies its claimed scope; review covers that |
 
 ## Variables
 
@@ -61,11 +65,19 @@ Use none for no dependencies.
 | HARNESS_VERBOSE=1 | print passing checks' output |
 | HARNESS_WORK_DIR | scratch logs/clones/cache, default $TMPDIR/tx00v2-harness; never inside source |
 | HARNESS_ONLY=<regex> | matching checks only, for local debugging; never CI |
-| FAMILY_OWNER | six-repository owner, default maringelix; CI uses vars.FAMILY_OWNER or repository owner |
-| FAMILY_SOURCE=<dir> | existing <dir>/<repo> checkouts as-is, any branch, no cloning; coordinated-PR inspection |
+| FAMILY_OWNER | six-cloud-repository owner, default maringelix; CI uses vars.FAMILY_OWNER or repository owner; independent tracks keep their public upstream owner |
+| FAMILY_SOURCE=<dir> | existing cloud checkouts `<dir>/<repo>` as-is, any branch; a present track checkout overrides its upstream; an absent optional track is cloned from upstream |
 
 Partial clones use --filter=blob:none: full commit history with blobs fetched when needed.
-They live under $HARNESS_WORK_DIR/family and refresh once per run.
+Cloud clones live under `$HARNESS_WORK_DIR/family`; independent tracks live under
+`$HARNESS_WORK_DIR/tracks/<upstream-owner>`. Both refresh once per run. With `FAMILY_SOURCE`,
+provide the track checkout too when a fully offline link/evidence check is required. Adding a
+track never requires a cloud-only fork owner to create another repository or supply cloud credentials.
+
+`FAMILY_TRACKS` in `scripts/lib/family.sh` is the explicit track catalog. It is separate from
+`FAMILY_TX`, `FAMILY_DX` and `FAMILY_LAB`. Registering a track allows documentation links and
+roadmap `Repos`; it does not certify the track's runtime or make its tools match the cloud pairs.
+Its own harness and workflow provide that evidence.
 
 ## Windows without WSL
 

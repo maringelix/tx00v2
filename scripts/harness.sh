@@ -33,9 +33,10 @@ REQUIRED_FILES=(
   .github/ISSUE_TEMPLATE/config.yml .github/ISSUE_TEMPLATE/bug_report.yml .github/ISSUE_TEMPLATE/roadmap_item.yml
   .github/workflows/ci.yml .github/rulesets/main.json
   docs/GUARDRAILS.md docs/HARNESS.md docs/HISTORY.md docs/MAINTENANCE.md docs/GETTING_STARTED.md
+  docs/LEARNING_PATH.md docs/AI_GPU_TRACK.md
   tools/versions.env tools/checksums.txt
   scripts/install-tools.sh scripts/update-tool-checksums.sh scripts/harness.sh scripts/repo-guardrails.sh
-  scripts/lib/common.sh scripts/lib/tools.sh scripts/lib/family.sh
+  scripts/lib/common.sh scripts/lib/tools.sh scripts/lib/family.sh scripts/test-family-tracks.sh
 )
 ROADMAP_STATUSES="done|in progress|pending|blocked|proposal"
 V1_LINK_RE='github\.com/maringelix/(tx|dx)0[0-9]([^0-9v]|$)'
@@ -450,7 +451,7 @@ check_roadmap() {
     echo "missing ROADMAP.md"
     return 1
   }
-  awk -v statuses="$ROADMAP_STATUSES" -v repos="$FAMILY_HUB ${FAMILY_LAB[*]}" '
+  awk -v statuses="$ROADMAP_STATUSES" -v repos="$FAMILY_HUB ${FAMILY_LAB[*]} ${FAMILY_TRACKS[*]}" '
     function err(m) { printf "ROADMAP.md:%d: %s\n", NR, m; bad = 1 }
     function trim(s) { gsub(/^[[:space:]]+|[[:space:]]+$/, "", s); return s }
     function close_item(   i) {
@@ -898,7 +899,7 @@ check_family_actions() {
 
 # Links of the hub docs to files of the family (blob|tree/main/<path>) point to existing paths.
 check_family_links() {
-  local rc=0 link repo path d checked=0
+  local rc=0 link repo path checked=0
   local -a md=()
   family_dirs
   mapfile -t md < <(visible_files | grep -E '\.md$')
@@ -908,16 +909,10 @@ check_family_links() {
     path="${BASH_REMATCH[3]}"
     path="${path%/}"
     checked=$((checked + 1))
-    if [[ "$repo" == "$FAMILY_HUB" ]]; then d="$REPO_ROOT"; else d="${FD[$repo]:-}"; fi
-    [[ -n "$d" ]] || {
-      echo "$link: $repo is not a repository of the family"
+    if ! family_check_path "$repo" "$path"; then
+      echo "$link: unresolved documentation target"
       rc=1
-      continue
-    }
-    [[ -e "$d/$path" ]] || {
-      echo "$link: $path does not exist on main of $repo"
-      rc=1
-    }
+    fi
   done < <(grep -ohE 'https://github\.com/maringelix/[a-z0-9]+/(blob|tree)/main/[^)[:space:]>`]+' "${md[@]}" | sort -u)
   echo "$checked links to files of the family checked"
   return "$rc"
@@ -963,7 +958,7 @@ check_family_evidence() {
       rc=1
       continue
     }
-    if [[ "$repo" == "$FAMILY_HUB" ]]; then d="$REPO_ROOT"; else d="${FD[$repo]}"; fi
+    d="$(family_dir "$repo")" || return 1
     log="$HARNESS_WORK_DIR/subjects-$repo.txt"
     [[ -f "$log" && "$(head -n 1 "$log")" == "${FAMILY_RUN_ID:-}" ]] || {
       printf '%s\n' "${FAMILY_RUN_ID:-}" >"$log"
@@ -997,6 +992,7 @@ register_checks() {
   register static roadmap check_roadmap
   register static delivery 'bash scripts/check-delivery.sh'
   register static delivery-fixtures 'bash scripts/test-delivery.sh'
+  register static learning-track-fixtures 'bash scripts/test-family-tracks.sh'
   register static actionlint check_actionlint
   register static shellcheck check_shellcheck
   register static gitleaks check_gitleaks

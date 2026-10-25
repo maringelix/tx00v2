@@ -1,4 +1,11 @@
-# Complete lab curriculum
+# Cloud lesson catalog: A01–A17
+
+For the complete student sequence, start with [LEARNING_PATH.md](LEARNING_PATH.md): foundations,
+architecture, AWS, Azure, Google Cloud, then [local AI and GPU infrastructure](AI_GPU_TRACK.md).
+This file preserves the existing cloud lesson IDs and detailed exercises. It is a technical
+catalog, not a beginner prerequisite course or proof that the later AI/GPU lessons are delivered.
+Work through the reference AWS pair first, then repeat the outcomes on Azure and Google Cloud,
+recording architecture differences. Real cloud validation in A17 remains optional and separate.
 
 The same React + Node.js + PostgreSQL app is delivered by independent
 [AWS](https://github.com/maringelix/tx01v2), [Azure](https://github.com/maringelix/tx02v2) and

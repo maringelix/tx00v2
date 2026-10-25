@@ -1,45 +1,70 @@
-# tx00v2
+# tx00v2 — DevOps, cloud architecture and AI infrastructure
 
-Family hub of the v2 DevOps lab: roadmap, family guardrails and cross-repo checks for the AWS, Azure and Google Cloud pairs.
+Learning hub for the v2 labs: from DevOps foundations and architecture through AWS, Azure and
+Google Cloud, then local AI and GPU infrastructure.
 
 [![ci](https://github.com/maringelix/tx00v2/actions/workflows/ci.yml/badge.svg)](https://github.com/maringelix/tx00v2/actions/workflows/ci.yml)
 
 ## What is this
 
-A public, educational DevOps lab in three clouds, built as six repositories: one infrastructure and
-one application repository per cloud. The three application repositories run the same app on
-purpose, so the clouds can be compared fairly. Every repository is checked by a local harness that
-needs no cloud account, and the whole platform of the v1 lab runs on a local kind cluster in CI.
-**Nothing of v2 has run in a cloud yet**: the cloud paths are code with tests.
+A public learning journey across eight repositories: this hub, three infrastructure/application
+pairs, and the independent [tx04v2 AI/GPU lab](https://github.com/maringelix/tx04v2).
+The cloud pairs run the same app so architecture and provider differences can be compared fairly.
+Their portable platform is exercised on kind in CI. **Nothing of v2 has run in a cloud yet**:
+the cloud paths remain **`not run in the cloud (v2)`**.
 
-This repository holds no infrastructure and no app. It links the family, keeps the scope and delivery
-record ([ROADMAP.md](ROADMAP.md)): anyone who forks it
-runs it locally on Docker and in their own clouds; cloud homologation requires a separate authorized run;
-the rules the seven repositories follow ([docs/GUARDRAILS.md](docs/GUARDRAILS.md)) and a harness
-that checks the six lab repositories against each other.
+This repository is the front door, not a combined runtime or a monorepo. Start with the
+[learning path](docs/LEARNING_PATH.md) for study order and checkpoints. Use
+[ROADMAP.md](ROADMAP.md) for delivery status and missing work. Beginner lesson packs, real local
+inference and physical GPU exercises are planned additions; a route through them is not evidence
+that they are already implemented. No cloud account or GPU purchase is required to start.
+
+The harness compares the six cloud repositories under their existing shared contracts. The
+AI/GPU track has its own lifecycle and validation; it is linked and checked for navigation without
+being forced into cloud app parity or shared tool versions.
 
 ## The family
 
 | Repository | Cloud | Role | Status |
 |---|---|---|---|
-| `tx00v2` (this repo) | all three | family hub: roadmap, family guardrails, cross-repo checks | see the status tables below |
+| `tx00v2` (this repo) | all tracks | learning sequence, curriculum, delivery roadmap and cloud family checks | see the status tables below |
 | [`tx01v2`](https://github.com/maringelix/tx01v2) | AWS | infrastructure: Terraform, EKS, RDS PostgreSQL, ALB + WAF, platform layer | see its status matrix |
 | [`dx01v2`](https://github.com/maringelix/dx01v2) | AWS | application: Express 5 + TypeScript API, React 19, PostgreSQL 17 | see its status matrix |
 | [`tx02v2`](https://github.com/maringelix/tx02v2) | Azure | infrastructure: Terraform, AKS, PostgreSQL Flexible Server, Application Gateway for Containers | see its status matrix |
 | [`dx02v2`](https://github.com/maringelix/dx02v2) | Azure | application: the same app on AKS | see its status matrix |
 | [`tx03v2`](https://github.com/maringelix/tx03v2) | GCP | infrastructure: Terraform, GKE Autopilot, Cloud SQL, Cloud Armor | see its status matrix |
 | [`dx03v2`](https://github.com/maringelix/dx03v2) | GCP | application: the same app on GKE Autopilot | see its status matrix |
+| [`tx04v2`](https://github.com/maringelix/tx04v2) | local AI/GPU | independent kind lab: simulated GPUs, scheduling, mock serving, networking and observability | basic kind/mock smoke `verified in CI`; real inference/hardware track `planned` |
 
 Each pair talks through a versioned contract owned by the infrastructure repository (for AWS:
 [tx01v2 docs/CONTRACT.md](https://github.com/maringelix/tx01v2/blob/main/docs/CONTRACT.md)); the
 application repository pins the infrastructure commit its platform e2e uses
 (`deploy/local/tx0Nv2.ref`).
 
+## Learning sequence
+
+| Step | Focus | Checkpoint |
+|---|---|---|
+| 1 | Linux, Git, networking, containers and DevOps workflow | trace a request, diagnose a failure and recover; guided beginner packs are planned |
+| 2 | Cloud architecture and delivery design | diagram, requirements, ADR, identity/state boundaries and rollback plan |
+| 3 | AWS reference pair | deliver and operate the shared app with evidence from the existing lessons |
+| 4 | Azure comparison | reproduce the outcomes and explain provider-specific changes |
+| 5 | Google Cloud comparison | compare all three architectures, including managed-platform constraints |
+| 6 | Real local AI on CPU | reproducible model/runtime and measured generation; implementation planned |
+| 7 | GPU infrastructure in simulation | scheduling, queues, serving, telemetry and incident diagnosis in tx04v2 |
+| 8 | Physical GPU and final project | measured hardware behavior and an inference-service operations report; planned and optional hardware |
+
+The [full path](docs/LEARNING_PATH.md) defines prerequisites, deliverables and exit criteria.
+Run the same application through AWS, Azure and GCP in that order; repeat the learning outcomes,
+then focus on differences instead of restarting the concepts from zero. Real cloud execution
+is an optional, separately authorized validation step for each pair.
+
 ## Where to start
 
-1. Start with the [complete getting started guide](docs/GETTING_STARTED.md): forks, accounts,
-   bootstrap, variables/secrets, pipeline order, validation and cleanup.
-2. Follow the [curriculum](docs/CURRICULUM.md) and read the reference pair:
+1. Choose your entry point in the [learning path](docs/LEARNING_PATH.md). New learners start with
+   foundations; experienced learners can demonstrate the checkpoints and enter the reference pair.
+2. Use the [getting started guide](docs/GETTING_STARTED.md) for setup and the existing
+   [A01–A17 cloud lesson catalog](docs/CURRICULUM.md) with the reference pair:
    [tx01v2](https://github.com/maringelix/tx01v2) and
    [dx01v2](https://github.com/maringelix/dx01v2). The Azure and Google Cloud pairs are ports of it.
 3. Run the local lab, no account needed: `make e2e` in tx01v2 (Docker with 8 GB for the `full`
@@ -47,7 +72,9 @@ application repository pins the infrastructure commit its platform e2e uses
    then `make e2e-platform` in dx01v2.
 4. Use the [acceptance matrix](docs/ACCEPTANCE.md) to find each technology, its test and its limits.
    Capacity/FinOps exercises use three-node kind with 12 GiB recommended; keep small on one node.
-5. Forking overview: [FORK.md](FORK.md).
+5. After the cloud comparison, follow the [AI/GPU track](docs/AI_GPU_TRACK.md) and
+   [tx04v2 bring-up guide](https://github.com/maringelix/tx04v2/blob/main/docs/bring-up.md).
+   Fork only the repositories you will work on; see [FORK.md](FORK.md).
 
 ## Status of the hub
 
@@ -58,7 +85,7 @@ application repository pins the infrastructure commit its platform e2e uses
 | Repository settings as code (ruleset requiring `static`, secret scanning, private vulnerability reporting) | `verified locally` | `scripts/repo-guardrails.sh` applied and read back with `gh api` on 2026-10-14 |
 | Cloud | not applicable | the hub talks to no cloud and has no cloud credentials |
 
-## The family at a glance (2026-10-18)
+## The cloud core at a glance (2026-10-18)
 
 | Capability | Status | Where |
 |---|---|---|
@@ -68,7 +95,10 @@ application repository pins the infrastructure commit its platform e2e uses
 | HA/backup/PITR, restored volume bytes, independent A/B recovery, fencing, measured local RPO/RTO and failback | `verified in CI` | R9; TX `e2e` and DX `continuity` |
 | Cloud paths of the three clouds (bootstrap, apply, platform layer, deploy, destroy + leftovers) | `not run in the cloud (v2)` | `docs/RUNBOOK.md` of each repository |
 | Cloud core/full platform and app integration: TLS/DNS/WAF, identity, advanced mesh and durable observability | `verified in CI`; `not run in the cloud (v2)` | R8; provider configuration/mocks and portable kind exercises |
-| Complete scope: R7–R11, including FinOps/scaling and final curriculum | construction complete: 22 PRs | [ROADMAP.md](ROADMAP.md), [acceptance matrix](docs/ACCEPTANCE.md), [PR ledger](docs/DELIVERIES.json) |
+| DEC-13 cloud scope: R7–R11, including FinOps/scaling and cloud curriculum | construction complete: 22 PRs; later learning-path expansion remains separate | [ROADMAP.md](ROADMAP.md), [acceptance matrix](docs/ACCEPTANCE.md), [PR ledger](docs/DELIVERIES.json) |
+
+The [AI/GPU acceptance inventory](docs/ACCEPTANCE.md#ai-and-gpu-track) records the independent
+tx04v2 baseline and its limits. GPU simulation, mock serving and real model inference are distinct.
 
 ## Harness
 
@@ -95,13 +125,15 @@ On Windows without WSL, run it in a throwaway container (see [docs/HARNESS.md](d
 
 ## Docs
 
-Documentation is maintained in English across all seven repositories.
+Documentation is maintained in English across the cloud core and the AI/GPU learning track.
 
 | Doc | Content |
 |---|---|
+| [docs/LEARNING_PATH.md](docs/LEARNING_PATH.md) | sequential learning route, prerequisites, checkpoints and learner deliverables |
+| [docs/AI_GPU_TRACK.md](docs/AI_GPU_TRACK.md) | local inference and GPU infrastructure sequence, current evidence and implementation gaps |
 | [docs/GETTING_STARTED.md](docs/GETTING_STARTED.md) | complete fork-to-cloud sequence, accounts, bootstrap, variables/secrets, workflows, validation and cleanup |
 | [ROADMAP.md](ROADMAP.md) | scope and delivery evidence: status, repositories, deliverables, acceptance, cost, dependencies and decisions |
-| [docs/CURRICULUM.md](docs/CURRICULUM.md) | 17 lessons with prerequisites, commands, deliberate failures, acceptance, recovery, cost and cleanup |
+| [docs/CURRICULUM.md](docs/CURRICULUM.md) | existing 17 cloud lessons, reused by the learning path without changing their IDs |
 | [docs/ACCEPTANCE.md](docs/ACCEPTANCE.md) | requirement × cloud × implementation × test × limit; future cloud homologation checklist |
 | [docs/DELIVERIES.json](docs/DELIVERIES.json) | machine-checked ledger of the 21 implementation PRs plus this hub closure |
 | [docs/GUARDRAILS.md](docs/GUARDRAILS.md) | the rules of the family and where each one is enforced |
