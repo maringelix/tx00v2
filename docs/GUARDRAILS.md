@@ -1,8 +1,14 @@
 # v2 family guardrails
 
-Rules for all seven repositories (the six labs and this hub), with their enforcement points.
+Rules for the cloud family (the six cloud labs and this hub), with their enforcement points.
 Each lab has its own `docs/GUARDRAILS.md` for provider-specific IAM, networking and contract rules.
 For shared rules, “Enforced by” identifies the checks on each side.
+
+The complete learning path also includes independent tracks, currently `tx04v2`. Those tracks
+follow their own repository instructions and runtime checks. The hub checks their catalog entries,
+documentation links and cited merge evidence; the cloud-pair parity rules below do not apply to
+them. Privacy, truthful evidence and explicit authorization for paid/cloud operations remain
+requirements for the whole learning path.
 
 Types: `blocking` (a required check fails), `warning` (an informative check fails, such as this
 hub's `family` job), and `process` (review and maintenance without an automatic check).
@@ -34,12 +40,13 @@ hub's `family` job), and `process` (review and maintenance without an automatic 
 | DOC-02 | No self-praise or emojis; README at most 250 lines | factual documentation | `repo-structure` | blocking |
 | DOC-03 | Never link private, archived v1 repositories | avoid broken links and stale dependencies | hub `docs-links`; `family-table` | blocking |
 | DOC-04 | Each English README includes the family table linking the other repositories | every entry point leads to the family | `family-table` | warning |
-| DOC-05 | ROADMAP has required fields, valid statuses, known repositories, existing dependencies and an overview matching its items | a checkable delivery plan | `roadmap` | blocking |
+| DOC-05 | ROADMAP has required fields, valid statuses, registered hub/cloud/track repositories, existing dependencies and an overview matching its items | a checkable delivery plan | `roadmap` | blocking |
 | DOC-06 | `done` items have merged PRs in `Evidence`; `docs/HISTORY.md` cites merged PRs only | status stays within its proof | `family-evidence` | warning |
 | DOC-07 | Each lab has the v2 standard files: English README, AGENTS, FORK, guardrails, harness, maintenance, contract, runbook, architecture, publishing and local lab docs | consistent structure across six labs | `family-structure` | warning |
-| DOC-08 | Hub links to family paths (`blob/main/...`) exist | working navigation | `family-links` | warning |
+| DOC-08 | Hub links to cloud and registered track paths (`blob/main/...`) exist | working navigation | `family-links` | warning |
 | DOC-09 | DEC-13 ledger has three R7 app PRs, six per R8/R9/R10 and one hub closure; curriculum and acceptance matrix exist | checkable coverage of the 22 deliveries | `delivery`, `delivery-fixtures`, `family-evidence` | blocking/warning |
 | DOC-10 | Public prose, templates, agent instructions and document filenames use English; central onboarding follows actual workflows | one maintained learning path | review; `repo-structure`, `docs-links`, `family-structure` | process/blocking |
+| DOC-11 | Independent tracks remain outside cloud-pair parity and do not require another fork; unknown/v1 repositories and missing track paths remain rejected | extend the learning path without inventing a fourth cloud pair or weakening existing checks | `learning-track-fixtures`, `docs-links`, `family-links`; separate `FAMILY_TRACKS` catalog | blocking/warning |
 | CUSTO-01 | Cloud actions need explicit human authorization for that action; each round ends the same day with destroy, leftovers and `cloud_run_report` | the operator pays | manual cloud workflows; protected `lab` on mutations; repository AGENTS | process |
 | CUSTO-02 | Bootstrap budgets/alerts enabled by default; cheapest working defaults; costs name amount and source | avoid unexpected bills | TX bootstrap tests; ROADMAP `Cost` | blocking |
 | CUSTO-03 | Reviewed regional prices, duration and expiry <=24 hours before plan/apply; cloud teardown remains manual | estimates/budgets are neither billing caps nor permission to destroy an account | TX FinOps gates/docs | blocking/process |
@@ -61,6 +68,11 @@ Every exception has a reason and an ending roadmap item:
   inconsistent work. It runs on hub PRs, every main push and Mondays.
 - It reads each repository's main (or local checkouts with `FAMILY_SOURCE`); open lab PRs appear
   after merge.
+- Independent track links/evidence use a present `FAMILY_SOURCE/<track>` checkout or the public
+  upstream. The `FAMILY_OWNER` fork selection and mandatory source checkouts still concern only
+  the six cloud labs; cloud-only fork owners do not need to fork a track.
+- Registering a track does not certify its optional modules, real hardware or cloud execution.
+  Its own workflow/runbooks define the scope of runtime evidence.
 - App parity compares dependencies and `api/src`/`web/src` after stripping repository names,
   full-line comments and blank lines. Tests and smoke (`e2e/`) differ because provider edges differ.
 - The hub proves no real cloud behavior. Nothing of v2 has run in a cloud.

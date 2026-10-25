@@ -1,7 +1,9 @@
 # Forking the family
 
-The lab is seven repositories. Each lab repository has its own `FORK.md` with the details; this page
-is the overview and the links between them. Follow the [complete getting started guide](docs/GETTING_STARTED.md)
+The learning map is eight repositories: this hub, six cloud repositories and the independent
+tx04v2 AI/GPU track. Each cloud repository has its own `FORK.md`; this page provides the overview
+and a separate entry for the AI/GPU lab. Follow the [learning path](docs/LEARNING_PATH.md) for study
+order and the [getting started guide](docs/GETTING_STARTED.md)
 for account creation, bootstrap, variables/secrets, pipeline order, validation and teardown.
 
 ## What you need
@@ -28,6 +30,13 @@ for account creation, bootstrap, variables/secrets, pipeline order, validation a
    checks the six repositories of the owner of the fork (or of the repository variable
    `FAMILY_OWNER`); a partial fork of the family fails there, so set `FAMILY_OWNER` to `maringelix`
    if you forked only the hub.
+
+6. When you reach local AI/GPU infrastructure, optionally fork
+   [tx04v2](https://github.com/maringelix/tx04v2) and follow its
+   [bring-up guide](https://github.com/maringelix/tx04v2/blob/main/docs/bring-up.md).
+   It has its own Docker-only launchers and CI, no matching DX repository and no cloud identity
+   bootstrap. Do not apply a cloud pair's setup script to it. The hub checks its published links
+   independently; a cloud-only fork is not required to fork this track.
 
 ## What GitHub does not copy
 

@@ -1,6 +1,8 @@
 # Lab construction acceptance matrix
 
-Delivered scope: DEC-13, R7–R11, 22 PRs (21 implementation PRs plus hub closure).
+Delivered cloud scope: DEC-13, R7–R11, 22 PRs (21 implementation PRs plus hub closure).
+The broader [learning path](LEARNING_PATH.md), accepted under DEC-15, reuses this evidence;
+it does not count planned beginner lessons or AI/GPU capabilities as delivered by those PRs.
 The [curriculum](CURRICULUM.md) gives prerequisites, objectives, commands, induced failures,
 acceptance, diagnosis, recovery, costs and cleanup. The [roadmap](../ROADMAP.md) records PRs.
 Use [GETTING_STARTED.md](GETTING_STARTED.md) for the complete operating sequence.
@@ -96,3 +98,23 @@ Construction closure does not end CVE/pin/Kubernetes/provider/chart upkeep, pric
 quota/certificate checks, backup age/replica lag or retention. Follow each repository's
 docs/MAINTENANCE.md and weekly hub CI. Domains, accounts and continuous operation belong to
 the fork owner.
+
+## AI and GPU track
+
+This inventory is separate from the historical R7–R11 cloud ledger. The
+[track guide](AI_GPU_TRACK.md) maps it to prerequisites and missing work.
+
+| Capability | Current material or evidence | Limit / next acceptance |
+|---|---|---|
+| Sequential foundations and architecture route | [learning path](LEARNING_PATH.md), with existing A01–A17 reused for cloud practice | beginner guided lesson packs and assessed architecture exercises are planned in R12.1 |
+| Independent local lab | [tx04v2](https://github.com/maringelix/tx04v2), [baseline CI](https://github.com/maringelix/tx04v2/actions/runs/40182267072), revision `ff936c9c38c2652c331458b5fe1f0a6bb0ff28b3` | `verified in CI`: toolbox build, default kind, mock health/request/metrics and teardown; not all optional modules |
+| Static configuration, launcher boundary and GPU alert | the same baseline CI validates YAML/Kubernetes, Bash/PowerShell, shell launcher contract, dashboard PromQL and synthetic alert transitions | syntax/configuration and synthetic-series evidence do not establish live GPU wiring |
+| Simulated GPU, Volcano, KWOK and incident modules | manifests, installers and runbooks in tx04v2 | R12.3 must add guided checkpoints, reproducible optional downloads and module runtime evidence |
+| Real local CPU inference | reference notes/manifests exist; the CPU image path is incomplete | `planned`: R12.2 requires a supported pinned runtime/model, real generation and repeatable measurements |
+| Physical GPU infrastructure | introductory hardware notes and a time-slicing configuration | `planned`: R12.4 needs compatible hardware, driver/runtime evidence, actual memory/error/isolation and multi-GPU exercises |
+| Integrated inference capstone | objectives in the learning path and AI/GPU guide | `planned`: R12.5 requires a reproducible release, measurements, incident/recovery report and cleanup |
+
+The baseline commit starts a new repository and is not a merged PR for closing R12 items.
+Future completed roadmap items still require the merged-PR evidence enforced by the hub.
+Do not label fake GPU telemetry, a mock response or a scheduler-only node as model execution,
+CUDA performance, VRAM measurements or completed distributed training.

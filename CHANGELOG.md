@@ -8,6 +8,10 @@ All notable changes to this project are documented here. The format follows
 
 ### Changed
 
+- Made TX00 the learning entry point for foundations, architecture, AWS, Azure, Google Cloud,
+  local AI and GPU infrastructure (DEC-15), while preserving the A01–A17 cloud lessons and the
+  R7–R11 historical delivery ledger. The independent tx04v2 track is recognized for navigation
+  and roadmap planning without adding it to cloud-pair parity or version invariants.
 - Standardized public documentation and filenames in English (DEC-14), consolidated each repo's
   README, translated the roadmap/curriculum/acceptance/history and coordinated all six lab ports.
   The shared app interface now uses English text, HTML language and date formatting, with matching tests.
@@ -26,6 +30,9 @@ All notable changes to this project are documented here. The format follows
 
 ### Added
 
+- A sequential learning path with prerequisites, checkpoints and learner deliverables, plus an
+  AI/GPU track inventory that separates simulated infrastructure, mock serving, planned CPU
+  inference and planned physical-GPU exercises. R12 records the remaining teaching/runtime work.
 - [Central getting started guide](docs/GETTING_STARTED.md): choosing profiles, forks, cloud signup,
   bootstrap, exact per-repository variables/secrets, reviewed cost inputs, plan/apply/platform,
   signed publication/promotion, validation, recovery and both-region cleanup.
