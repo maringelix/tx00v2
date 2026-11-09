@@ -275,3 +275,28 @@ real cloud validation; no cloud resources were created during the audit/correcti
   No real cloud resources were created; v2 remains `not run in the cloud (v2)`.
 
 Merged PRs: [tx01v2#21](https://github.com/maringelix/tx01v2/pull/21), [dx01v2#21](https://github.com/maringelix/dx01v2/pull/21), [tx02v2#20](https://github.com/maringelix/tx02v2/pull/20), [dx02v2#16](https://github.com/maringelix/dx02v2/pull/16), [tx03v2#19](https://github.com/maringelix/tx03v2/pull/19), [dx03v2#19](https://github.com/maringelix/dx03v2/pull/19).
+
+## 2026-11-09: dependency round
+
+- Resolved every open Dependabot PR of the family. The green provider PRs merged as they were
+  (AWS 6.71.0, azurerm 5.12.0, google 8.9.0), and so did tx04v2's setup-python 7.1.0. Each cloud
+  repository then received one round PR.
+- TX side: the capacity image `node:24-alpine3.24` moved to the digest of the DX build images, and
+  the three local labs share TLS provider 4.4.2 again.
+- DX side: one PR per app replaced its twelve Dependabot PRs, which were closed with a link to it.
+  It fixed the red weekly CI that began on 2026-10-26: `body-parser` 2.4.0 (CVE-2026-111181),
+  `ip-address` and `undici` patches, refreshed distroless, node and nginx-unprivileged digests, and
+  the fixed Alpine musl and zlib packages in the web runtime until an upstream nginx-unprivileged
+  rebuild ships them. The trivy gate kept HIGH/CRITICAL with no exception. npm minor and patch
+  updates came along, and the CodeQL Action moved to the v4.39.3 commit (the old pin was the tag
+  object of v4.39.0).
+- Not adopted: the OpenTelemetry JS SDK 3 line. `sdk-trace-node` 2.12.0 accepts
+  `@opentelemetry/api` <1.10.0, and the Dependabot group installed two API copies. Dependabot now
+  ignores that line until a manual migration in the three apps.
+- Dependabot then opened jsdom 31.0.0 (major, used only by the web tests) in the three apps; each
+  merged after its full CI passed. One medium advisory stays open: GHSA-g3hv-75wg-m249 in
+  minimatch 10.2.6, a development dependency of eslint and typescript-eslint, fixed only in
+  minimatch 11. Each app's docs/MAINTENANCE.md records it for the next round.
+- The DX refs pin the merged TX round commits. Nothing ran in a cloud.
+
+Merged PRs: [tx01v2#23](https://github.com/maringelix/tx01v2/pull/23), [tx02v2#21](https://github.com/maringelix/tx02v2/pull/21), [tx03v2#21](https://github.com/maringelix/tx03v2/pull/21), [tx04v2#1](https://github.com/maringelix/tx04v2/pull/1), [tx01v2#24](https://github.com/maringelix/tx01v2/pull/24), [tx02v2#22](https://github.com/maringelix/tx02v2/pull/22), [tx03v2#22](https://github.com/maringelix/tx03v2/pull/22), [dx01v2#35](https://github.com/maringelix/dx01v2/pull/35), [dx02v2#30](https://github.com/maringelix/dx02v2/pull/30), [dx03v2#33](https://github.com/maringelix/dx03v2/pull/33), [dx01v2#36](https://github.com/maringelix/dx01v2/pull/36), [dx02v2#31](https://github.com/maringelix/dx02v2/pull/31), [dx03v2#34](https://github.com/maringelix/dx03v2/pull/34).

@@ -8,6 +8,9 @@ All notable changes to this project are documented here. The format follows
 
 ### Changed
 
+- Recorded the 2026-11-09 dependency round in docs/HISTORY.md. Every open Dependabot PR of the
+  family was merged or replaced by one round PR per repository, and the DX refs pin the merged TX
+  round commits. The OpenTelemetry JS SDK 3 line stays out until a manual migration.
 - Made TX00 the learning entry point for foundations, architecture, AWS, Azure, Google Cloud,
   local AI and GPU infrastructure (DEC-15), while preserving the A01–A17 cloud lessons and the
   R7–R11 historical delivery ledger. The independent tx04v2 track is recognized for navigation
